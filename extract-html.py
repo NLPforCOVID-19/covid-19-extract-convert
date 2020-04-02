@@ -19,6 +19,11 @@ now = datetime.datetime.now()
 nb_html_files_per_domain = {}
 processed_db_per_domain = {}
 
+gmt_date_format = '%a, %d %b %Y %H:%M:%S GMT'
+utf_offset_date_format = '%a, %d %b %Y %H:%M:%S %z'
+utf_offset_date_format_2 = '%a, %d %b %y %H:%M:%S %z'
+
+
 def write_html_file(path, filename, url):
     try:
         os.makedirs(path, exist_ok=True)
@@ -33,10 +38,32 @@ def write_html_file(path, filename, url):
     except OSError as os_err:
         print("An error has occurred: {0}".format(os_err))
 
+
 def write_stats_file(filename):
     with open(filename, 'w') as stats_file:
         data = {}
         json.dump(nb_html_files_per_domain, stats_file)
+
+
+def is_too_old(headers):
+    json_data = json.loads(headers)
+    for key in json_data:
+        if key == 'last-modified' or key == 'Last-Modified' or key == 'Last-modified':
+            str_last_modif = json_data[key]
+            try:
+                last_modif = datetime.datetime.strptime(str_last_modif, gmt_date_format) 
+            except ValueError:
+                try:
+                    last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format) 
+                except ValueError:
+                    try:
+                        last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format_2) 
+                    except ValueError:
+                        # Give up, 
+                        return False
+            if last_modif.year < 2019 or last_modif == 2019 and month < 11:
+                return True
+    return False
 
 
 for domain in os.listdir(db_dir):
@@ -68,14 +95,19 @@ for domain in os.listdir(db_dir):
         try:
             cursor = conn.cursor()
             sql = (
-                "select url, same_as, content from page "
-                "where content_type like '%text/html%' "
-                "and url like '%" + real_domain + "%'"
+                "select url, same_as, content, headers from page "
+                "where content_type like '%text/html%'"
             )
             for row in cursor.execute(sql):
                 url = row[0]
                 same_as = row[1]
                 content = row[2]
+                headers = row[3]
+
+                # Skip older files.
+                if is_too_old(headers):
+                    continue
+
                 # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
                 domain_part = "^http.*?{0}/(.*)".format(real_domain)
                 match = re.search(domain_part, url)
@@ -112,6 +144,7 @@ for domain in os.listdir(db_dir):
             processed_db_per_domain[real_domain].append(os.path.basename(db_file))
         else:
             processed_db_per_domain[real_domain] = [os.path.basename(db_file)]
+
     with open(run_filename, 'w') as run_file:
         json.dump(processed_db_per_domain[real_domain], run_file)
 
