@@ -33,6 +33,10 @@ def write_html_file(path, filename, url):
         filename_url = filename[:-5] + '.url'
         with open(filename_url, 'w') as url_file:
             url_file.write(url)
+        new_html_filename = os.path.join(run_dir, 'new-html-files-{}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+        with open(new_html_filename, 'a') as new_html_file:
+            new_html_file.write(filename)
+            new_html_file.write("\n")
         global nb_html_files
         nb_html_files += 1
     except OSError as os_err:
