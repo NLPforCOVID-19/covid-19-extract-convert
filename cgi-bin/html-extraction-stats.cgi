@@ -51,29 +51,37 @@ print("<!doctype html>")
 print("<html lang=\"en\">")
 print("<head>")
 print("<meta charset=\"utf-8\">")
+print("<style>")
+print("table { border-collapse: collapse; }")
+print("table, th, td { border: solid 1px; }")
+print("th, td { padding: 6px; }")
+print(".right-aligned { text-align: right; }")
+print("</style>")
 print("</head>")
 print("<body>")
+
+print("<h1>HTML file extraction from db files</h1>")
 
 print("<p>Date of first extraction: {0}</p>".format(date_min))
 print("<p>Date of last extraction: {0}</p>".format(date_max))
 print("<p>Length of period (days): {0}</p>".format(delta.days))
 print("<hr/>")
-print("<h2>Extracted HTML files per domain</h2>")
-print("<table border=1>")
-print("<tr><th>Domain</th><th>Total</th><th>Daily Average</th></tr>")
+print("<h2>Number of files per domain</h2>")
+print("<table>")
+print("<tr><th>Domain</th><th class=\"right-aligned\">Total</th><th class=\"right-aligned\">Daily Average</th></tr>")
 for domain in totals_per_domain:
     total = totals_per_domain[domain]
     daily_avg = total / delta.days
-    print("<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>".format(domain, total, daily_avg))
+    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2}</td></tr>".format(domain, total, daily_avg))
 print("</table>")
 
-print("<h2>Extracted HTML files per region</h2>")
-print("<table border=1>")
-print("<tr><th>Region</th><th>Total</th><th>Daily Average</th></tr>")
+print("<h2>Number of files per region</h2>")
+print("<table>")
+print("<tr><th>Region</th><th class=\"right-aligned\">Total</th><th class=\"right-aligned\">Daily Average</th></tr>")
 for region in totals_per_region:
     total = totals_per_region[region]
     daily_avg = total / delta.days
-    print("<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>".format(region, total, daily_avg))
+    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2}</td></tr>".format(region, total, daily_avg))
 print("</table>")
     
 print("</body>")
