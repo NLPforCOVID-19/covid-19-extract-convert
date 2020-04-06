@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import subprocess
@@ -10,7 +11,10 @@ with open(config_filename, 'r') as config_file:
 db_dir = config['db_dir']
 html_dir = config['html_dir']
 xml_dir = config['xml_dir']
+run_dir = config['run_dir']
 www2sf_dir = config['WWW2sf_dir']
+
+now = datetime.datetime.now()
 
 for region in os.listdir(html_dir):
     print("Processing files from region: {}...".format(region))
@@ -23,7 +27,7 @@ for region in os.listdir(html_dir):
         for domain in os.listdir(root_abs_input_dir):
             print("Processing domain: {}...".format(domain))
             for top, dirs, files in os.walk(os.path.join(root_abs_input_dir, domain)):
-                print("top={0} dirs={1} files={2}".format(top, dirs, files))
+                # print("top={0} dirs={1} files={2}".format(top, dirs, files))
                 for file in files:
                     if file.endswith('.html'):
                         www2sf_input_file = os.path.join(top, file)
@@ -33,7 +37,13 @@ for region in os.listdir(html_dir):
                             # print("file={} input={} output={}".format(file, www2sf_input_file, www2sf_output_file))
                             process = subprocess.run(["tool/html2sf.sh", "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                             print("return_code={0}".format(process.returncode))
-                            os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
-                            with open(www2sf_output_file, "wb") as xml_file:
-                                xml_file.write(process.stdout)
+                            if process.returncode == 0:
+                                os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
+                                with open(www2sf_output_file, "wb") as xml_file:
+                                    xml_file.write(process.stdout)
+                                new_xml_filename = os.path.join(run_dir, 'new-xml-files-{}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+                                with open(new_xml_filename, 'a') as new_xml_file:             
+                                   new_xml_file.write(www2sf_output_file) 
+                                   new_xml_file.write("\n")
+
 
