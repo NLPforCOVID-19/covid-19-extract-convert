@@ -5,11 +5,11 @@
             "language": "fr"
         },
         "globalbiodefense.com": {
-            "region": "us???",
+            "region": "us",
             "language": "en"
         },
         "www.cdc.gov": {
-            "region": "us???",
+            "region": "us",
             "language": "en"
         },
         "www.ecdc.europa.eu": {
@@ -33,7 +33,7 @@
             "language": "fr"
         },
         "www.who.int": {
-            "region": "int???",
+            "region": "int",
             "language": "en"
         },
         "www.mhlw.go.jp": {
@@ -44,9 +44,21 @@
             "region": "jp",
             "language": "ja"
         },
+        "www.kantei.go.jp": {
+            "region": "jp",
+            "language": "ja"
+        },
         "hazard.yahoo.co.jp": {
             "region": "jp",
             "language": "ja"
+        },
+        "health.ifeng.com": {
+            "region": "cn",
+            "language": "zh"
+        },
+        "www.cdc.gov.kr": {
+            "region": "kr",
+            "language": "ko"
         }
     },
     "db_dir": "/mnt/hinoki/share/covid19/db/setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
