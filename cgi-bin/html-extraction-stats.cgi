@@ -72,7 +72,7 @@ print("<tr><th>Domain</th><th class=\"right-aligned\">Total</th><th class=\"righ
 for domain in totals_per_domain:
     total = totals_per_domain[domain]
     daily_avg = total / delta.days
-    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2}</td></tr>".format(domain, total, daily_avg))
+    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2:.2f}</td></tr>".format(domain, total, daily_avg))
 print("</table>")
 
 print("<h2>Number of files per region</h2>")
@@ -81,7 +81,7 @@ print("<tr><th>Region</th><th class=\"right-aligned\">Total</th><th class=\"righ
 for region in totals_per_region:
     total = totals_per_region[region]
     daily_avg = total / delta.days
-    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2}</td></tr>".format(region, total, daily_avg))
+    print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2:.2f}</td></tr>".format(region, total, daily_avg))
 print("</table>")
     
 print("</body>")
