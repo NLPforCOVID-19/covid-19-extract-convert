@@ -65,6 +65,7 @@
     "html_dir": "/mnt/hinoki/share/covid19/html",
     "xml_dir": "/mnt/hinoki/share/covid19/xml",
     "run_dir": "/mnt/hinoki/share/covid19/run",
-    "WWW2sf_dir": "/home/frederic/WWW2sf"
+    "WWW2sf_dir": "/home/frederic/WWW2sf",
+    "detectblocks_dir": "/home/frederic/detectblocks"
 }
 

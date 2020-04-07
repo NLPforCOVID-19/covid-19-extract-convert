@@ -14,6 +14,7 @@ html_dir = config['html_dir']
 xml_dir = config['xml_dir']
 run_dir = config['run_dir']
 www2sf_dir = config['WWW2sf_dir']
+detectblocks_dir = config['detectblocks_dir']
 
 now = datetime.datetime.now()
 
@@ -43,7 +44,7 @@ class Converter(threading.Thread):
                             # print("www2sf_output_file={0} exist={1}".format(www2sf_output_file, os.path.exists(www2sf_output_file)))
                             if not os.path.exists(www2sf_output_file):
                                 # print("file={} input={} output={}".format(file, www2sf_input_file, www2sf_output_file))
-                                process = subprocess.run(["tool/html2sf.sh", "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                                 # print("return_code={0}".format(process.returncode))
                                 if process.returncode == 0:
                                     os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
