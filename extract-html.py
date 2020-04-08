@@ -114,6 +114,8 @@ for domain in os.listdir(db_dir):
 
                 # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
                 domain_part = "^http.*?{0}/(.*)".format(real_domain)
+                if 'prefix' in config['domains'][real_domain]:
+                    domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
                 match = re.search(domain_part, url)
                 # print("url={}".format(url))
                 if match:

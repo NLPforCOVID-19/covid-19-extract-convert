@@ -58,7 +58,8 @@
         },
         "www.cdc.gov.kr": {
             "region": "kr",
-            "language": "ko"
+            "language": "ko",
+            "prefix": "www.cdc.go.kr"
         }
     },
     "db_dir": "/mnt/hinoki/share/covid19/db/setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
