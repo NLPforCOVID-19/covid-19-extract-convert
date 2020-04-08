@@ -22,6 +22,7 @@ SRC=http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19
 WRK=/data/frederic/covid19/db
 DST=/mnt/hinoki/share/covid19/db
 EXT=/home/frederic/covid19/translation
+PIPENV=/home/frederic/.local/bin/pipenv
 
 declare -a procs
 
@@ -70,7 +71,7 @@ echo "The db files have been synchronized."
 
 cd "$EXT"
 echo "Extracting HTML files from db files..."
-pipenv run python extract-html.py
+$PIPENV run python extract-html.py
 echo "The HTML files have been extracted."
 
 echo "Done"
