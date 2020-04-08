@@ -21,6 +21,6 @@ echo "Extracting HTML files from db files..."
 $PIPENV run python extract-html.py
 echo "The HTML files have been extracted."
 
-find $HTML_DIR -type d -exec chmod 775 {} \;
+find $HTML_DIR -user frederic -type d -exec chmod 775 {} \;
 
 echo "Done"
