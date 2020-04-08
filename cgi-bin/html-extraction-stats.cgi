@@ -69,19 +69,29 @@ print("<hr/>")
 print("<h2>Number of files per domain</h2>")
 print("<table>")
 print("<tr><th>Domain</th><th class=\"right-aligned\">Total</th><th class=\"right-aligned\">Daily Average</th></tr>")
+grand_total = 0
+total_daily_avg = 0.0
 for domain in totals_per_domain:
     total = totals_per_domain[domain]
     daily_avg = total / delta.days
+    grand_total += total
+    total_daily_avg += daily_avg
     print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2:.2f}</td></tr>".format(domain, total, daily_avg))
+print("<tr><td>Total</td><td class=\"right-aligned\">{0}</td><td class=\"right-aligned\">{1:.2f}</td></tr>".format(grand_total, total_daily_avg))
 print("</table>")
 
 print("<h2>Number of files per region</h2>")
 print("<table>")
 print("<tr><th>Region</th><th class=\"right-aligned\">Total</th><th class=\"right-aligned\">Daily Average</th></tr>")
+grand_total = 0
+total_daily_avg = 0.0
 for region in totals_per_region:
     total = totals_per_region[region]
     daily_avg = total / delta.days
+    grand_total += total
+    total_daily_avg += daily_avg
     print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2:.2f}</td></tr>".format(region, total, daily_avg))
+print("<tr><td>Total</td><td class=\"right-aligned\">{0}</td><td class=\"right-aligned\">{1:.2f}</td></tr>".format(grand_total, total_daily_avg))
 print("</table>")
     
 print("</body>")
