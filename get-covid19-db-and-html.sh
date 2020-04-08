@@ -18,58 +18,15 @@ export HTTPS_PROXY=http://proxy.kuins.net:8080
 export ftp_proxy=http://proxy.kuins.net:8080
 export FTP_PROXY=http://proxy.kuins.net:8080
 
-SRC=http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19
-WRK=/data/frederic/covid19/db
-DST=/mnt/hinoki/share/covid19/db
-EXT=/home/frederic/covid19/translation
+SCRIPTS=/home/frederic/covid19/translation
 PIPENV=/home/frederic/.local/bin/pipenv
 
-declare -a procs
+cd "$SCRIPTS"
 
-# cd "$WRK"
-# # Remove index.html files to force the download of the databases.
-# find . -iname "index.html" -exec rm -f {} \;
-# echo "Retrieving latest db files..."
-# wget -O covid19_index_html $SRC
-# grep "^<li>" covid19_index_html | cut -d "\"" -f 2 | while read -r line ; do
-#     echo "Downloading database from $line..." 
-#     # echo "wget --timeout=0 --mirror --random-wait --page-requisites $SRC/$line"
-#     # wget --timeout=15 --mirror --random-wait --page-requisites $SRC/$line &
-#     # wget --timeout=0 --mirror --random-wait --page-requisites $SRC/$line &
-#     wget --timeout=15 -nc -q --recursive --level 1 $SRC/$line
-# done
-# echo "The db files have been retrieved."
+echo "Fetching db files..."
+$PIPENV run python fetch-db.py
+echo "The db files have been fetched."
 
-# 
-# I tried to fetch the db files using parallel wget instances
-# but for some reasons, on some occasions, a problem occurs and
-# the script crashes, preventing the ulterior steps to execute.
-# 
-cd "$WRK"
-# Remove index.html files to force the download of the databases.
-find . -iname "index.html" -exec rm -f {} \;
-echo "Retrieving latest db files..."
-wget -O covid19_index_html $SRC
-grep "^<li>" covid19_index_html | cut -d "\"" -f 2 | while read -r line ; do
-    echo "Downloading database from $line..." 
-    # echo "wget --timeout=0 --mirror --random-wait --page-requisites $SRC/$line"
-    # wget --timeout=15 --mirror --random-wait --page-requisites $SRC/$line &
-    # wget --timeout=0 --mirror --random-wait --page-requisites $SRC/$line &
-    wget --timeout=15 -nc --recursive --level 1 $SRC/$line &
-    procs=("${procs[@]}" $!)
-done
-for procId in "${procs[@]}"
-do
-    wait $procId
-done
-echo "The db files have been retrieved."
-
-find $WRK -type d -exec chmod 775 {} \;
-echo "Synchronizing the db files with the share folder..."
-rsync -av "$WRK/" "$DST/"
-echo "The db files have been synchronized."
-
-cd "$EXT"
 echo "Extracting HTML files from db files..."
 $PIPENV run python extract-html.py
 echo "The HTML files have been extracted."

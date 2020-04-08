@@ -150,6 +150,7 @@ for domain in os.listdir(db_dir):
             processed_db_per_domain[real_domain].append(os.path.basename(db_file))
         else:
             processed_db_per_domain[real_domain] = [os.path.basename(db_file)]
+        os.remove(db_file)
 
     with open(run_filename, 'w') as run_file:
         json.dump(processed_db_per_domain[real_domain], run_file)
