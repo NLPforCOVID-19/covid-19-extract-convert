@@ -63,6 +63,7 @@
             "prefix": "www.cdc.go.kr"
         }
     },
+    "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
     "db_dir": "/mnt/hinoki/share/covid19/db",
     "html_dir": "/mnt/hinoki/share/covid19/html",
     "xml_dir": "/mnt/hinoki/share/covid19/xml",

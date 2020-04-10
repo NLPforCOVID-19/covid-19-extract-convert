@@ -14,6 +14,12 @@ db_dir = config['db_dir']
 html_dir = config['html_dir']
 run_dir = config['run_dir']
 
+rejected_urls = []
+with open(config['url_black_list'], 'r') as rejected_urls_file:
+    for line in rejected_urls_file:
+        rejected_urls.append(line.strip())
+
+
 now = datetime.datetime.now()
 
 nb_html_files_per_domain = {}
@@ -22,6 +28,13 @@ processed_db_per_domain = {}
 gmt_date_format = '%a, %d %b %Y %H:%M:%S GMT'
 utf_offset_date_format = '%a, %d %b %Y %H:%M:%S %z'
 utf_offset_date_format_2 = '%a, %d %b %y %H:%M:%S %z'
+
+
+def is_blacklisted(url):
+    for item in rejected_urls:
+        if url.find(item) != -1:
+            return True
+    return False
 
 
 def write_html_file(path, filename, url):
@@ -110,6 +123,11 @@ for domain in os.listdir(db_dir):
 
                 # Skip older files.
                 if is_too_old(headers):
+                    continue
+
+                # Skip blacklisted urls.
+                if is_blacklisted(url):
+                    print("url blacklisted detected!!!: {}".format(url))
                     continue
 
                 # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
