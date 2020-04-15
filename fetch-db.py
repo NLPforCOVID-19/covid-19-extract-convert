@@ -9,7 +9,7 @@ import sys
 def get_processed_databases(domain):
     dbs = []
     run_filename = os.path.join(run_dir, "{}.json".format(domain))
-    if os.path.exists(run_dir):
+    if os.path.exists(run_filename):
         with open(run_filename, 'r') as run_file:
             dbs = json.load(run_file)
     return dbs
