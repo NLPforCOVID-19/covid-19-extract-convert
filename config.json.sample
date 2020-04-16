@@ -61,6 +61,14 @@
             "region": "kr",
             "language": "ko",
             "prefix": "www.cdc.go.kr"
+        },
+        "www.mscbs.gob.es": {
+            "region": "es",
+            "language": "es"
+        },
+        "www.mygov.in": {
+            "region": "in",
+            "language": "en"
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
