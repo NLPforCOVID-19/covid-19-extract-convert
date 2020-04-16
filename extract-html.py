@@ -53,7 +53,7 @@ def write_html_file(path, filename, url):
         global nb_html_files
         nb_html_files += 1
     except OSError as os_err:
-        print("An error has occurred: {0}".format(os_err))
+        print("An error has occurred in write_html(path={0} filename={1} url={2}): {3}".format(path, filename, url, os_err))
 
 
 def write_stats_file(filename):
@@ -143,6 +143,9 @@ for domain in os.listdir(db_dir):
                     if path == '':
                         filename = '_'
                     else:
+                        # Remove leading slashes.
+                        while path.startswith('/'):
+                            path = path[1:]
                         parts = path.split('/')
                         dirs = '/'.join(parts[:-1])
                         filename = parts[-1]
