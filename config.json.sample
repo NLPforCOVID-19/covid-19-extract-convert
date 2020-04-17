@@ -69,6 +69,10 @@
         "www.mygov.in": {
             "region": "in",
             "language": "en"
+        },
+        "www.zusammengegencorona.de": {
+            "region": "de",
+            "language": "de"
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
