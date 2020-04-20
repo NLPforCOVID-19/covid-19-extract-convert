@@ -22,7 +22,7 @@ converter_count = 10
 
 now = datetime.datetime.now()
 
-queue_html_files = queue.Queue(500)
+queue_html_files = queue.Queue()
 
 processed_files = []
 
