@@ -75,6 +75,12 @@
             "language": "de"
         }
     },
+    "domains_off": {
+        "www.salute.gov.it": {
+            "region": "it",
+            "language": "it"
+        }
+    },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
     "db_dir": "/mnt/hinoki/share/covid19/db",
     "html_dir": "/mnt/hinoki/share/covid19/html",
