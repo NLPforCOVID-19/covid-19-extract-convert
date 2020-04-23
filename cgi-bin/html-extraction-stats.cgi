@@ -35,6 +35,8 @@ for stat_filename in sorted(glob.glob('stats-*')):
         data_json = json.load(stat_file)
         for domain in data_json:
             count = data_json[domain]
+            if domain not in config['domains']:
+                continue
             region = config['domains'][domain]['region']
             if domain in totals_per_domain:
                 totals_per_domain[domain] += count
@@ -93,7 +95,8 @@ for region in totals_per_region:
     print("<tr><td>{0}</td><td class=\"right-aligned\">{1}</td><td class=\"right-aligned\">{2:.2f}</td></tr>".format(region, total, daily_avg))
 print("<tr><td>Total</td><td class=\"right-aligned\">{0}</td><td class=\"right-aligned\">{1:.2f}</td></tr>".format(grand_total, total_daily_avg))
 print("</table>")
-    
+
+
 print("</body>")
 print("</html>")
 
