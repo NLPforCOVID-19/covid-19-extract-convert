@@ -17,7 +17,10 @@ def get_processed_databases(domain):
 
 def get_available_databases(domain):
     dbs = []
-    index_url = '{0}/{1}'.format(config['crawled_data_repository'], domain.replace('.', '_'))
+    if 'prefix' in config['domains'][domain]:
+        index_url = '{0}/{1}'.format(config['crawled_data_repository'], config['domains'][domain]['prefix'].replace('.', '_'))
+    else:
+        index_url = '{0}/{1}'.format(config['crawled_data_repository'], domain.replace('.', '_'))
     req = requests.get(index_url)
     if req.status_code == 200:
         for line in req.text.splitlines():
@@ -31,8 +34,8 @@ def get_available_databases(domain):
 def retrieve_database(domain, database):
     print("Retrieving db: {}".format(database))
     domain_dir = domain.replace('.', '_')
-    database_url = os.path.join(config['crawled_data_repository'], domain_dir, database) 
-    os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True) 
+    database_url = os.path.join(config['crawled_data_repository'], domain_dir, database)
+    os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
     database_filename = os.path.join(db_dir, domain_dir, database)
     req = requests.get(database_url, stream=True)
     with open(database_filename, 'wb') as database_file:
