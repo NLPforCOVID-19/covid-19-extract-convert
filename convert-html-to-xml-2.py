@@ -66,28 +66,33 @@ class Converter(threading.Thread):
 
     def run(self):
         while True:
-            if not queue_html_files.empty():
-                (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
-                print("Process file: {}".format(www2sf_input_file))
-                if not os.path.exists(www2sf_output_file):
-                    print("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
-                    process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    # print("return_code={0}".format(process.returncode))
-                    if process.returncode == 0:
-                        os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
-                        with open(www2sf_output_file, "wb") as xml_file:
-                            xml_file.write(process.stdout)
-                        mutex.acquire()
-                        try:
-                            processed_files.append(www2sf_output_file)
-                        finally:
-                            mutex.release()
-            else:
-                # Wait a while.  If the queue is still empty after that, stop working.
-                time.sleep(60)
-                if queue_html_files.empty():
-                    break
-
+            try:
+                if not queue_html_files.empty():
+                    (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
+                    print("Process file: {}".format(www2sf_input_file))
+                    if not os.path.exists(www2sf_output_file):
+                        print("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
+                        print("cd {0} && tool/html2sf.sh -T -D {1} -J {2}".format(www2sf_dir, detectblocks_dir, www2sf_input_file))
+                        process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        print("return_code={0}".format(process.returncode))
+                        if process.returncode == 0:
+                            os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
+                            with open(www2sf_output_file, "wb") as xml_file:
+                                xml_file.write(process.stdout)
+                            print("Output file {}: OK".format(www2sf_output_file))
+                            mutex.acquire()
+                            try:
+                                processed_files.append(www2sf_output_file)
+                            finally:
+                                mutex.release()
+                else:
+                    # Wait a while.  If the queue is still empty after that, stop working.
+                    time.sleep(60)
+                    if queue_html_files.empty():
+                        break
+            except:
+                e = sys.exc_info()[0]
+                print("An error has occurred: %s" % e)
 
 
 converters = []
@@ -101,7 +106,7 @@ for region in os.listdir(html_dir):
     producer = Producer(region)
     producers.append(producer)
     producer.start()
-    
+
 for producer in producers:
     producer.join()
 
@@ -109,7 +114,9 @@ for convert in converters:
     converter.join()
 
 new_xml_filename = os.path.join(run_dir, 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
-with open(new_xml_filename, 'a') as new_xml_file:             
+print("Writing report file: {0} new_xml_file_count: {1}".format(new_xml_filename, len(processed_files)))
+with open(new_xml_filename, 'a') as new_xml_file:
     for file in processed_files:
-        new_xml_file.write(file) 
+        new_xml_file.write(file)
         new_xml_file.write("\n")
+print("Report written.")
