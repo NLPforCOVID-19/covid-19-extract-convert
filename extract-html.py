@@ -1,5 +1,6 @@
 import datetime
 import glob
+import hashlib
 import json
 import os
 import re
@@ -37,8 +38,11 @@ def is_blacklisted(url):
     return False
 
 
-def write_html_file(path, filename, url):
+def write_html_file(path, filename, url, source):
+    print("write_html_file path={0} filename={1} url={2} source={3}".format(path, filename, url, source))
     try:
+        timestamp = now.strftime('%Y-%m-%d-%H-%M')
+        path = "{0}_{1}".format(path, timestamp)
         os.makedirs(path, exist_ok=True)
         filename = os.path.join(path, filename)
         with open(filename, 'wb') as html_file:
@@ -46,7 +50,10 @@ def write_html_file(path, filename, url):
         filename_url = filename[:-5] + '.url'
         with open(filename_url, 'w') as url_file:
             url_file.write(url)
-        new_html_filename = os.path.join(run_dir, 'new-html-files-{}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+        filename_source = filename[:-5] + '.src'
+        with open(filename_source, 'w') as source_file:
+            source_file.write(source)
+        new_html_filename = os.path.join(run_dir, 'new-html-files-{}.txt'.format(timestamp))
         with open(new_html_filename, 'a') as new_html_file:
             new_html_file.write(filename)
             new_html_file.write("\n")
@@ -68,15 +75,15 @@ def is_too_old(headers):
         if key == 'last-modified' or key == 'Last-Modified' or key == 'Last-modified':
             str_last_modif = json_data[key]
             try:
-                last_modif = datetime.datetime.strptime(str_last_modif, gmt_date_format) 
+                last_modif = datetime.datetime.strptime(str_last_modif, gmt_date_format)
             except ValueError:
                 try:
-                    last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format) 
+                    last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format)
                 except ValueError:
                     try:
-                        last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format_2) 
+                        last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format_2)
                     except ValueError:
-                        # Give up, 
+                        # Give up,
                         return False
             if last_modif.year < 2019 or last_modif == 2019 and month < 11:
                 return True
@@ -88,7 +95,7 @@ for domain in os.listdir(db_dir):
         continue
     domain_dir = db_dir + '/' + domain
     real_domain = domain.replace('_', '.')
-    # print("domain_dir={0} real_domain={1}".format(domain_dir, real_domain))
+    print("domain_dir={0} real_domain={1}".format(domain_dir, real_domain))
     if real_domain not in config['domains']:
         continue
 
@@ -100,7 +107,7 @@ for domain in os.listdir(db_dir):
             processed_db_per_domain[real_domain] = run_data
 
     nb_html_files = 0
-    
+
     lang = config['domains'][real_domain]['language']
     region = config['domains'][real_domain]['region']
     for db_file in sorted(glob.glob('{0}/*.db'.format(domain_dir))):
@@ -158,10 +165,44 @@ for domain in os.listdir(db_dir):
                     if not filename.endswith('.html'):
                         filename = filename + '.html'
                     full_path = os.path.join(html_dir, region, 'orig', real_domain, path)
-                    # print("full_path {}".format(full_path))
-                    if not os.path.exists(os.path.join(full_path, filename)) or same_as is None:
-                        write_html_file(full_path, filename, url)
+                    parent_dir = os.path.dirname(full_path)
+                    file_dir_prefix = os.path.basename(full_path)
+                    print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
+                    print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
+                    needs_writing_html = True
+                    for file in glob.glob("{0}/{1}*".format(parent_dir, file_dir_prefix)):
+                        file_basename = os.path.basename(file)
+                        print("file={0} bn={1}".format(file, file_basename))
+                        if file_basename.startswith(file_dir_prefix) and os.path.isdir(file):
+                            print("It matches!!! same_as={}".format(same_as))
+                            if same_as:
+                                source_filename = os.path.join(file, filename[:-5] + '.src')
+                                print("source_filename={}".format(source_filename))
+                                if os.path.exists(source_filename):
+                                    with open(source_filename, 'r') as source_file:
+                                        source = source_file.read()
+                                    print("source={0} same_as={1} egal?={2}".format(source, same_as, (source == same_as)))
+                                    if source == same_as:
+                                        needs_writing_html = False
+                                        break
 
+                            content_filename = os.path.join(file, filename[:-5] + '.html')
+                            # print("content_filename={0}".format(content_filename))
+                            if os.path.exists(content_filename):
+                                with open(content_filename, 'rb') as content_file:
+                                    content_on_disk = content_file.read()
+                                md5_content = hashlib.md5(content)
+                                md5_content_on_disk = hashlib.md5(content_on_disk)
+                                # print("content == content_on_disk? {}".format(content == content_on_disk))
+                                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
+                                if md5_content.hexdigest() == md5_content_on_disk.hexdigest():
+                                    needs_writing_html = False
+                                    break
+
+                    print("needs_writing_html={0}".format(needs_writing_html))
+                    if needs_writing_html:
+                        source = same_as or db_file_basename
+                        write_html_file(full_path, filename, url, source)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
