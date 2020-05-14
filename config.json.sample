@@ -73,6 +73,22 @@
         "www.zusammengegencorona.de": {
             "region": "de",
             "language": "de"
+        },
+        "www.covid19india.org": {
+            "region": "in",
+            "language": "en"
+        },
+        "www.mohfw.gov.in": {
+            "region": "in",
+            "language": "en"
+        },
+        "www.worldmeters.info": {
+            "region": "int",
+            "language": "en"
+        },
+        "www.usa.gov": {
+            "region": "int",
+            "language": "en"
         }
     },
     "domains_off": {
