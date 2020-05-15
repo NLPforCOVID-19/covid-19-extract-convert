@@ -82,12 +82,12 @@
             "region": "in",
             "language": "en"
         },
-        "www.worldmeters.info": {
+        "www.worldometers.info": {
             "region": "int",
             "language": "en"
         },
         "www.usa.gov": {
-            "region": "int",
+            "region": "us",
             "language": "en"
         }
     },
