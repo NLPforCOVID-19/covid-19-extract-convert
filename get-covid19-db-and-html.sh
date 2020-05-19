@@ -11,6 +11,10 @@ SCRIPTS=/home/frederic/covid19/translation
 PIPENV=/home/frederic/.local/bin/pipenv
 HTML_DIR=/mnt/hinoki/share/covid19/html
 
+
+NOW=$(date +"%Y-%m-%d %H:%M:%S")
+echo "Start time: $NOW"
+
 cd "$SCRIPTS"
 
 echo "Fetching db files..."
@@ -26,3 +30,6 @@ find $HTML_DIR -user frederic -type d -exec chmod 775 {} \;
 echo "The permissions have been changed."
 
 echo "Done"
+
+NOW=$(date +"%Y-%m-%d %H:%M:%S")
+echo "Stop time: $NOW"
