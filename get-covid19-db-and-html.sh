@@ -26,7 +26,7 @@ $PIPENV run python extract-html.py
 echo "The HTML files have been extracted."
 
 echo "Changing permissions..."
-find $HTML_DIR -user frederic -type d -exec chmod 775 {} \;
+find $HTML_DIR -user frederic -type d -perm 755 -exec chmod 775 {} \;
 echo "The permissions have been changed."
 
 echo "Done"
