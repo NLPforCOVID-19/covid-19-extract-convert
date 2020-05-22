@@ -33,11 +33,12 @@ def get_available_databases(domain):
 
 def retrieve_database(domain, database):
     print("Retrieving db: {}".format(database))
+    domain_dir = domain.replace('.', '_')
+    
     if 'prefix' in config['domains'][domain]:
-        domain_dir = config['domains'][domain]['prefix'].replace('.', '_')
+        database_url = os.path.join(config['crawled_data_repository'], config['domains'][domain]['prefix'].replace('.', '_'), database)
     else:
-        domain_dir = domain.replace('.', '_')
-    database_url = os.path.join(config['crawled_data_repository'], domain_dir, database)
+        database_url = os.path.join(config['crawled_data_repository'], domain.replace('.', '_'), database)
     print("db url: {}".format(database_url))
     os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
     database_filename = os.path.join(db_dir, domain_dir, database)
