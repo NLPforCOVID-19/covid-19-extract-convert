@@ -33,15 +33,20 @@ def get_available_databases(domain):
 
 def retrieve_database(domain, database):
     print("Retrieving db: {}".format(database))
-    domain_dir = domain.replace('.', '_')
+    if 'prefix' in config['domains'][domain]:
+        domain_dir = config['domains'][domain]['prefix'].replace('.', '_')
+    else:
+        domain_dir = domain.replace('.', '_')
     database_url = os.path.join(config['crawled_data_repository'], domain_dir, database)
+    print("db url: {}".format(database_url))
     os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
     database_filename = os.path.join(db_dir, domain_dir, database)
-    req = requests.get(database_url, stream=True)
-    with open(database_filename, 'wb') as database_file:
-        for chunk in req.iter_content(chunk_size=1024):
-            database_file.write(chunk)
-        print("File {} written.".format(database_filename))
+    with requests.get(database_url, stream=True) as req:
+        req.raise_for_status()
+        with open(database_filename, 'wb') as database_file:
+            for chunk in req.iter_content(chunk_size=8192):
+                database_file.write(chunk)
+            print("File {} written.".format(database_filename))
 
 
 config_filename = sys.argv[1] if len(sys.argv) == 2 else 'config.json'
