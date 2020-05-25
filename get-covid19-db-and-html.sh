@@ -25,10 +25,6 @@ echo "Extracting HTML files from db files..."
 $PIPENV run python extract-html.py $1
 echo "The HTML files have been extracted."
 
-echo "Changing permissions..."
-find $HTML_DIR/*/orig -user frederic -type d -perm 755 -exec chmod 775 {} \;
-echo "The permissions have been changed."
-
 echo "Done"
 
 NOW=$(date +"%Y-%m-%d %H:%M:%S")

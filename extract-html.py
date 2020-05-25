@@ -41,12 +41,16 @@ def is_blacklisted(url):
     return False
 
 
-def write_html_file(path, filename, url, source):
-    print("write_html_file path={0} filename={1} url={2} source={3}".format(path, filename, url, source))
+def write_html_file(path, filename, url, source, domain_path):
+    print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4}".format(path, filename, url, source, domain_path))
     try:
         timestamp = now.strftime('%Y-%m-%d-%H-%M')
         path = "{0}_{1}".format(path, timestamp)
         os.makedirs(path, exist_ok=True)
+        temp_path = path
+        while temp_path != domain_path:
+            os.chmod(temp_path, 0o775)
+            temp_path = os.path.dirname(temp_path)
         filename = os.path.join(path, filename)
         with open(filename, 'wb') as html_file:
             html_file.write(content)
@@ -170,6 +174,7 @@ for domain in os.listdir(db_dir):
                         filename = filename[:-4] + '.html'
                     if not filename.endswith('.html'):
                         filename = filename + '.html'
+                    domain_path = os.path.join(html_dir, region, 'orig', real_domain)
                     full_path = os.path.join(html_dir, region, 'orig', real_domain, path)
                     parent_dir = os.path.dirname(full_path)
                     file_dir_prefix = os.path.basename(full_path)
@@ -208,7 +213,7 @@ for domain in os.listdir(db_dir):
                     print("needs_writing_html={0}".format(needs_writing_html))
                     if needs_writing_html:
                         source = same_as or db_file_basename
-                        write_html_file(full_path, filename, url, source)
+                        write_html_file(full_path, filename, url, source, domain_path)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
