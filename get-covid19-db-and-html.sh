@@ -18,15 +18,15 @@ echo "Start time: $NOW"
 cd "$SCRIPTS"
 
 echo "Fetching db files..."
-$PIPENV run python fetch-db.py
+$PIPENV run python fetch-db.py $1
 echo "The db files have been fetched."
 
 echo "Extracting HTML files from db files..."
-$PIPENV run python extract-html.py
+$PIPENV run python extract-html.py $1
 echo "The HTML files have been extracted."
 
 echo "Changing permissions..."
-find $HTML_DIR -user frederic -type d -perm 755 -exec chmod 775 {} \;
+find $HTML_DIR/*/orig -user frederic -type d -perm 755 -exec chmod 775 {} \;
 echo "The permissions have been changed."
 
 echo "Done"

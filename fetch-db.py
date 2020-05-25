@@ -5,7 +5,6 @@ import re
 import requests
 import sys
 
-
 def get_processed_databases(domain):
     dbs = []
     run_filename = os.path.join(run_dir, "{}.json".format(domain))
@@ -34,7 +33,7 @@ def get_available_databases(domain):
 def retrieve_database(domain, database):
     print("Retrieving db: {}".format(database))
     domain_dir = domain.replace('.', '_')
-    
+
     if 'prefix' in config['domains'][domain]:
         database_url = os.path.join(config['crawled_data_repository'], config['domains'][domain]['prefix'].replace('.', '_'), database)
     else:
@@ -49,8 +48,9 @@ def retrieve_database(domain, database):
                 database_file.write(chunk)
             print("File {} written.".format(database_filename))
 
+input_domain = sys.argv[1]
 
-config_filename = sys.argv[1] if len(sys.argv) == 2 else 'config.json'
+config_filename = sys.argv[2] if len(sys.argv) == 3 else 'config.json'
 with open(config_filename, 'r') as config_file:
     config = json.load(config_file)
 
@@ -60,6 +60,9 @@ run_dir = config['run_dir']
 now = datetime.datetime.now()
 
 for domain in config['domains']:
+    if input_domain != 'all' and domain != input_domain:
+        continue
+
     print("Processing domain: {}...".format(domain))
     processed_dbs = get_processed_databases(domain)
     available_dbs = get_available_databases(domain)

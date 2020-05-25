@@ -7,7 +7,10 @@ import re
 import sqlite3
 import sys
 
-config_filename = sys.argv[1] if len(sys.argv) == 2 else 'config.json'
+input_domain = sys.argv[1]
+
+config_filename = sys.argv[2] if len(sys.argv) == 3 else 'config.json'
+
 with open(config_filename, 'r') as config_file:
     config = json.load(config_file)
 
@@ -95,7 +98,10 @@ for domain in os.listdir(db_dir):
         continue
     domain_dir = db_dir + '/' + domain
     real_domain = domain.replace('_', '.')
-    print("domain_dir={0} real_domain={1}".format(domain_dir, real_domain))
+    print("domain_dir={0} real_domain={1} input_domain={2}".format(domain_dir, real_domain, input_domain))
+    if input_domain != 'all' and real_domain != input_domain:
+        continue
+
     if real_domain not in config['domains']:
         continue
 
