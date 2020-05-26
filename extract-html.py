@@ -41,7 +41,7 @@ def is_blacklisted(url):
     return False
 
 
-def write_html_file(path, filename, url, source, domain_path):
+def write_html_file(path, filename, url, content, source, domain_path):
     print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4}".format(path, filename, url, source, domain_path))
     try:
         timestamp = now.strftime('%Y-%m-%d-%H-%M')
@@ -117,10 +117,13 @@ def get_content(file, filename):
     return None
 
 
-def process_file(filename, parent_dir, file_dir_prefix, same_as):
+def process_file(filename, parent_dir, file_dir_prefix, same_as, content):
     all_versions = sorted(glob.glob("{0}/{1}".format(parent_dir, file_dir_prefix)) + glob.glob("{0}/{1}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]".format(parent_dir, file_dir_prefix)))
     if len(all_versions) == 0:
         return True
+
+    # Now that we are using the similarity column from the database, I'm not convinced that
+    # the following code is useful. It looks redundant actually.
 
     # Only consider the most recent version.
     file = all_versions[-1]
@@ -144,14 +147,28 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as):
     return True
 
 
-def process_row(url, same_as, content, headers, real_domain, region, db_file_basename):
+def process_row(row, real_domain, region, db_file_basename):
+    url = row[0]
+    same_as = row[1]
+    content = row[2]
+    headers = row[3]
+    similarity = row[4]
+    main_text_similarity = row[5]
+    compared_against = row[6]
+
     # Skip older files.
     if is_too_old(headers):
+        print("url too old detected!!!: {}".format(url))
         return
 
     # Skip blacklisted urls.
     if is_blacklisted(url):
         print("url blacklisted detected!!!: {}".format(url))
+        return
+
+    print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
+    if compared_against is not None and main_text_similarity >= 0.8 :
+        print("url too similar to previous version: {0} sim: {1} main_text_sim={2}".format(url, similarity, main_text_similarity))
         return
 
     # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
@@ -187,12 +204,12 @@ def process_row(url, same_as, content, headers, real_domain, region, db_file_bas
         file_dir_prefix = os.path.basename(full_path)
         print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
         print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
-        needs_writing_html = process_file(filename, parent_dir, file_dir_prefix, same_as)
+        needs_writing_html = process_file(filename, parent_dir, file_dir_prefix, same_as, content)
 
         print("needs_writing_html={0}".format(needs_writing_html))
         if needs_writing_html:
             source = same_as or db_file_basename
-            write_html_file(full_path, filename, url, source, domain_path)
+            write_html_file(full_path, filename, url, content, source, domain_path)
 
 
 for domain in os.listdir(db_dir):
@@ -227,16 +244,11 @@ for domain in os.listdir(db_dir):
         try:
             cursor = conn.cursor()
             sql = (
-                "select url, same_as, content, headers from page "
+                "select url, same_as, content, headers, similarity, maintext_similarity, compared_against from page "
                 "where content_type like '%text/html%'"
             )
             for row in cursor.execute(sql):
-                url = row[0]
-                same_as = row[1]
-                content = row[2]
-                headers = row[3]
-
-                process_row(url, same_as, content, headers, real_domain, region, db_file_basename)
+                process_row(row, real_domain, region, db_file_basename)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
