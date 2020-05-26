@@ -97,33 +97,50 @@ def is_too_old(headers):
     return False
 
 
-def process_file(filename, parent_dir, file_dir_prefix, same_as):
-    for file in glob.glob("{0}/{1}*".format(parent_dir, file_dir_prefix)):
-        file_basename = os.path.basename(file)
-        print("file={0} bn={1}".format(file, file_basename))
-        if file_basename.startswith(file_dir_prefix) and os.path.isdir(file):
-            print("It matches!!! same_as={}".format(same_as))
-            if same_as:
-                source_filename = os.path.join(file, filename[:-5] + '.src')
-                print("source_filename={}".format(source_filename))
-                if os.path.exists(source_filename):
-                    with open(source_filename, 'r') as source_file:
-                        source = source_file.read()
-                    print("source={0} same_as={1} egal?={2}".format(source, same_as, (source == same_as)))
-                    if source == same_as:
-                        return False
+def get_source(file, filename):
+    source_filename = os.path.join(file, filename[:-5] + '.src')
+    print("source_filename={}".format(source_filename))
+    if os.path.exists(source_filename):
+        with open(source_filename, 'r') as source_file:
+            source = source_file.read()
+        return source
+    return None
 
-            content_filename = os.path.join(file, filename[:-5] + '.html')
-            # print("content_filename={0}".format(content_filename))
-            if os.path.exists(content_filename):
-                with open(content_filename, 'rb') as content_file:
-                    content_on_disk = content_file.read()
-                md5_content = hashlib.md5(content)
-                md5_content_on_disk = hashlib.md5(content_on_disk)
-                # print("content == content_on_disk? {}".format(content == content_on_disk))
-                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
-                if md5_content.hexdigest() == md5_content_on_disk.hexdigest():
-                    return False
+
+def get_content(file, filename):
+    content_filename = os.path.join(file, filename[:-5] + '.html')
+    # print("content_filename={0}".format(content_filename))
+    if os.path.exists(content_filename):
+        with open(content_filename, 'rb') as content_file:
+            content_on_disk = content_file.read()
+        return content_on_disk
+    return None
+
+
+def process_file(filename, parent_dir, file_dir_prefix, same_as):
+    all_versions = sorted(glob.glob("{0}/{1}".format(parent_dir, file_dir_prefix)) + glob.glob("{0}/{1}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]".format(parent_dir, file_dir_prefix)))
+    if len(all_versions) == 0:
+        return True
+
+    # Only consider the most recent version.
+    file = all_versions[-1]
+    if os.path.isdir(file):
+        if same_as:
+            source = get_source(file, filename)
+            print("source={0} same_as={1} egal?={2}".format(source, same_as, (source == same_as)))
+            if source is not None and source == same_as:
+                return False
+
+        content_on_disk = get_content(file, filename)
+        if content_on_disk is not None:
+            md5_content = hashlib.md5(content)
+            md5_content_on_disk = hashlib.md5(content_on_disk)
+            # print("content == content_on_disk? {}".format(content == content_on_disk))
+            print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
+            test = md5_content.hexdigest() == md5_content_on_disk.hexdigest()
+            if test:
+                return False
+
     return True
 
 
@@ -236,4 +253,5 @@ for domain in os.listdir(db_dir):
 
 stats_file = os.path.join(run_dir, 'stats-{}.json'.format(now.strftime('%Y-%m-%d-%H-%M')))
 write_stats_file(stats_file)
+
 
