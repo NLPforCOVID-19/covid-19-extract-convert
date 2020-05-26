@@ -97,6 +97,87 @@ def is_too_old(headers):
     return False
 
 
+def process_file(filename, parent_dir, file_dir_prefix, same_as):
+    for file in glob.glob("{0}/{1}*".format(parent_dir, file_dir_prefix)):
+        file_basename = os.path.basename(file)
+        print("file={0} bn={1}".format(file, file_basename))
+        if file_basename.startswith(file_dir_prefix) and os.path.isdir(file):
+            print("It matches!!! same_as={}".format(same_as))
+            if same_as:
+                source_filename = os.path.join(file, filename[:-5] + '.src')
+                print("source_filename={}".format(source_filename))
+                if os.path.exists(source_filename):
+                    with open(source_filename, 'r') as source_file:
+                        source = source_file.read()
+                    print("source={0} same_as={1} egal?={2}".format(source, same_as, (source == same_as)))
+                    if source == same_as:
+                        return False
+
+            content_filename = os.path.join(file, filename[:-5] + '.html')
+            # print("content_filename={0}".format(content_filename))
+            if os.path.exists(content_filename):
+                with open(content_filename, 'rb') as content_file:
+                    content_on_disk = content_file.read()
+                md5_content = hashlib.md5(content)
+                md5_content_on_disk = hashlib.md5(content_on_disk)
+                # print("content == content_on_disk? {}".format(content == content_on_disk))
+                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
+                if md5_content.hexdigest() == md5_content_on_disk.hexdigest():
+                    return False
+    return True
+
+
+def process_row(url, same_as, content, headers, real_domain, region, db_file_basename):
+    # Skip older files.
+    if is_too_old(headers):
+        return
+
+    # Skip blacklisted urls.
+    if is_blacklisted(url):
+        print("url blacklisted detected!!!: {}".format(url))
+        return
+
+    # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
+    domain_part = "^http.*?{0}/(.*)".format(real_domain)
+    if 'prefix' in config['domains'][real_domain]:
+        domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
+    match = re.search(domain_part, url)
+    # print("url={}".format(url))
+    if match:
+        # print("g0={}".format(match.group(0)))
+        # print("g1={}".format(match.group(1)))
+        path = match.group(1)
+        if path == '':
+            filename = '_'
+        else:
+            # Remove leading slashes.
+            while path.startswith('/'):
+                path = path[1:]
+            parts = path.split('/')
+            dirs = '/'.join(parts[:-1])
+            filename = parts[-1]
+            if filename == '':
+                filename = '_'
+            # print("mkdirs {}".format(dirs))
+        # print("filename {}".format(filename))
+        if filename.endswith('.htm'):
+            filename = filename[:-4] + '.html'
+        if not filename.endswith('.html'):
+            filename = filename + '.html'
+        domain_path = os.path.join(html_dir, region, 'orig', real_domain)
+        full_path = os.path.join(html_dir, region, 'orig', real_domain, path)
+        parent_dir = os.path.dirname(full_path)
+        file_dir_prefix = os.path.basename(full_path)
+        print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
+        print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
+        needs_writing_html = process_file(filename, parent_dir, file_dir_prefix, same_as)
+
+        print("needs_writing_html={0}".format(needs_writing_html))
+        if needs_writing_html:
+            source = same_as or db_file_basename
+            write_html_file(full_path, filename, url, source, domain_path)
+
+
 for domain in os.listdir(db_dir):
     if domain.endswith('.html') or domain.endswith('.py') or domain.endswith('.py~') or domain.endswith(".jp"):
         continue
@@ -138,82 +219,7 @@ for domain in os.listdir(db_dir):
                 content = row[2]
                 headers = row[3]
 
-                # Skip older files.
-                if is_too_old(headers):
-                    continue
-
-                # Skip blacklisted urls.
-                if is_blacklisted(url):
-                    print("url blacklisted detected!!!: {}".format(url))
-                    continue
-
-                # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
-                domain_part = "^http.*?{0}/(.*)".format(real_domain)
-                if 'prefix' in config['domains'][real_domain]:
-                    domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
-                match = re.search(domain_part, url)
-                # print("url={}".format(url))
-                if match:
-                    # print("g0={}".format(match.group(0)))
-                    # print("g1={}".format(match.group(1)))
-                    path = match.group(1)
-                    if path == '':
-                        filename = '_'
-                    else:
-                        # Remove leading slashes.
-                        while path.startswith('/'):
-                            path = path[1:]
-                        parts = path.split('/')
-                        dirs = '/'.join(parts[:-1])
-                        filename = parts[-1]
-                        if filename == '':
-                            filename = '_'
-                        # print("mkdirs {}".format(dirs))
-                    # print("filename {}".format(filename))
-                    if filename.endswith('.htm'):
-                        filename = filename[:-4] + '.html'
-                    if not filename.endswith('.html'):
-                        filename = filename + '.html'
-                    domain_path = os.path.join(html_dir, region, 'orig', real_domain)
-                    full_path = os.path.join(html_dir, region, 'orig', real_domain, path)
-                    parent_dir = os.path.dirname(full_path)
-                    file_dir_prefix = os.path.basename(full_path)
-                    print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
-                    print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
-                    needs_writing_html = True
-                    for file in glob.glob("{0}/{1}*".format(parent_dir, file_dir_prefix)):
-                        file_basename = os.path.basename(file)
-                        print("file={0} bn={1}".format(file, file_basename))
-                        if file_basename.startswith(file_dir_prefix) and os.path.isdir(file):
-                            print("It matches!!! same_as={}".format(same_as))
-                            if same_as:
-                                source_filename = os.path.join(file, filename[:-5] + '.src')
-                                print("source_filename={}".format(source_filename))
-                                if os.path.exists(source_filename):
-                                    with open(source_filename, 'r') as source_file:
-                                        source = source_file.read()
-                                    print("source={0} same_as={1} egal?={2}".format(source, same_as, (source == same_as)))
-                                    if source == same_as:
-                                        needs_writing_html = False
-                                        break
-
-                            content_filename = os.path.join(file, filename[:-5] + '.html')
-                            # print("content_filename={0}".format(content_filename))
-                            if os.path.exists(content_filename):
-                                with open(content_filename, 'rb') as content_file:
-                                    content_on_disk = content_file.read()
-                                md5_content = hashlib.md5(content)
-                                md5_content_on_disk = hashlib.md5(content_on_disk)
-                                # print("content == content_on_disk? {}".format(content == content_on_disk))
-                                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
-                                if md5_content.hexdigest() == md5_content_on_disk.hexdigest():
-                                    needs_writing_html = False
-                                    break
-
-                    print("needs_writing_html={0}".format(needs_writing_html))
-                    if needs_writing_html:
-                        source = same_as or db_file_basename
-                        write_html_file(full_path, filename, url, source, domain_path)
+                process_row(url, same_as, content, headers, real_domain, region, db_file_basename)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
@@ -230,3 +236,4 @@ for domain in os.listdir(db_dir):
 
 stats_file = os.path.join(run_dir, 'stats-{}.json'.format(now.strftime('%Y-%m-%d-%H-%M')))
 write_stats_file(stats_file)
+
