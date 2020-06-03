@@ -172,6 +172,7 @@ def process_row(row, real_domain, region, db_file_basename):
         domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
     match = re.search(domain_part, url)
     if not match:
+        print("url discarded because it's not matching the domain.")
         return
     
     print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
