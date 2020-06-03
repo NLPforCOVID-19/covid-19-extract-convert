@@ -165,21 +165,20 @@ def process_row(row, real_domain, region, db_file_basename):
         print("url blacklisted detected!!!: {}".format(url))
         return
 
-    print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
-    if compared_against is not None and main_text_similarity >= 0.8 :
-        print("url too similar to previous version: {0} sim: {1} main_text_sim={2}".format(url, similarity, main_text_similarity))
-        return
-
     # Consider only urls that match the domain_part. 
     # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
     domain_part = "^http.*?{0}/(.*)".format(real_domain)
     if 'prefix' in config['domains'][real_domain]:
         domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
     match = re.search(domain_part, url)
-
     if not match:
         return
     
+    print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
+    if compared_against is not None and main_text_similarity >= 0.8 :
+        print("url too similar to previous version: {0} sim: {1} main_text_sim={2}".format(url, similarity, main_text_similarity))
+        return
+
     # print("url={0} g0={1} g1={2}".format(url, match.group(0), match.group(1)))
     path = match.group(1)
     if path == '':
