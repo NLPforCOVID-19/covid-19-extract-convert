@@ -12,7 +12,7 @@ echo "Start time: $NOW"
 cd "$SCRIPTS"
 
 echo "Converting HTML files to XML..."
-$PIPENV run python convert-html-to-xml-2.py
+$PIPENV run python convert-html-to-xml.py
 echo "The HTML files have converted."
 
 echo "Done"
