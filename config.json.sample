@@ -1,21 +1,33 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
     "domains": {
-        "fr.reuters.com": {
-            "region": "fr",
-            "language": "fr"
+        "health.ifeng.com": {
+            "region": "cn",
+            "language": "zh"
         },
-        "globalbiodefense.com": {
-            "region": "us",
-            "language": "en"
+        "www.gov.cn": {
+            "region": "cn",
+            "language": "zh"
         },
-        "www.cdc.gov": {
-            "region": "us",
-            "language": "en"
+
+        "www.zusammengegencorona.de": {
+            "region": "de",
+            "language": "de"
         },
+
+        "www.mscbs.gob.es": {
+            "region": "es",
+            "language": "es"
+        },
+
         "www.ecdc.europa.eu": {
             "region": "eu",
             "language": "en"
+        },
+
+        "fr.reuters.com": {
+            "region": "fr",
+            "language": "fr"
         },
         "www.france24.com": {
             "region": "fr",
@@ -25,17 +37,23 @@
             "region": "fr",
             "language": "fr"
         },
-        "www.gov.cn": {
-            "region": "cn",
-            "language": "zh"
-        },
         "www.lci.fr": {
             "region": "fr",
             "language": "fr"
         },
+
         "www.who.int": {
             "region": "int",
             "language": "en"
+        },
+
+        "hazard.yahoo.co.jp": {
+            "region": "jp",
+            "language": "ja"
+        },
+        "www.kantei.go.jp": {
+            "region": "jp",
+            "language": "ja"
         },
         "www.mhlw.go.jp": {
             "region": "jp",
@@ -45,35 +63,13 @@
             "region": "jp",
             "language": "ja"
         },
-        "www.kantei.go.jp": {
-            "region": "jp",
-            "language": "ja"
-        },
-        "hazard.yahoo.co.jp": {
-            "region": "jp",
-            "language": "ja"
-        },
-        "health.ifeng.com": {
-            "region": "cn",
-            "language": "zh"
-        },
+
         "www.cdc.gov.kr": {
             "region": "kr",
             "language": "ko",
             "prefix": "www.cdc.go.kr"
         },
-        "www.mscbs.gob.es": {
-            "region": "es",
-            "language": "es"
-        },
-        "www.mygov.in": {
-            "region": "in",
-            "language": "en"
-        },
-        "www.zusammengegencorona.de": {
-            "region": "de",
-            "language": "de"
-        },
+
         "www.covid19india.org": {
             "region": "in",
             "language": "en"
@@ -82,8 +78,22 @@
             "region": "in",
             "language": "en"
         },
+        "www.mygov.in": {
+            "region": "in",
+            "language": "en"
+        },
+
         "www.worldometers.info": {
             "region": "int",
+            "language": "en"
+        },
+
+        "globalbiodefense.com": {
+            "region": "us",
+            "language": "en"
+        },
+        "www.cdc.gov": {
+            "region": "us",
             "language": "en"
         },
         "www.usa.gov": {
