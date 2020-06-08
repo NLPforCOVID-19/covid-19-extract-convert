@@ -65,7 +65,8 @@
 
         "hazard.yahoo.co.jp": {
             "region": "jp",
-            "language": "ja"
+            "language": "ja",
+            "subdomains": ["news.yahoo.co.jp", "headlines.yahoo.co.jp"]
         },
         "www.kantei.go.jp": {
             "region": "jp",
