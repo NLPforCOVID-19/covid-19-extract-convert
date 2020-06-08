@@ -10,6 +10,22 @@
             "language": "zh"
         },
 
+        "interaktiv.morgenpost.de": {
+            "region": "de",
+            "language": "de"
+        },
+        "www.bundesgesundheitsministerium.de": {
+            "region": "de",
+            "language": "de"
+        },
+        "www.bundesregierung.de": {
+            "region": "de",
+            "language": "de"
+        },
+        "www.rki.de": {
+            "region": "de",
+            "language": "de"
+        },
         "www.zusammengegencorona.de": {
             "region": "de",
             "language": "de"
