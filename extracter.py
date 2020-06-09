@@ -1,4 +1,5 @@
 import argparse
+import datetime
 import json
 import logging
 import logging.config
@@ -6,113 +7,68 @@ import os
 import re
 import requests
 import signal
+import subprocess
 import sys
 import threading
 import time
 import traceback
 
 
+# Wait a while before extracting another domain (to let it finish).
+INTER_DOMAIN_DELAY = 120
+
+# Wait a while before checking all the domains again.
+INTER_DOMAINS_DELAY = 300
+
 def signal_handler(sig, frame):
     print("Ctrl+C has been pressed. Let's stop the workers.")
     global stopped
     stopped = True
-    database_monitor.stopped = True
     print("The script should stop in a few moments.  Please be patient.")
 
 
-class DatabaseMonitor(threading.Thread):
+class Extracter(threading.Thread):
 
-
-    def __init__(self, config_filename, logger):
+    def __init__(self, domain, logger, run_dir):
         threading.Thread.__init__(self)
-        self.config_filename = config_filename
+        self.domain = domain
         self.logger = logger
-        self.stopped = True
-
+        self.run_dir = run_dir
 
     def run(self):
-        self.stopped = False
-        while not self.stopped:
-            try:
-                with open(self.config_filename, 'r') as config_file:
-                    config = json.load(config_file)
+        start = datetime.datetime.now()
+        start_timestamp = start.strftime('%Y-%m-%d-%H-%M')
 
-                db_dir = config['db_dir']
-                run_dir = config['run_dir']
-                for domain in config['domains']:
+        self.logger.info("Starting extraction for domain {0} at {1}...".format(self.domain, start_timestamp))
+        cmd = ['nice ./get-covid19-db-and-html.sh {0}'.format(self.domain)]
+        output = None
+        try:
+            output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+        except subprocess.CalledProcessError as err:
+            self.logger.info("The extraction of domain: {0} resulted in a non-zero return code: {1}".format(self.domain, err.returncode))
+            if err.output:
+                output = err.output
 
-                    if self.stopped:
-                        break
+        if output:
+            report_path = '{0}/extracter/{1}'.format(self.run_dir, self.domain)
+            os.makedirs(report_path, exist_ok=True)
+            report_filename = '{0}/extracter_{1}.txt'.format(report_path, start_timestamp)
+            with open(report_filename, 'wb') as report_file:
+                report_file.write(output)
 
-                    self.logger.info("Checking availability of new database for domain {0}...".format(domain))
-
-                    if not self.stopped:
-                        processed_dbs = self.get_processed_databases(domain, run_dir)
-                        self.logger.info("Processed databases: {0}".format(len(processed_dbs)))
-                        self.logger.debug("processed_dbs={0}".format(processed_dbs))
-
-                    if not self.stopped:
-                        available_dbs = self.get_available_databases(domain, config)
-                        self.logger.info("Available databases: {0}".format(len(available_dbs)))
-                        self.logger.debug("available_dbs={0}".format(available_dbs))
-
-                    for db in available_dbs:
-                        if not db in processed_dbs and not self.stopped:
-                            self.retrieve_database(domain, db, config, db_dir)
-
-                    if not self.stopped:
-                        time.sleep(60)
-
-            except:
-                (typ, val, tb) = sys.exc_info()
-                error_msg = "An exception occurred in the DatabaseMonitor:\n"
-                for line in traceback.format_exception(typ, val, tb):
-                    error_msg += line + "\n"
-                self.logger.debug(error_msg)
+        stop = datetime.datetime.now()
+        stop_timestamp = stop.strftime('%Y-%m-%d-%H-%M')
+        self.logger.info("Extraction terminated for domain {0} at {1}.".format(self.domain, stop_timestamp))
+        terminate_extracter(self.domain)
 
 
-    def get_processed_databases(self, domain, run_dir):
-        dbs = []
-        run_filename = os.path.join(run_dir, "{}.json".format(domain))
-        if os.path.exists(run_filename):
-            with open(run_filename, 'r') as run_file:
-                dbs = json.load(run_file)
-        return dbs
-
-
-    def get_available_databases(self, domain, config):
-        dbs = []
-        if 'prefix' in config['domains'][domain]:
-            index_url = '{0}/{1}'.format(config['crawled_data_repository'], config['domains'][domain]['prefix'].replace('.', '_'))
-        else:
-            index_url = '{0}/{1}'.format(config['crawled_data_repository'], domain.replace('.', '_'))
-        req = requests.get(index_url)
-        if req.status_code == 200:
-            for line in req.text.splitlines():
-                match = re.search('a href="\./(.*?\.db)', line)
-                if match:
-                    db_filename = match.group(1)
-                    dbs.append(db_filename)
-        return dbs
-
-
-    def retrieve_database(self, domain, database, config, db_dir):
-        print("Retrieving db: {}".format(database))
-        domain_dir = domain.replace('.', '_')
-
-        if 'prefix' in config['domains'][domain]:
-            database_url = os.path.join(config['crawled_data_repository'], config['domains'][domain]['prefix'].replace('.', '_'), database)
-        else:
-            database_url = os.path.join(config['crawled_data_repository'], domain.replace('.', '_'), database)
-        print("db url: {}".format(database_url))
-        os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
-        database_filename = os.path.join(db_dir, domain_dir, database)
-        with requests.get(database_url, stream=True) as req:
-            req.raise_for_status()
-            with open(database_filename, 'wb') as database_file:
-                for chunk in req.iter_content(chunk_size=8192):
-                    database_file.write(chunk)
-                print("File {} written.".format(database_filename))
+def terminate_extracter(domain):
+    mutex.acquire()
+    try:
+        if domain in extracters:
+            del extracters[domain]
+    finally:
+        mutex.release()
 
 
 if __name__ == "__main__":
@@ -127,8 +83,53 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     print("Hit CTRL+C and wait a little bit to stop the script.")
 
+    mutex = threading.Lock()
+    extracters = {}
+
     stopped = False
+    while not stopped:
 
-    database_monitor = DatabaseMonitor(args.config, logger)
-    database_monitor.start()
+       try:
 
+            with open(args.config, 'r') as config_file:
+                config = json.load(config_file)
+
+            run_dir = config['run_dir']
+
+            for domain in config['domains']:
+
+                pause = 0
+
+                if stopped:
+                    break
+
+                mutex.acquire()
+                try:
+                    # If an extracter is already working for the domain, skip it for now.
+                    if domain in extracters:
+                        continue
+
+                    extracter = Extracter(domain, logger, run_dir)
+                    extracters[domain] = extracter
+                    extracter.start()
+
+                    pause = INTER_DOMAIN_DELAY
+
+                finally:
+                    mutex.release()
+
+                if stopped:
+                    break
+
+                if pause > 0:
+                    time.sleep(pause)
+
+            if not stopped:
+                time.sleep(INTER_DOMAINS_DELAY)
+
+       except:
+           (typ, val, tb) = sys.exc_info()
+           error_msg = "An exception occurred in the main thread of the extracter:\n"
+           for line in traceback.format_exception(typ, val, tb):
+               error_msg += line + "\n"
+           self.logger.debug(error_msg)
