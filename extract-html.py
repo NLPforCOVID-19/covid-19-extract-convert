@@ -165,15 +165,26 @@ def process_row(row, real_domain, region, db_file_basename):
         print("url blacklisted detected!!!: {}".format(url))
         return
 
-    # Consider only urls that match the domain_part.
-    # print("url={0} same_as={1} isNone={2} isEmptu={3}".format(url, same_as, (same_as is None), same_as == ''))
+    # Consider only urls that match the domain_part or declared subdomains.
+    # print("url={0} same_as={1} isNone={2} isEmpty={3}".format(url, same_as, (same_as is None), same_as == ''))
     domain_part = "^http.*?{0}/(.*)".format(real_domain)
     if 'prefix' in config['domains'][real_domain]:
         domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
     match = re.search(domain_part, url)
     if not match:
-        print("url discarded because it's not matching the domain.")
-        return
+        if 'subdomains' not in config['domains'][real_domain]:
+            print("url discarded because it's not matching the domain.")
+            return
+
+        subdomain_match = False
+        for subdomain in config['domains'][real_domain]['subdomains']:
+            match = re.search("^http.*?({0}/.*)".format(subdomain), url)
+            if match:
+                subdomain_match = True
+                break
+        if not subdomain_match:
+            print("url discarded because it's not matching the domain or subdomains.")
+            return
 
     print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
     if compared_against is not None and main_text_similarity >= 0.8 :

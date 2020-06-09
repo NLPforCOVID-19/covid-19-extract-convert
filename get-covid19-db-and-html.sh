@@ -9,7 +9,6 @@ export FTP_PROXY=http://proxy.kuins.net:8080
 
 SCRIPTS=/home/frederic/covid19/translation
 PIPENV=/home/frederic/.local/bin/pipenv
-HTML_DIR=/mnt/hinoki/share/covid19/html
 
 
 NOW=$(date +"%Y-%m-%d %H:%M:%S")
