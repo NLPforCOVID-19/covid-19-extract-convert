@@ -24,7 +24,8 @@
         },
         "www.rki.de": {
             "region": "de",
-            "language": "de"
+            "language": "de",
+            "subdomains": [".*.rki.de"]
         },
         "www.zusammengegencorona.de": {
             "region": "de",
@@ -66,7 +67,7 @@
         "hazard.yahoo.co.jp": {
             "region": "jp",
             "language": "ja",
-            "subdomains": ["news.yahoo.co.jp", "headlines.yahoo.co.jp"]
+            "subdomains": [".*.yahoo.co.jp"]
         },
         "www.kantei.go.jp": {
             "region": "jp",

@@ -178,7 +178,7 @@ def process_row(row, real_domain, region, db_file_basename):
 
         subdomain_match = False
         for subdomain in config['domains'][real_domain]['subdomains']:
-            match = re.search("^http.*?({0}/.*)".format(subdomain), url)
+            match = re.search("^https?://({0}/.*)".format(subdomain), url)
             if match:
                 subdomain_match = True
                 break
