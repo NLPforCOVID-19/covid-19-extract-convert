@@ -38,6 +38,10 @@
             "subdomains": [".*.zusammengegencorona.de"]
         },
 
+        "covid19.gob.es": {
+            "region": "es",
+            "language": "es"
+        },
         "www.mscbs.gob.es": {
             "region": "es",
             "language": "es",
@@ -136,14 +140,23 @@
             "language": "en",
             "subdomains": [".*.cdc.gov"]
         },
+        "www.nytimes.com": {
+            "region": "us",
+            "language": "en",
+            "subdomains": [".*.nytimes.com"]
+        },
         "www.usa.gov": {
             "region": "us",
             "language": "en",
             "subdomains": [".*.usa.gov"]
         }
     },
-    "domains_off": {
+    "domains_ignored": {
         "www.salute.gov.it": {
+            "region": "it",
+            "language": "it"
+        },
+        "www.governo.it": {
             "region": "it",
             "language": "it"
         }
@@ -156,6 +169,14 @@
     "run_dir": "/mnt/hinoki/share/covid19/run",
     "WWW2sf_dir": "/home/frederic/WWW2sf",
     "detectblocks_dir": "/home/frederic/detectblocks",
-    "grace_period_before_pruning": 14
+    "grace_period_before_pruning": 14,
+    "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "user": "myaccount@gmail.com",
+        "password": "mypassword",
+        "from": "noreply.covid19.dbchecker@gmail.com",
+        "cc": "someone@example.com"
+    }
 }
 
