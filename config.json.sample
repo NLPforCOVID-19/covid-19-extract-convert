@@ -3,24 +3,29 @@
     "domains": {
         "health.ifeng.com": {
             "region": "cn",
-            "language": "zh"
+            "language": "zh",
+            "subdomains": [".*.ifeng.com"]
         },
         "www.gov.cn": {
             "region": "cn",
-            "language": "zh"
+            "language": "zh",
+            "subdomains": [".*.gov.cn"]
         },
 
         "interaktiv.morgenpost.de": {
             "region": "de",
-            "language": "de"
+            "language": "de",
+            "subdomains": [".*.morgenpost.de"]
         },
         "www.bundesgesundheitsministerium.de": {
             "region": "de",
-            "language": "de"
+            "language": "de",
+            "subdomains": [".*.bundesgesundheitsministerium.de"]
         },
         "www.bundesregierung.de": {
             "region": "de",
-            "language": "de"
+            "language": "de",
+            "subdomains": [".*.bundesregierung.de"]
         },
         "www.rki.de": {
             "region": "de",
@@ -29,17 +34,20 @@
         },
         "www.zusammengegencorona.de": {
             "region": "de",
-            "language": "de"
+            "language": "de",
+            "subdomains": [".*.zusammengegencorona.de"]
         },
 
         "www.mscbs.gob.es": {
             "region": "es",
-            "language": "es"
+            "language": "es",
+            "subdomains": [".*.mscbs.gob.es"]
         },
 
         "www.ecdc.europa.eu": {
             "region": "eu",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.ecdc.europa.eu"]
         },
 
         "fr.reuters.com": {
@@ -48,20 +56,24 @@
         },
         "www.france24.com": {
             "region": "fr",
-            "language": "fr"
+            "language": "fr",
+            "subdomains": [".*.france24.com"]
         },
         "www.gouvernement.fr": {
             "region": "fr",
-            "language": "fr"
+            "language": "fr",
+            "subdomains": [".*.gouvernement.fr"]
         },
         "www.lci.fr": {
             "region": "fr",
-            "language": "fr"
+            "language": "fr",
+            "subdomains": [".*.lci.fr"]
         },
 
         "www.who.int": {
             "region": "int",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.who.int"]
         },
 
         "hazard.yahoo.co.jp": {
@@ -71,52 +83,63 @@
         },
         "www.kantei.go.jp": {
             "region": "jp",
-            "language": "ja"
+            "language": "ja",
+            "subdomains": [".*.kantei.go.jp"]
         },
         "www.mhlw.go.jp": {
             "region": "jp",
-            "language": "ja"
+            "language": "ja",
+            "subdomains": [".*.mhlw.go.jp"]
         },
         "www.niid.go.jp": {
             "region": "jp",
-            "language": "ja"
+            "language": "ja",
+            "subdomains": [".*.niid.go.jp"]
         },
 
         "www.cdc.gov.kr": {
             "region": "kr",
             "language": "ko",
-            "prefix": "www.cdc.go.kr"
+            "prefix": "www.cdc.go.kr",
+            "subdomains": [".*.cdc.gov.kr"]
         },
 
         "www.covid19india.org": {
             "region": "in",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.covid19india.org"]
         },
         "www.mohfw.gov.in": {
             "region": "in",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.mohfw.gov.in"]
         },
         "www.mygov.in": {
             "region": "in",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.mygov.in"]
         },
 
         "www.worldometers.info": {
             "region": "int",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.worldometers.info"]
         },
 
         "globalbiodefense.com": {
             "region": "us",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.globalbiodefense.com"]
         },
         "www.cdc.gov": {
             "region": "us",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.cdc.gov"]
         },
         "www.usa.gov": {
             "region": "us",
-            "language": "en"
+            "language": "en",
+            "subdomains": [".*.usa.gov"]
         }
     },
     "domains_off": {
