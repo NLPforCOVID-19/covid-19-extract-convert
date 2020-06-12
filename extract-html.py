@@ -159,6 +159,8 @@ def process_row(row, real_domain, region, db_file_basename):
     main_text_similarity = row[5]
     compared_against = row[6]
 
+    print("url: {0}".format(url))
+
     # Skip older files.
     if is_too_old(headers):
         print("url too old detected!!!: {}".format(url))
@@ -190,9 +192,9 @@ def process_row(row, real_domain, region, db_file_basename):
             print("url discarded because it's not matching the domain or subdomains.")
             return
 
-    print("url: {0} sim: {1} main_text_sim: {2} compared against: {3}".format(url, similarity, main_text_similarity, compared_against))
+    print("sim: {0} main_text_sim: {1} compared against: {2}".format(similarity, main_text_similarity, compared_against))
     if compared_against is not None and main_text_similarity >= 0.8 :
-        print("url too similar to previous version: {0} sim: {1} main_text_sim={2}".format(url, similarity, main_text_similarity))
+        print("url too similar to previous version sim: {0} main_text_sim={1}".format(similarity, main_text_similarity))
         return
 
     # print("url={0} g0={1} g1={2}".format(url, match.group(0), match.group(1)))
