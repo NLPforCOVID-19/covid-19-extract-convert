@@ -86,13 +86,15 @@ def is_too_old(headers):
             except ValueError:
                 try:
                     last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format)
+                    last_modif = last_modif.replace(tzinfo=None)
                 except ValueError:
                     try:
                         last_modif = datetime.datetime.strptime(str_last_modif, utf_offset_date_format_2)
+                        last_modif = last_modif.replace(tzinfo=None)
                     except ValueError:
                         # Give up,
                         return False
-            delta = now - last_modif
+            delta = datetime.datetime.now() - last_modif
             # Ignore pages that are older than a week.
             if delta.days > 7:
                 return True
