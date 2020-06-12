@@ -121,8 +121,24 @@ def get_content(file, filename):
     return None
 
 
+# This function should be faster than using globbing.
+def get_all_versions(parent_dir, file_dir_prefix):
+    if not os.path.exists(parent_dir):
+        return []
+
+    res = []
+    if file_dir_prefix == '':
+        res.append(parent_dir + "/")
+
+    files = os.listdir(parent_dir)
+    pattern = "^{0}(_20\d\d-\d\d-\d\d-\d\d-\d\d)?$".format(file_dir_prefix)
+    related_files = ["{0}/{1}".format(parent_dir, file) for file in files if re.match(pattern, file)]
+    res += related_files
+    return res
+
 def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, full_path, domain_path):
-    all_versions = sorted(glob.glob("{0}/{1}".format(parent_dir, file_dir_prefix)) + glob.glob("{0}/{1}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]".format(parent_dir, file_dir_prefix)))
+    # all_versions = sorted(glob.glob("{0}/{1}".format(parent_dir, file_dir_prefix)) + glob.glob("{0}/{1}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]".format(parent_dir, file_dir_prefix)))
+    all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
     if len(all_versions) > 0:
         # Now that we are using the similarity column from the database, I'm not convinced that
         # the following code is useful. It looks redundant actually.
