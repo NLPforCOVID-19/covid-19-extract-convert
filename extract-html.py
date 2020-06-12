@@ -92,7 +92,9 @@ def is_too_old(headers):
                     except ValueError:
                         # Give up,
                         return False
-            if last_modif.year < 2019 or last_modif == 2019 and month < 11:
+            delta = now - last_modif
+            # Ignore pages that are older than a week.
+            if delta.days > 7:
                 return True
     return False
 
