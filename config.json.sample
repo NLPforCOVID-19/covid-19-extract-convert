@@ -32,6 +32,11 @@
             "language": "de",
             "subdomains": [".*.rki.de"]
         },
+        "www.spiegel.de": {
+            "region": "de",
+            "language": "de",
+            "subdomains": [".*.spiegel.de"]
+        },
         "www.zusammengegencorona.de": {
             "region": "de",
             "language": "de",
@@ -63,6 +68,11 @@
             "language": "fr",
             "subdomains": [".*.france24.com"]
         },
+        "www.francetvinfo.fr": {
+            "region": "fr",
+            "language": "fr",
+            "subdomains": [".*.francetvinfo.fr"]
+        },
         "www.gouvernement.fr": {
             "region": "fr",
             "language": "fr",
@@ -72,6 +82,11 @@
             "region": "fr",
             "language": "fr",
             "subdomains": [".*.lci.fr"]
+        },
+        "www.lemonde.fr": {
+            "region": "fr",
+            "language": "fr",
+            "subdomains": [".*.lemonde.fr"]
         },
 
         "www.who.int": {
@@ -152,11 +167,19 @@
         }
     },
     "domains_ignored": {
-        "www.salute.gov.it": {
+        "www.ansa.it": {
             "region": "it",
             "language": "it"
         },
         "www.governo.it": {
+            "region": "it",
+            "language": "it"
+        },
+        "www.repubblica.it": {
+            "region": "it",
+            "language": "it"
+        },
+        "www.salute.gov.it": {
             "region": "it",
             "language": "it"
         }
