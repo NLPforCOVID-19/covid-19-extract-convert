@@ -92,7 +92,6 @@ text = ''
 os.chdir(run_dir)
 for stat_filename in sorted(glob.glob('stats/stats-*')):
     date_str = stat_filename[12:28]
-
     date = datetime.strptime(date_str, '%Y-%m-%d-%H-%M')
     if date_min is None or date < date_min:
         date_min = date
@@ -133,7 +132,9 @@ print("<link rel=\"stylesheet\" href=\"../default.css\">")
 print("</head>")
 print("<body>")
 
-print("<h1>HTML file extraction from db files</h1>")
+now = datetime.now()
+timestamp = now.strftime('%Y-%m-%d %H:%M')
+print("<h1>HTML file extraction and XML file conversion ({0})</h1>".format(timestamp))
 
 print("<p>Date of first extraction: {0}</p>".format(date_min))
 print("<p>Date of last extraction: {0}</p>".format(date_max))
