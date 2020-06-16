@@ -87,9 +87,12 @@ date_max = None
 totals_per_domain = {}
 totals_per_region = {}
 
+text = ''
+
 os.chdir(run_dir)
-for stat_filename in sorted(glob.glob('stats-*')):
-    date_str = stat_filename[6:22]
+for stat_filename in sorted(glob.glob('stats/stats-*')):
+    date_str = stat_filename[12:28]
+
     date = datetime.strptime(date_str, '%Y-%m-%d-%H-%M')
     if date_min is None or date < date_min:
         date_min = date
@@ -113,11 +116,11 @@ for stat_filename in sorted(glob.glob('stats-*')):
                 totals_per_region[region] = count
 
 html_file_pattern = ".*/html/.+?/orig/(.+?)/.*"
-html_file_glob = "new-html-files-{0}*.txt"
+html_file_glob = "new-html-files/new-html-files-{0}*.txt"
 totals_html_per_day = get_total_files_per_day(html_file_pattern, html_file_glob) 
 
 xml_file_pattern = ".*/xml/.+?/ja_translated/(.+?)/.*"
-xml_file_glob = "new-xml-files-{0}*.txt"
+xml_file_glob = "new-xml-files/new-xml-files-{0}*.txt"
 totals_xml_per_day = get_total_files_per_day(xml_file_pattern, xml_file_glob)
 
 delta = date_max - date_min
@@ -176,4 +179,3 @@ show_total_files_per_day(totals_xml_per_day, xml_table_title)
 
 print("</body>")
 print("</html>")
-
