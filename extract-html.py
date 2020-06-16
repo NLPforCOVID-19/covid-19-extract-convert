@@ -103,9 +103,9 @@ def write_html_file(path, filename, url, content, source, domain_path):
 
 
 def write_stats_file(filename):
-    with open(filename, 'w') as stats_file:
-        data = {}
-        json.dump(nb_html_files_per_domain, stats_file)
+    if nb_html_files_per_domain:
+        with open(filename, 'w') as stats_file:
+            json.dump(nb_html_files_per_domain, stats_file)
 
 
 def is_too_old(headers):
