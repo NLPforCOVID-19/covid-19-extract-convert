@@ -340,7 +340,7 @@ for domain in os.listdir(db_dir):
     with open(run_filename, 'w') as run_file:
         json.dump(processed_db_per_domain[real_domain], run_file)
 
-stats_file = os.path.join(run_dir, 'stats-{}.json'.format(now.strftime('%Y-%m-%d-%H-%M')))
+stats_file = os.path.join(run_dir, 'stats', 'stats-{}.json'.format(now.strftime('%Y-%m-%d-%H-%M')))
 write_stats_file(stats_file)
 
 
