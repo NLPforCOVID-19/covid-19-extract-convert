@@ -157,7 +157,7 @@ if __name__ == '__main__':
             converter.join()
 
         if len(processed_files) > 0:
-            new_xml_filename = os.path.join(run_dir, 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+            new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
             logger.info("Writing report file: {0} new_xml_file_count: {1}".format(new_xml_filename, len(processed_files)))
             with open(new_xml_filename, 'a') as new_xml_file:
                 for file in processed_files:

@@ -61,7 +61,7 @@ def is_blacklisted(url):
 #         filename_source = filename[:-5] + '.src'
 #         with open(filename_source, 'w') as source_file:
 #             source_file.write(source)
-#         new_html_filename = os.path.join(run_dir, 'new-html-files-{}.txt'.format(timestamp))
+#         new_html_filename = os.path.join(run_dir, 'new-html-files', 'new-html-files-{}.txt'.format(timestamp))
 #         with open(new_html_filename, 'a') as new_html_file:
 #             new_html_file.write(filename)
 #             new_html_file.write("\n")
@@ -92,7 +92,7 @@ def write_html_file(path, filename, url, content, source, domain_path):
         filename_source = filename[:-5] + '.src'
         with open(filename_source, 'w') as source_file:
             source_file.write(source)
-        new_html_filename = os.path.join(run_dir, 'new-html-files-{}.txt'.format(timestamp))
+        new_html_filename = os.path.join(run_dir, 'new-html-files', 'new-html-files-{}.txt'.format(timestamp))
         with open(new_html_filename, 'a') as new_html_file:
             new_html_file.write(filename)
             new_html_file.write("\n")
