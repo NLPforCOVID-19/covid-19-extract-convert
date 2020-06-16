@@ -172,7 +172,7 @@ def get_all_versions(parent_dir, file_dir_prefix):
             return res
 
     files = os.listdir(parent_dir)
-    pattern = "^{0}(_20\d\d-\d\d-\d\d-\d\d-\d\d)?$".format(file_dir_prefix)
+    pattern = "^{0}(_20\d\d-\d\d-\d\d-\d\d-\d\d)?$".format(file_dir_prefix.replace("?", "\?"))
     related_files = ["{0}/{1}".format(parent_dir, file) for file in files if re.match(pattern, file)]
     res += related_files
     return res
