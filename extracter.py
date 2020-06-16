@@ -15,10 +15,10 @@ import traceback
 
 
 # Wait a while before extracting another domain (to let it finish).
-INTER_DOMAIN_DELAY = 120
+INTER_DOMAIN_DELAY = 60
 
 # Wait a while before checking all the domains again.
-INTER_DOMAINS_DELAY = 300
+INTER_DOMAINS_DELAY = 150
 
 def signal_handler(sig, frame):
     print("Ctrl+C has been pressed. Let's stop the workers.")
