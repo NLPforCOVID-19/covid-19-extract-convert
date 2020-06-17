@@ -95,6 +95,11 @@
             "subdomains": [".*.who.int"]
         },
 
+        "fij.info": {
+            "region": "jp",
+            "language": "ja",
+            "subdomains": [".*.fij.info"]
+        },
         "hazard.yahoo.co.jp": {
             "region": "jp",
             "language": "ja",
