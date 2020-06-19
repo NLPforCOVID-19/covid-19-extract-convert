@@ -4,59 +4,60 @@
         "health.ifeng.com": {
             "region": "cn",
             "language": "zh",
-            "subdomains": [".*.ifeng.com"]
+            "subdomains": ["[a-zA-Z.-]+\\.ifeng\\.com"]
         },
         "www.gov.cn": {
             "region": "cn",
             "language": "zh",
-            "subdomains": [".*.gov.cn"]
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.cn"]
         },
 
         "interaktiv.morgenpost.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.morgenpost.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.morgenpost\\.de"]
         },
         "www.bundesgesundheitsministerium.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.bundesgesundheitsministerium.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.bundesgesundheitsministerium\\.de"]
         },
         "www.bundesregierung.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.bundesregierung.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.bundesregierung\\.de"]
         },
         "www.rki.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.rki.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"]
         },
         "www.spiegel.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.spiegel.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.spiegel\\.de"]
         },
         "www.zusammengegencorona.de": {
             "region": "de",
             "language": "de",
-            "subdomains": [".*.zusammengegencorona.de"]
+            "subdomains": ["[a-zA-Z.-]+\\.zusammengegencorona\\.de"]
         },
 
         "covid19.gob.es": {
             "region": "es",
-            "language": "es"
+            "language": "es",
+            "subdomains": ["[a-zA-Z.-]+\\.covid19\\.gob\\.es"]
         },
         "www.mscbs.gob.es": {
             "region": "es",
             "language": "es",
-            "subdomains": [".*.mscbs.gob.es"]
+            "subdomains": ["[a-zA-Z.-]+\\.mscbs\\.gob\\.es"]
         },
 
         "www.ecdc.europa.eu": {
             "region": "eu",
             "language": "en",
-            "subdomains": [".*.ecdc.europa.eu"]
+            "subdomains": ["[a-zA-Z.-]+\\.ecdc\\.europa\\.eu"]
         },
 
         "fr.reuters.com": {
@@ -66,109 +67,109 @@
         "www.france24.com": {
             "region": "fr",
             "language": "fr",
-            "subdomains": [".*.france24.com"]
+            "subdomains": ["[a-zA-Z.-]+\\.france24\\.com"]
         },
         "www.francetvinfo.fr": {
             "region": "fr",
             "language": "fr",
-            "subdomains": [".*.francetvinfo.fr"]
+            "subdomains": ["[a-zA-Z.-]+\\.francetvinfo\\.fr"]
         },
         "www.gouvernement.fr": {
             "region": "fr",
             "language": "fr",
-            "subdomains": [".*.gouvernement.fr"]
+            "subdomains": ["[a-zA-Z.-]+\\.gouvernement\\.fr"]
         },
         "www.lci.fr": {
             "region": "fr",
             "language": "fr",
-            "subdomains": [".*.lci.fr"]
+            "subdomains": ["[a-zA-Z.-]+\\.lci\\.fr"]
         },
         "www.lemonde.fr": {
             "region": "fr",
             "language": "fr",
-            "subdomains": [".*.lemonde.fr"]
+            "subdomains": ["[a-zA-Z.-]+\\.lemonde\\.fr"]
         },
 
         "www.who.int": {
             "region": "int",
             "language": "en",
-            "subdomains": [".*.who.int"]
+            "subdomains": ["[a-zA-Z.-]+\\.who\\.int"]
         },
 
         "fij.info": {
             "region": "jp",
             "language": "ja",
-            "subdomains": [".*.fij.info"]
+            "subdomains": ["[a-zA-Z.-]+\\.fij\\.info"]
         },
         "hazard.yahoo.co.jp": {
             "region": "jp",
             "language": "ja",
-            "subdomains": [".*.yahoo.co.jp"]
+            "subdomains": ["[a-zA-Z.-]+\\.yahoo\\.co\\.jp"]
         },
         "www.kantei.go.jp": {
             "region": "jp",
             "language": "ja",
-            "subdomains": [".*.kantei.go.jp"]
+            "subdomains": ["[a-zA-Z.-]+\\.kantei\\.go\\.jp"]
         },
         "www.mhlw.go.jp": {
             "region": "jp",
             "language": "ja",
-            "subdomains": [".*.mhlw.go.jp"]
+            "subdomains": ["[a-zA-Z.-]+\\.mhlw\\.go\\.jp"]
         },
         "www.niid.go.jp": {
             "region": "jp",
             "language": "ja",
-            "subdomains": [".*.niid.go.jp"]
+            "subdomains": ["[a-zA-Z.-]+\\.niid.go\\.jp"]
         },
 
         "www.cdc.gov.kr": {
             "region": "kr",
             "language": "ko",
             "prefix": "www.cdc.go.kr",
-            "subdomains": [".*.cdc.gov.kr"]
+            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov\\.kr"]
         },
 
         "www.covid19india.org": {
             "region": "in",
             "language": "en",
-            "subdomains": [".*.covid19india.org"]
+            "subdomains": ["[a-zA-Z.-]+\\.covid19india\\.org"]
         },
         "www.mohfw.gov.in": {
             "region": "in",
             "language": "en",
-            "subdomains": [".*.mohfw.gov.in"]
+            "subdomains": ["[a-zA-Z.-]+\\.mohfw\\.gov\\.in"]
         },
         "www.mygov.in": {
             "region": "in",
             "language": "en",
-            "subdomains": [".*.mygov.in"]
+            "subdomains": ["[a-zA-Z.-]+\\.mygov\\.in"]
         },
 
         "www.worldometers.info": {
             "region": "int",
             "language": "en",
-            "subdomains": [".*.worldometers.info"]
+            "subdomains": ["[a-zA-Z.-]+\\.worldometers\\.info"]
         },
 
         "globalbiodefense.com": {
             "region": "us",
             "language": "en",
-            "subdomains": [".*.globalbiodefense.com"]
+            "subdomains": ["[a-zA-Z.-]+\\.globalbiodefense\\.com"]
         },
         "www.cdc.gov": {
             "region": "us",
             "language": "en",
-            "subdomains": [".*.cdc.gov"]
+            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov"]
         },
         "www.nytimes.com": {
             "region": "us",
             "language": "en",
-            "subdomains": [".*.nytimes.com"]
+            "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"]
         },
         "www.usa.gov": {
             "region": "us",
             "language": "en",
-            "subdomains": [".*.usa.gov"]
+            "subdomains": ["[a-zA-Z.-]+\\.usa\\.gov"]
         }
     },
     "domains_ignored": {
