@@ -46,7 +46,7 @@ class Producer(threading.Thread):
                     for file in files:
 
                         if self.stopped:
-                            logger.info("Producer {0} has been stopped.".format(self.identifier))
+                            logger.info("Producer for region {0} has been stopped.".format(self.region))
                             return
 
                         if file.endswith('.html'):
@@ -128,7 +128,7 @@ if __name__ == '__main__':
         run_dir = config['run_dir']
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
-        converter_count = 12
+        converter_count = 16
 
         now = datetime.datetime.now()
 
