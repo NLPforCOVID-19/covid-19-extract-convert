@@ -161,7 +161,7 @@ if __name__ == '__main__':
         new_xml_files_dir = "{0}/new-xml-files".format(run_dir)
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
-        converter_count = 16
+        converter_count = 20
 
         now = datetime.datetime.now()
 
