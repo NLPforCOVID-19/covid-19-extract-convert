@@ -1,0 +1,5 @@
+config.json
+converter_logging.conf
+extracter_logging.conf
+logs/
+.venv/

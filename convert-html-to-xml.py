@@ -1,4 +1,5 @@
 import datetime
+from filelock import FileLock
 import glob
 import json
 import logging
@@ -119,9 +120,12 @@ class Converter(threading.Thread):
                             finally:
                                 mutex.release()
                         else:
-                            unconvertable_filename = "{0}/unconvertable_files.txt".format(self.new_xml_files_dir)
-                            with open(unconvertable_filename, 'a') as f:
-                                f.write("{0}\n".format(www2sf_input_file))
+                            if not stopped:
+                                unconvertable_filename = "{0}/unconvertable_files.txt".format(self.new_xml_files_dir)
+                                unconvertable_file_lock = "{0}.lock".format(unconvertable_filename)
+                                with FileLock(unconvertable_file_lock):
+                                    with open(unconvertable_filename, 'a') as f:
+                                        f.write("{0}\n".format(www2sf_input_file))
 
                 else:
                     # Wait a while.  If the queue is still empty after that, stop working.
