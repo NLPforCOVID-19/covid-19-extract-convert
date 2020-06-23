@@ -1,4 +1,5 @@
 import datetime
+import glob
 import json
 import logging
 import logging.config
@@ -21,6 +22,28 @@ def signal_handler(sig, frame):
         convert.stopped = True
     print("The converter script should stop in a few moments.  Please be patient.")
 
+
+def get_processed_files(new_xml_files_dir):
+    processed_files = set()
+
+    # Consider unconvertable files as already processed. 
+    unconvertable_filename = "{0}/unconvertable_files.txt".format(new_xml_files_dir)
+    if os.path.exists(unconvertable_filename): 
+        with open(unconvertable_filename, 'r') as f:
+            xml_entries = f.read().splitlines()
+            for entry in xml_entries:
+                if entry.endswith('.html'):
+                    modified_entry = entry[:-5] + ".xml"
+                    processed_files.add(modified_entry)
+
+    for new_xml_file in glob.glob("{0}/new-xml-files*.txt".format(new_xml_files_dir)):
+        with open(new_xml_file, 'r') as f:
+            xml_entries = f.read().splitlines()
+        for entry in xml_entries:
+            print("entry={0}".format(entry))
+            processed_files.add(entry)
+
+    return processed_files
 
 
 class Producer(threading.Thread):
@@ -50,21 +73,25 @@ class Producer(threading.Thread):
                             return
 
                         if file.endswith('.html'):
+                            www2sf_input_file = os.path.join(top, file)
+                            www2sf_output_file = os.path.join(root_abs_output_dir, domain, top[top.index(domain) + len(domain) + 1:], file[:file.index('.html')] + '.xml')
+                            if www2sf_output_file in prev_processed_files:
+                                # logger.debug("Skip {} because already processed.".format(www2sf_output_file))
+                                continue
+                            
                             if not queue_html_files.full():
-                                www2sf_input_file = os.path.join(top, file)
-                                www2sf_output_file = os.path.join(root_abs_output_dir, domain, top[top.index(domain) + len(domain) + 1:], file[:file.index('.html')] + '.xml')
-
                                 # logger.info("Adding {} to queue.".format(www2sf_input_file))
                                 queue_html_files.put((www2sf_input_file, www2sf_output_file))
 
 
 class Converter(threading.Thread):
 
-    def __init__(self, identifier):
+    def __init__(self, identifier, new_xml_files_dir):
         threading.Thread.__init__(self)
         self.name = "Converter: {}".format(identifier)
         self.identifier = identifier
         self.stopped = False
+        self.new_xml_files_dir = new_xml_files_dir
 
     def run(self):
         while True:
@@ -91,6 +118,11 @@ class Converter(threading.Thread):
                                 processed_files.append(www2sf_output_file)
                             finally:
                                 mutex.release()
+                        else:
+                            unconvertable_filename = "{0}/unconvertable_files.txt".format(self.new_xml_files_dir)
+                            with open(unconvertable_filename, 'a') as f:
+                                f.write("{0}\n".format(www2sf_input_file))
+
                 else:
                     # Wait a while.  If the queue is still empty after that, stop working.
                     time.sleep(60)
@@ -126,6 +158,7 @@ if __name__ == '__main__':
         html_dir = config['html_dir']
         xml_dir = config['xml_dir']
         run_dir = config['run_dir']
+        new_xml_files_dir = "{0}/new-xml-files".format(run_dir)
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
         converter_count = 16
@@ -134,13 +167,14 @@ if __name__ == '__main__':
 
         queue_html_files = queue.Queue()
 
+        prev_processed_files = get_processed_files(new_xml_files_dir)
         processed_files = []
 
         mutex = threading.Lock()
 
         converters = []
         for c in range(0, converter_count):
-            converter = Converter(c)
+            converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
             converter.start()
 
