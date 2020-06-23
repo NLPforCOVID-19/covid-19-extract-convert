@@ -37,11 +37,18 @@ def get_processed_files(new_xml_files_dir):
                     modified_entry = entry[:-5] + ".xml"
                     processed_files.add(modified_entry)
 
+    # Consider already converted but unreferred files as already processed. 
+    lost_filename = "{0}/already_converted_but_unreferred_files.txt".format(new_xml_files_dir)
+    if os.path.exists(lost_filename): 
+        with open(lost_filename, 'r') as f:
+            xml_entries = f.read().splitlines()
+            for entry in xml_entries:
+                processed_files.add(entry)
+
     for new_xml_file in glob.glob("{0}/new-xml-files*.txt".format(new_xml_files_dir)):
         with open(new_xml_file, 'r') as f:
             xml_entries = f.read().splitlines()
         for entry in xml_entries:
-            print("entry={0}".format(entry))
             processed_files.add(entry)
 
     return processed_files
@@ -126,6 +133,15 @@ class Converter(threading.Thread):
                                 with FileLock(unconvertable_file_lock):
                                     with open(unconvertable_filename, 'a') as f:
                                         f.write("{0}\n".format(www2sf_input_file))
+                    else:
+                        # Special case for files that had an old timestamps format or have been lost
+                        # probably because the converter has been killed abruptly.
+                        if not stopped:
+                            lost_filename = "{0}/already_converted_but_unreferred_files.txt".format(self.new_xml_files_dir)
+                            lost_file_lock = "{0}.lock".format(lost_filename)
+                            with FileLock(lost_file_lock):
+                                with open(lost_filename, 'a') as f:
+                                    f.write("{0}\n".format(www2sf_output_file))
 
                 else:
                     # Wait a while.  If the queue is still empty after that, stop working.
