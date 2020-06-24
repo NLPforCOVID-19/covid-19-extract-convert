@@ -72,9 +72,10 @@ class Producer(threading.Thread):
         self.name = "Producer for region {}".format(region)
         self.region = region
         self.stopped = False
-        self.i = 0
+        self.files_to_process = {}
 
     def run(self):
+        global queue_html_files
         logger.info("Processing files from region: {}...".format(self.region))
         root_input_dir = "{0}/ja_translated".format(self.region)
         root_output_dir = "{0}/ja_translated".format(self.region)
@@ -84,7 +85,7 @@ class Producer(threading.Thread):
         if os.path.exists(root_abs_input_dir):
             for domain in os.listdir(root_abs_input_dir):
                 logger.info("Processing domain: {}...".format(domain))
-                files_to_process = []
+                self.files_to_process[domain] = []
                 for top, dirs, files in os.walk(os.path.join(root_abs_input_dir, domain)):
                     # logger.debug("top={0} dirs={1} files={2}".format(top, dirs, files))
                     for file in files:
@@ -96,6 +97,7 @@ class Producer(threading.Thread):
                         if file.endswith('.html'):
                             www2sf_input_file = os.path.join(top, file)
                             www2sf_output_file = os.path.join(root_abs_output_dir, domain, top[top.index(domain) + len(domain) + 1:], file[:file.index('.html')] + '.xml')
+                            logger.debug("Checking file: {}".format(www2sf_input_file))
                             if www2sf_input_file in unconvertable_files:
                                 logger.debug("Skip {} because it's flagged as unconvertable.".format(www2sf_input_file))
                                 continue
@@ -105,11 +107,13 @@ class Producer(threading.Thread):
                                 continue
 
                             timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
-                            files_to_process.append((www2sf_input_file, www2sf_output_file, timestamp) )
+                            logger.debug("Adding {} to files to process.".format(www2sf_input_file))
+                            self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
 
-                # Process the 500 most recent files first. 
-                most_recent_files_first = sorted(files_to_process, reverse=True, key=lambda x: x[-1])[:500]
-                for file in most_recent_files_first:
+                # Process the 200 most recent files first for this domain. 
+                logger.debug("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
+                self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])[:200]
+                for file in self.most_recent_files_first:
                     logger.info("Adding {} to queue.".format(www2sf_input_file))
                     queue_html_files.put((file[0], file[1]))
                     
@@ -126,6 +130,7 @@ class Converter(threading.Thread):
         self.new_xml_files_dir = new_xml_files_dir
 
     def run(self):
+        global queue_html_files
         while True:
             try:
                 if self.stopped:
@@ -136,7 +141,7 @@ class Converter(threading.Thread):
                     break
 
                 (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
-                # logger.info("Process file: {}".format(www2sf_input_file))
+                logger.info("Process file: {}".format(www2sf_input_file))
                 if not os.path.exists(www2sf_output_file):
                     logger.info("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
                     logger.info("cd {0} && tool/html2sf.sh -T -D {1} -J {2}".format(www2sf_dir, detectblocks_dir, www2sf_input_file))
@@ -157,6 +162,7 @@ class Converter(threading.Thread):
                             processed_files.append(www2sf_output_file)
                         finally:
                             mutex.release()
+                        queue_html_files.task_done()
                     else:
                         # If the script is stopped manually, the file is considered as not processed.
                         if not stopped:
@@ -222,12 +228,22 @@ if __name__ == '__main__':
 
         producers = []
         for region in os.listdir(html_dir):
+            # Skip French region temporarily.
+            # if region == 'fr':
+            #     continue
             producer = Producer(region)
             producers.append(producer)
             producer.start()
 
         for producer in producers:
             producer.join()
+
+        # i = 0
+        # while not queue_html_files.empty():
+        #     (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
+        #     print("i={0} www2sf_input_file={1}".format(i, www2sf_input_file))
+        #     i += 1
+        #     queue_html_files.task_done()
 
         converter_count = 40
         converters = []
