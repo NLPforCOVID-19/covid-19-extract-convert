@@ -203,10 +203,10 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, signal_handler)
     print("Hit CTRL+C and wait a little bit to stop the converter.")
 
-    self.logger.info("Start running.")
+    logger.info("Start running.")
     stopped = False
     while not stopped:
-        self.logger.info("Start iteration.")
+        logger.info("Start iteration.")
         with open(config_filename, 'r') as config_file:
             config = json.load(config_file)
 
@@ -235,8 +235,8 @@ if __name__ == '__main__':
             #     continue
 
             # Just process cn and de regions (temporarily).
-            if region not in ['cn', 'de']:
-                continue
+            # if region not in ['cn', 'de']:
+            #     continue
 
             producer = Producer(region)
             producers.append(producer)
@@ -273,6 +273,6 @@ if __name__ == '__main__':
         #             new_xml_file.write("\n")
         #     logger.info("Report written.")
     
-        self.logger.info("Iteration over.")
+        logger.info("Iteration over.")
 
-    self.logger.info("Stop running.")
+    logger.info("Stop running.")
