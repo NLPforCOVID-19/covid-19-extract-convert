@@ -24,34 +24,45 @@ def signal_handler(sig, frame):
     print("The converter script should stop in a few moments.  Please be patient.")
 
 
-def get_processed_files(new_xml_files_dir):
-    processed_files = set()
-
-    # Consider unconvertable files as already processed. 
+def get_unconvertable_files(new_xml_files_dir):
+    files = set()
     unconvertable_filename = "{0}/unconvertable_files.txt".format(new_xml_files_dir)
-    if os.path.exists(unconvertable_filename): 
+    if os.path.exists(unconvertable_filename):
         with open(unconvertable_filename, 'r') as f:
-            xml_entries = f.read().splitlines()
-            for entry in xml_entries:
-                if entry.endswith('.html'):
-                    modified_entry = entry[:-5] + ".xml"
-                    processed_files.add(modified_entry)
+            entries = f.read().splitlines()
+            for entry in entries:
+                files.add(entry)
+    return files
 
-    # Consider already converted but unreferred files as already processed. 
-    lost_filename = "{0}/already_converted_but_unreferred_files.txt".format(new_xml_files_dir)
-    if os.path.exists(lost_filename): 
-        with open(lost_filename, 'r') as f:
-            xml_entries = f.read().splitlines()
-            for entry in xml_entries:
-                processed_files.add(entry)
+
+# For some reasons (like the script was killed abruptly), some xml files have
+# not been reported even though they have been converted.  
+# Eventually, we should report these files?
+# For the moment, we skip these as they already 
+def get_unreferred_files(new_xml_files_dir):
+    files = set()
+    unreferred_filename = "{0}/already_converted_but_unreferred_files.txt".format(new_xml_files_dir)
+    if os.path.exists(unreferred_filename):
+        with open(unreferred_filename, 'r') as f:
+            entries = f.read().splitlines()
+            for entry in entries:
+                files.add(entry)
+    return files
+
+
+def get_processed_files(new_xml_files_dir):
+    files = set()
 
     for new_xml_file in glob.glob("{0}/new-xml-files*.txt".format(new_xml_files_dir)):
         with open(new_xml_file, 'r') as f:
             xml_entries = f.read().splitlines()
         for entry in xml_entries:
-            processed_files.add(entry)
+            files.add(entry)
 
-    return processed_files
+    for entry in unreferred_files:
+        files.add(entry)
+
+    return files
 
 
 class Producer(threading.Thread):
@@ -61,6 +72,7 @@ class Producer(threading.Thread):
         self.name = "Producer for region {}".format(region)
         self.region = region
         self.stopped = False
+        self.i = 0
 
     def run(self):
         logger.info("Processing files from region: {}...".format(self.region))
@@ -72,6 +84,7 @@ class Producer(threading.Thread):
         if os.path.exists(root_abs_input_dir):
             for domain in os.listdir(root_abs_input_dir):
                 logger.info("Processing domain: {}...".format(domain))
+                files_to_process = []
                 for top, dirs, files in os.walk(os.path.join(root_abs_input_dir, domain)):
                     # logger.debug("top={0} dirs={1} files={2}".format(top, dirs, files))
                     for file in files:
@@ -83,13 +96,24 @@ class Producer(threading.Thread):
                         if file.endswith('.html'):
                             www2sf_input_file = os.path.join(top, file)
                             www2sf_output_file = os.path.join(root_abs_output_dir, domain, top[top.index(domain) + len(domain) + 1:], file[:file.index('.html')] + '.xml')
-                            if www2sf_output_file in prev_processed_files:
-                                # logger.debug("Skip {} because already processed.".format(www2sf_output_file))
+                            if www2sf_input_file in unconvertable_files:
+                                logger.debug("Skip {} because it's flagged as unconvertable.".format(www2sf_input_file))
                                 continue
-                            
-                            if not queue_html_files.full():
-                                # logger.info("Adding {} to queue.".format(www2sf_input_file))
-                                queue_html_files.put((www2sf_input_file, www2sf_output_file))
+
+                            if www2sf_output_file in prev_processed_files:
+                                logger.debug("Skip {} because already processed.".format(www2sf_output_file))
+                                continue
+
+                            timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
+                            files_to_process.append((www2sf_input_file, www2sf_output_file, timestamp) )
+
+                # Process the 500 most recent files first. 
+                most_recent_files_first = sorted(files_to_process, reverse=True, key=lambda x: x[-1])[:500]
+                for file in most_recent_files_first:
+                    logger.info("Adding {} to queue.".format(www2sf_input_file))
+                    queue_html_files.put((file[0], file[1]))
+                    
+        logger.info("Finished processing files from region: {}...".format(self.region))
 
 
 class Converter(threading.Thread):
@@ -108,46 +132,50 @@ class Converter(threading.Thread):
                     logger.info("Converter {0} has been stopped.".format(self.identifier))
                     break
 
-                if not queue_html_files.empty():
-                    (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
-                    # logger.info("Process file: {}".format(www2sf_input_file))
-                    if not os.path.exists(www2sf_output_file):
-                        logger.info("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
-                        logger.info("cd {0} && tool/html2sf.sh -T -D {1} -J {2}".format(www2sf_dir, detectblocks_dir, www2sf_input_file))
-                        process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        logger.info("return_code={0}".format(process.returncode))
-                        if process.returncode == 0:
-                            os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
-                            with open(www2sf_output_file, "wb") as xml_file:
-                                xml_file.write(process.stdout)
-                            logger.info("Output file {}: OK".format(www2sf_output_file))
-                            mutex.acquire()
-                            try:
-                                processed_files.append(www2sf_output_file)
-                            finally:
-                                mutex.release()
-                        else:
-                            if not stopped:
-                                unconvertable_filename = "{0}/unconvertable_files.txt".format(self.new_xml_files_dir)
-                                unconvertable_file_lock = "{0}.lock".format(unconvertable_filename)
-                                with FileLock(unconvertable_file_lock):
-                                    with open(unconvertable_filename, 'a') as f:
-                                        f.write("{0}\n".format(www2sf_input_file))
-                    else:
-                        # Special case for files that had an old timestamps format or have been lost
-                        # probably because the converter has been killed abruptly.
-                        if not stopped:
-                            lost_filename = "{0}/already_converted_but_unreferred_files.txt".format(self.new_xml_files_dir)
-                            lost_file_lock = "{0}.lock".format(lost_filename)
-                            with FileLock(lost_file_lock):
-                                with open(lost_filename, 'a') as f:
-                                    f.write("{0}\n".format(www2sf_output_file))
+                if queue_html_files.empty():
+                    break
 
+                (www2sf_input_file, www2sf_output_file) = queue_html_files.get()
+                # logger.info("Process file: {}".format(www2sf_input_file))
+                if not os.path.exists(www2sf_output_file):
+                    logger.info("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
+                    logger.info("cd {0} && tool/html2sf.sh -T -D {1} -J {2}".format(www2sf_dir, detectblocks_dir, www2sf_input_file))
+                    process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    logger.info("return_code={0}".format(process.returncode))
+                    if process.returncode == 0:
+                        os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
+                        with open(www2sf_output_file, "wb") as xml_file:
+                            xml_file.write(process.stdout)
+                        logger.info("Output file {}: OK".format(www2sf_output_file))
+                        new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+                        new_xml_file_lock = "{0}.lock".format(new_xml_filename)
+                        with FileLock(new_xml_file_lock):
+                            with open(new_xml_filename, 'a') as f:
+                                f.write("{0}\n".format(www2sf_output_file))
+                        mutex.acquire()
+                        try:
+                            processed_files.append(www2sf_output_file)
+                        finally:
+                            mutex.release()
+                    else:
+                        # If the script is stopped manually, the file is considered as not processed.
+                        if not stopped:
+                            unconvertable_filename = "{0}/unconvertable_files.txt".format(self.new_xml_files_dir)
+                            unconvertable_file_lock = "{0}.lock".format(unconvertable_filename)
+                            with FileLock(unconvertable_file_lock):
+                                with open(unconvertable_filename, 'a') as f:
+                                    f.write("{0}\n".format(www2sf_input_file))
                 else:
-                    # Wait a while.  If the queue is still empty after that, stop working.
-                    time.sleep(60)
-                    if queue_html_files.empty():
-                        break
+                    # Special case for files that had an old timestamps format or have been lost
+                    # probably because the converter has been killed abruptly.
+                    # If the script is stopped manually, the file is considered as not processed.
+                    if not stopped:
+                        lost_filename = "{0}/already_converted_but_unreferred_files.txt".format(self.new_xml_files_dir)
+                        lost_file_lock = "{0}.lock".format(lost_filename)
+                        with FileLock(lost_file_lock):
+                            with open(lost_filename, 'a') as f:
+                                f.write("{0}\n".format(www2sf_output_file))
+
             except:
                 e = sys.exc_info()[0]
                 logger.info("An error has occurred: %s" % e)
@@ -171,7 +199,6 @@ if __name__ == '__main__':
 
     stopped = False
     while not stopped:
-
         with open(config_filename, 'r') as config_file:
             config = json.load(config_file)
 
@@ -181,22 +208,17 @@ if __name__ == '__main__':
         new_xml_files_dir = "{0}/new-xml-files".format(run_dir)
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
-        converter_count = 20
 
         now = datetime.datetime.now()
 
         queue_html_files = queue.Queue()
 
+        unconvertable_files = get_unconvertable_files(new_xml_files_dir)
+        unreferred_files = get_unreferred_files(new_xml_files_dir)
         prev_processed_files = get_processed_files(new_xml_files_dir)
         processed_files = []
 
         mutex = threading.Lock()
-
-        converters = []
-        for c in range(0, converter_count):
-            converter = Converter(c, new_xml_files_dir)
-            converters.append(converter)
-            converter.start()
 
         producers = []
         for region in os.listdir(html_dir):
@@ -207,14 +229,23 @@ if __name__ == '__main__':
         for producer in producers:
             producer.join()
 
-        for convert in converters:
+        converter_count = 40
+        converters = []
+        for c in range(0, converter_count):
+            converter = Converter(c, new_xml_files_dir)
+            converters.append(converter)
+            converter.start()
+
+        for converter in converters:
             converter.join()
 
-        if len(processed_files) > 0:
-            new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
-            logger.info("Writing report file: {0} new_xml_file_count: {1}".format(new_xml_filename, len(processed_files)))
-            with open(new_xml_filename, 'a') as new_xml_file:
-                for file in processed_files:
-                    new_xml_file.write(file)
-                    new_xml_file.write("\n")
-            logger.info("Report written.")
+        logger.info("Number of new xml files: {0}".format(len(processed_files)))
+
+        # if len(processed_files) > 0:
+        #     new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
+        #     logger.info("Writing report file: {0} new_xml_file_count: {1}".format(new_xml_filename, len(processed_files)))
+        #     with open(new_xml_filename, 'a') as new_xml_file:
+        #         for file in processed_files:
+        #             new_xml_file.write(file)
+        #             new_xml_file.write("\n")
+        #     logger.info("Report written.")
