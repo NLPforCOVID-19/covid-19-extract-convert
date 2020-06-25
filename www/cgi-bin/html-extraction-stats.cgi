@@ -198,22 +198,22 @@ print("<p>Length of period (days): {0}</p>".format(delta.days))
 html_table_title = "Number of HTML files extracted per day per domain (last {0} days)".format(period)
 show_total_files_per_day(totals_html_per_day, html_table_title)
 
-print("<hr/>")
+print("<br/>")
 
 translated_table_title = "Number of translated files converted per day per domain (last {0} days)".format(period)
 show_total_files_per_day(totals_translated_per_day, translated_table_title)
 
-print("<hr/>")
+print("<br/>")
 
 xml_table_title = "Number of XML files converted per day per domain (last {0} days)".format(period)
 show_total_files_per_day(totals_xml_per_day, xml_table_title)
 
-print("<hr/>")
+print("<br/>")
 
 combined_table_title = "Combined view of HTML files extracted_translated_converted per day per domain (last {0} days)".format(period)
 show_combined_total_files_per_day(totals_html_per_day, totals_translated_per_day, totals_xml_per_day, combined_table_title)
 
-print("<hr/>")
+print("<br/>")
 
 print("<div><div class=\"left\">");
 
