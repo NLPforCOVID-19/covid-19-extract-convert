@@ -153,7 +153,6 @@ def get_content(file, filename):
     return None
 
 
-# This function should be faster than using globbing.
 def get_all_versions(parent_dir, file_dir_prefix):
     if not os.path.exists(parent_dir):
         return []
@@ -162,27 +161,17 @@ def get_all_versions(parent_dir, file_dir_prefix):
     if file_dir_prefix == '':
         res.append(parent_dir + "/")
 
-    new_location_path = "{0}/{1}/2020/06".format(parent_dir, file_dir_prefix).replace("//", "/")
-    if os.path.exists(new_location_path):
-        new_location_files = os.listdir(new_location_path)
-        # If we have files at the new location, we can ignore the files at the old location.
-        if len(new_location_files) > 0:
-            new_location_files = ["{0}/{1}".format(new_location_path, f) for f in new_location_files]
-            res += new_location_files
-            return res
+    other_versions = glob.glob('{0}/{1}/[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]-[0-9][0-9]-[0-9][0-9]'.format(parent_dir, file_dir_prefix).replace('//', '/'))
+    res += other_versions
 
-    files = os.listdir(parent_dir)
-    pattern = "^{0}(_20\d\d-\d\d-\d\d-\d\d-\d\d)?$".format(file_dir_prefix.replace("?", "\?"))
-    related_files = ["{0}/{1}".format(parent_dir, file) for file in files if re.match(pattern, file)]
-    res += related_files
     return res
 
 
 def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, full_path, domain_path):
-    # all_versions = sorted(glob.glob("{0}/{1}".format(parent_dir, file_dir_prefix)) + glob.glob("{0}/{1}_[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]".format(parent_dir, file_dir_prefix)))
+    print("process_file parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
-    # print("parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     # print("all_versions={0}".format(all_versions))
+
     if len(all_versions) > 0:
         # Now that we are using the similarity column from the database, I'm not convinced that
         # the following code is useful. It looks redundant actually.
