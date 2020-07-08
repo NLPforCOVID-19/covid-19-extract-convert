@@ -1,6 +1,12 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
     "domains": {
+        "bundle.br": {
+            "region": "br",
+            "language": "pt",
+            "subdomains": ["g1\\.globo\\.com", "coronavirus\\.saude\\.gov\\.br"]
+        },
+
         "health.ifeng.com": {
             "region": "cn",
             "language": "zh",
