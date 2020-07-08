@@ -322,8 +322,6 @@ for domain in os.listdir(db_dir):
                 "select url, same_as, content, headers, similarity, maintext_similarity, compared_against from page "
                 "where content_type like '%text/html%'"
             )
-            if real_domain == 'www.lci.fr':
-                sql += ' limit 1000'
             for row in cursor.execute(sql):
                 process_row(row, real_domain, region, db_file_basename)
         except sqlite3.DatabaseError as db_err:
