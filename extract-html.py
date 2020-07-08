@@ -42,37 +42,6 @@ def is_blacklisted(url):
     return False
 
 
-# Version with the old location.
-# def write_html_file(path, filename, url, content, source, domain_path):
-#     print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4}".format(path, filename, url, source, domain_path))
-#     try:
-#         timestamp = now.strftime('%Y-%m-%d-%H-%M')
-#         path = "{0}_{1}".format(path, timestamp)
-#         os.makedirs(path, exist_ok=True)
-#         temp_path = path
-#         while temp_path != domain_path:
-#             os.chmod(temp_path, 0o775)
-#             temp_path = os.path.dirname(temp_path)
-#         filename = os.path.join(path, filename)
-#         with open(filename, 'wb') as html_file:
-#             html_file.write(content)
-#         filename_url = filename[:-5] + '.url'
-#         with open(filename_url, 'w') as url_file:
-#             url_file.write(url)
-#         filename_source = filename[:-5] + '.src'
-#         with open(filename_source, 'w') as source_file:
-#             source_file.write(source)
-#         new_html_filename = os.path.join(run_dir, 'new-html-files', 'new-html-files-{}.txt'.format(timestamp))
-#         with open(new_html_filename, 'a') as new_html_file:
-#             new_html_file.write(filename)
-#             new_html_file.write("\n")
-#         global nb_html_files
-#         nb_html_files += 1
-#     except OSError as os_err:
-#         print("An error has occurred in write_html(path={0} filename={1} url={2}): {3}".format(path, filename, url, os_err))
-
-
-# Version with the new location.
 def write_html_file(path, filename, url, content, source, domain_path):
     print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4}".format(path, filename, url, source, domain_path))
     try:
