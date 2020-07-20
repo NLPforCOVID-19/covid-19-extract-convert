@@ -37,7 +37,7 @@ utf_offset_date_format_2 = '%a, %d %b %y %H:%M:%S %z'
 
 def is_blacklisted(url):
     for item in rejected_urls:
-        if url.find(item) != -1:
+        if re.search(item, url):
             return True
     return False
 
