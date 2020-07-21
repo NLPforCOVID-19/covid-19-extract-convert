@@ -258,7 +258,7 @@ for domain in os.listdir(db_dir):
         continue
     domain_dir = db_dir + '/' + domain
     real_domain = domain.replace('_', '.')
-    print("domain_dir={0} real_domain={1} input_domain={2}".format(domain_dir, real_domain, input_domain))
+    # print("domain_dir={0} real_domain={1} input_domain={2}".format(domain_dir, real_domain, input_domain))
     if input_domain != 'all' and real_domain != input_domain:
         continue
 

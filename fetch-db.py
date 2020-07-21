@@ -3,7 +3,10 @@ import json
 import os
 import re
 import requests
+import sqlite3
 import sys
+
+max_attempts = 10
 
 def get_processed_databases(domain):
     dbs = []
@@ -41,12 +44,32 @@ def retrieve_database(domain, database):
     print("db url: {}".format(database_url))
     os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
     database_filename = os.path.join(db_dir, domain_dir, database)
-    with requests.get(database_url, stream=True) as req:
-        req.raise_for_status()
-        with open(database_filename, 'wb') as database_file:
-            for chunk in req.iter_content(chunk_size=8192):
-                database_file.write(chunk)
-            print("File {} written.".format(database_filename))
+    
+    attempt = 1
+    while attempt <= max_attempts:
+        with requests.get(database_url, stream=True) as req:
+            req.raise_for_status()
+            with open(database_filename, 'wb') as database_file:
+                for chunk in req.iter_content(chunk_size=8192):
+                    database_file.write(chunk)
+                print("File {} written.".format(database_filename))
+
+        conn = sqlite3.connect(database_filename)
+        try:
+            cursor = conn.cursor()
+            sql = (
+                "select count(url) as count from page where content_type like '%text/html%'"
+            )
+            for row in cursor.execute(sql):
+                print("Records in the database: {0}".format(row[0]))
+        except sqlite3.DatabaseError as db_err:
+            print("An error has occurred while testing the database on attempt {0}: {1}".format(attempt, db_err))
+            attempt += 1
+            continue
+        finally:
+            conn.close()
+        return
+
 
 input_domain = sys.argv[1]
 
