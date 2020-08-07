@@ -169,8 +169,11 @@ html_file_glob = "new-html-files/new-html-files-{0}*.txt"
 totals_html_per_day = get_total_files_per_day(html_file_pattern, html_file_glob) 
 
 translated_file_pattern = ".*/html/.+?/ja_translated/(.+?)/.*"
+translated_file_pattern_en = ".*/html/.+?/en_translated/(.+?)/.*"
 translated_file_glob = "new-translated-files/new-translated-files-{0}*.txt"
+translated_file_glob_en = "new-translated-files/new-translated-files-en-{0}*.txt"
 totals_translated_per_day = get_total_files_per_day(translated_file_pattern, translated_file_glob)
+totals_translated_per_day_en = get_total_files_per_day(translated_file_pattern_en, translated_file_glob_en)
 
 xml_file_pattern = ".*/xml/.+?/ja_translated/(.+?)/.*"
 xml_file_glob = "new-xml-files/new-xml-files-{0}*.txt"
@@ -200,8 +203,13 @@ show_total_files_per_day(totals_html_per_day, html_table_title)
 
 print("<br/>")
 
-translated_table_title = "Number of translated files converted per day per domain (last {0} days)".format(period)
+translated_table_title = "Number of translated files per day per domain (last {0} days)".format(period)
 show_total_files_per_day(totals_translated_per_day, translated_table_title)
+
+print("<br/>")
+
+translated_table_title_en = "Number of translated files (to English) per day per domain (last {0} days)".format(period)
+show_total_files_per_day(totals_translated_per_day_en, translated_table_title_en)
 
 print("<br/>")
 
