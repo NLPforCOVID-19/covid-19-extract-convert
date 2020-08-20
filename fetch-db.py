@@ -26,7 +26,7 @@ def get_available_databases(domain):
     req = requests.get(index_url)
     if req.status_code == 200:
         for line in req.text.splitlines():
-            match = re.search('a href="\./(.*?\.db)', line)
+            match = re.search('a href="(.*?\.db)', line)
             if match:
                 db_filename = match.group(1)
                 dbs.append(db_filename)
