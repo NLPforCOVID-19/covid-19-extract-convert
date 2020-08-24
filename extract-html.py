@@ -165,7 +165,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 if test:
                     return
 
-    # Handle special cases for fast-checking.
+    # Handle special cases for fact-checking.
     if domain_path.endswith('fij.info') and url in ['https://fij.info/coronavirus-feature/national', 'https://fij.info/coronavirus-feature/overseas']:
         global fact_checking_urls
         fact_checking_urls.append((url, content))
@@ -198,19 +198,24 @@ def process_row(row, real_domain, region, db_file_basename, test_domain_and_subd
     # Consider only urls that match the domain_part or declared subdomains.
     # print("url={0} same_as={1} isNone={2} isEmpty={3}".format(url, same_as, (same_as is None), same_as == ''))
     if test_domain_and_subdomain:
-        domain_part = "^http.*?{0}/(.*)".format(real_domain)
+        domain_part = "^https?://{0}/(.*)".format(real_domain)
         if 'prefix' in config['domains'][real_domain]:
-            domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
+            domain_part = "^https?://{0}/(.*)".format(config['domains'][real_domain]['prefix'])
         match = re.search(domain_part, url)
-        if not match:
+        if match:
+            print(f"domain_part={domain_part} url={url} matched!!!")
+        else:
+            print("domain_part not matched so check subdomains")
             if 'subdomains' not in config['domains'][real_domain]:
                 print("url discarded because it's not matching the domain.")
                 return
 
             subdomain_match = False
             for subdomain in config['domains'][real_domain]['subdomains']:
-                match = re.search("^https?://({0}/?.*)".format(subdomain), url)
+                subdomain_part = "^https?://({0}/?.*)".format(subdomain)
+                match = re.search(subdomain_part, url)
                 if match:
+                    print(f"subdomain_part={subdomain_part} url={url} matched!!!")
                     subdomain_match = True
                     break
             if not subdomain_match:
