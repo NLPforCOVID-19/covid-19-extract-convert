@@ -165,16 +165,48 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 if test:
                     return
 
-    # Handle special cases for fast-checking.
-    if domain_path.endswith('fij.info') and url in ['https://fij.info/coronavirus-feature/national', 'https://fij.info/coronavirus-feature/overseas']:
-        global fact_checking_urls
-        fact_checking_urls.append((url, content))
-
     source = same_as or db_file_basename
     write_html_file(full_path, filename, url, content, source, domain_path)
 
 
-def process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=True, test_similariy=True, limit_in_days=7):
+def perform_fact_checking(db_file, real_domain, region, db_file_basename):
+    print("Check special urls for fact_checking.")
+    fact_checking_urls = ['https://fij.info/coronavirus-feature/national', 'https://fij.info/coronavirus-feature/overseas']
+    for url in fact_checking_urls:
+        print(f"Checking url={url}")
+        content = None
+        conn = sqlite3.connect(db_file)
+        try:
+            cursor = conn.cursor()
+            sql = f"select content from page where url='{url}';"
+            cursor.execute(sql)
+            record = cursor.fetchone()
+            content = record[0]
+        except sqlite3.DatabaseError as db_err:
+            print("An error has occurred: {0}".format(db_err))
+        finally:
+            conn.close()
+
+        if content is not None:
+            soup = bs4.BeautifulSoup(content, 'html.parser')
+            links = set(soup.find_all('a'))
+            external_hrefs = {link.get('href') for link in links if link.get('href').startswith('http') and not re.search("^http.*?fij.info/?.*", link.get('href'))}
+
+            conn = sqlite3.connect(db_file)
+            try:
+                cursor = conn.cursor()
+                sql = (
+                    "select url, same_as, content, headers, similarity, maintext_similarity, compared_against from page "
+                    "where content_type like '%text/html%' and url in ({0})"
+                ).format(','.join(["'{}'".format(href) for href in external_hrefs]))
+                for row in cursor.execute(sql):
+                    process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=False)
+            except sqlite3.DatabaseError as db_err:
+                print("An error has occurred: {0}".format(db_err))
+            finally:
+                conn.close()
+
+def process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=True, test_similarity=True, limit_in_days=7):
     url = row[0]
     same_as = row[1]
     content = row[2]
@@ -198,19 +230,24 @@ def process_row(row, real_domain, region, db_file_basename, test_domain_and_subd
     # Consider only urls that match the domain_part or declared subdomains.
     # print("url={0} same_as={1} isNone={2} isEmpty={3}".format(url, same_as, (same_as is None), same_as == ''))
     if test_domain_and_subdomain:
-        domain_part = "^http.*?{0}/(.*)".format(real_domain)
+        domain_part = "^https?://{0}/(.*)".format(real_domain)
         if 'prefix' in config['domains'][real_domain]:
-            domain_part = "^http.*?{0}/(.*)".format(config['domains'][real_domain]['prefix'])
+            domain_part = "^https?://{0}/(.*)".format(config['domains'][real_domain]['prefix'])
         match = re.search(domain_part, url)
-        if not match:
+        if match:
+            print(f"domain_part={domain_part} url={url} matched!!!")
+        else:
+            print("domain_part not matched so check subdomains")
             if 'subdomains' not in config['domains'][real_domain]:
                 print("url discarded because it's not matching the domain.")
                 return
 
             subdomain_match = False
             for subdomain in config['domains'][real_domain]['subdomains']:
-                match = re.search("^https?://({0}/?.*)".format(subdomain), url)
+                subdomain_part = "^https?://({0}/?.*)".format(subdomain)
+                match = re.search(subdomain_part, url)
                 if match:
+                    print(f"subdomain_part={subdomain_part} url={url} matched!!!")
                     subdomain_match = True
                     break
             if not subdomain_match:
@@ -218,12 +255,6 @@ def process_row(row, real_domain, region, db_file_basename, test_domain_and_subd
                 return
     else:
         match = re.search("^https?://(.*)", url)
-
-    if test_similariy:
-        print("sim: {0} main_text_sim: {1} compared against: {2}".format(similarity, main_text_similarity, compared_against))
-        if compared_against is not None and main_text_similarity >= 0.8 :
-            print("url too similar to previous version sim: {0} main_text_sim={1}".format(similarity, main_text_similarity))
-            return
 
     # print("url={0} g0={1} g1={2}".format(url, match.group(0), match.group(1)))
     path = match.group(1)
@@ -250,6 +281,14 @@ def process_row(row, real_domain, region, db_file_basename, test_domain_and_subd
     file_dir_prefix = os.path.basename(full_path)
     print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
     print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
+
+    # Consider similarity when the file exists.
+    if os.path.exists(full_path) and test_similarity:
+        print("sim: {0} main_text_sim: {1} compared against: {2}".format(similarity, main_text_similarity, compared_against))
+        if compared_against is not None and main_text_similarity >= 0.8 :
+            print("url too similar to previous version sim: {0} main_text_sim={1}".format(similarity, main_text_similarity))
+            return
+
     process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, full_path, domain_path)
 
 
@@ -282,8 +321,6 @@ for domain in os.listdir(db_dir):
             continue
         print("Processing {0}".format(db_file))
 
-        fact_checking_urls = []
-
         conn = sqlite3.connect(db_file)
         try:
             cursor = conn.cursor()
@@ -298,25 +335,8 @@ for domain in os.listdir(db_dir):
         finally:
             conn.close()
 
-        print("fact_checking_urls l={0}".format(len(fact_checking_urls)))
-        for (url, content) in fact_checking_urls:
-            soup = bs4.BeautifulSoup(content, 'html.parser')
-            links = set(soup.find_all('a'))
-            external_hrefs = {link.get('href') for link in links if link.get('href').startswith('http') and not re.search("^http.*?fij.info/?.*", link.get('href'))}
-
-            conn = sqlite3.connect(db_file)
-            try:
-                cursor = conn.cursor()
-                sql = (
-                    "select url, same_as, content, headers, similarity, maintext_similarity, compared_against from page "
-                    "where content_type like '%text/html%' and url in ({0})"
-                ).format(','.join(["'{}'".format(href) for href in external_hrefs]))
-                for row in cursor.execute(sql):
-                    process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=False)
-            except sqlite3.DatabaseError as db_err:
-                print("An error has occurred: {0}".format(db_err))
-            finally:
-                conn.close()
+        if real_domain == 'fij.info':
+            perform_fact_checking(db_file, real_domain, region, db_file_basename)
 
         nb_html_files_per_domain[real_domain] = nb_html_files
         if real_domain in processed_db_per_domain:
