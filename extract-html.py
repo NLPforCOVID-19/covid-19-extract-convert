@@ -189,6 +189,12 @@ def perform_fact_checking(db_file, real_domain, region, db_file_basename):
 
         if content is not None:
             soup = bs4.BeautifulSoup(content, 'html.parser')
+
+            # Remove undesirable links.
+            for h4_tag in soup.find_all('h4', string="追記情報（ＦＩＪ）"):
+                for p_tag in h4_tag.find_next_siblings('p'):
+                    p_tag.decompose()
+
             links = set(soup.find_all('a'))
             external_hrefs = {link.get('href') for link in links if link.get('href').startswith('http') and not re.search("^http.*?fij.info/?.*", link.get('href'))}
 
