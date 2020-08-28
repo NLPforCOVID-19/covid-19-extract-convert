@@ -137,7 +137,7 @@ def get_all_versions(parent_dir, file_dir_prefix):
     return res
 
 
-def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, full_path, domain_path):
+def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path):
     print("process_file parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
     # print("all_versions={0}".format(all_versions))
@@ -165,11 +165,32 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 if test:
                     return
 
+    # Add the root_url to the urls_with_title so that we can detect doublons and skip them.
+    if content is not None:
+        soup = bs4.BeautifulSoup(content, 'html.parser')
+        title = soup.find('title')
+        if title is not None:
+            question_mark_pos = url.find("?")
+            root_url = url[:question_mark_pos] if question_mark_pos != -1 else url
+            if title.string not in urls_with_title:
+                urls_with_title[title.string] = {root_url}
+            else:
+                urls = urls_with_title[title.string]
+
+                # Test if there is already a previous article with the same title and the same root_url.
+                # If so, the current article is considered a doublon and is skipped.
+                if root_url in urls:
+                    return
+
+                # The title is exactly like a previously processed file but the url
+                # is different so it's assumed that they are different document.
+                urls.add(root_url)
+
     source = same_as or db_file_basename
     write_html_file(full_path, filename, url, content, source, domain_path)
 
 
-def perform_fact_checking(db_file, real_domain, region, db_file_basename):
+def perform_fact_checking(db_file, real_domain, region, db_file_basename, urls_with_title):
     print("Check special urls for fact_checking.")
     fact_checking_urls = ['https://fij.info/coronavirus-feature/national', 'https://fij.info/coronavirus-feature/overseas']
     for url in fact_checking_urls:
@@ -206,13 +227,13 @@ def perform_fact_checking(db_file, real_domain, region, db_file_basename):
                     "where content_type like '%text/html%' and url in ({0})"
                 ).format(','.join(["'{}'".format(href) for href in external_hrefs]))
                 for row in cursor.execute(sql):
-                    process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=False)
+                    process_row(row, real_domain, region, db_file_basename, urls_with_title, test_domain_and_subdomain=False)
             except sqlite3.DatabaseError as db_err:
                 print("An error has occurred: {0}".format(db_err))
             finally:
                 conn.close()
 
-def process_row(row, real_domain, region, db_file_basename, test_domain_and_subdomain=True, test_similarity=True, limit_in_days=7):
+def process_row(row, real_domain, region, db_file_basename, urls_with_title, test_domain_and_subdomain=True, test_similarity=True, limit_in_days=7):
     url = row[0]
     same_as = row[1]
     content = row[2]
@@ -295,12 +316,13 @@ def process_row(row, real_domain, region, db_file_basename, test_domain_and_subd
             print("url too similar to previous version sim: {0} main_text_sim={1}".format(similarity, main_text_similarity))
             return
 
-    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, full_path, domain_path)
+    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path)
 
 
 for domain in os.listdir(db_dir):
     if domain.endswith('.html') or domain.endswith('.py') or domain.endswith('.py~') or domain.endswith(".jp"):
         continue
+
     domain_dir = db_dir + '/' + domain
     real_domain = domain.replace('_', '.')
     # print("domain_dir={0} real_domain={1} input_domain={2}".format(domain_dir, real_domain, input_domain))
@@ -318,6 +340,7 @@ for domain in os.listdir(db_dir):
             processed_db_per_domain[real_domain] = run_data
 
     nb_html_files = 0
+    urls_with_title = {}
 
     lang = config['domains'][real_domain]['language']
     region = config['domains'][real_domain]['region']
@@ -335,14 +358,14 @@ for domain in os.listdir(db_dir):
                 "where content_type like '%text/html%'"
             )
             for row in cursor.execute(sql):
-                process_row(row, real_domain, region, db_file_basename)
+                process_row(row, real_domain, region, db_file_basename, urls_with_title)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
             conn.close()
 
         if real_domain == 'fij.info':
-            perform_fact_checking(db_file, real_domain, region, db_file_basename)
+            perform_fact_checking(db_file, real_domain, region, db_file_basename, urls_with_title)
 
         nb_html_files_per_domain[real_domain] = nb_html_files
         if real_domain in processed_db_per_domain:
