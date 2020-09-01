@@ -129,7 +129,7 @@ def show_combined_total_files_per_day(html_files_per_day_per_domain, translated_
 
 
 # In days.
-period = 10
+period = 7
 
 date_min = None
 date_max = None
@@ -203,7 +203,7 @@ show_total_files_per_day(totals_html_per_day, html_table_title)
 
 print("<br/>")
 
-translated_table_title = "Number of translated files per day per domain (last {0} days)".format(period)
+translated_table_title = "Number of translated files (to Japanese) per day per domain (last {0} days)".format(period)
 show_total_files_per_day(totals_translated_per_day, translated_table_title)
 
 print("<br/>")
