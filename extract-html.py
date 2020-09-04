@@ -185,7 +185,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
     if content is not None:
         soup = bs4.BeautifulSoup(content, 'html.parser')
         title = soup.find('title')
-        if title is not None:
+        if title is not None and title.string is not None:
             stripped_title = title.string.strip()
             question_mark_pos = url.find("?")
             root_url = url[:question_mark_pos] if question_mark_pos != -1 else url
