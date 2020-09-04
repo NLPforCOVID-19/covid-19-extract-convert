@@ -189,6 +189,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
             stripped_title = title.string.strip()
             question_mark_pos = url.find("?")
             root_url = url[:question_mark_pos] if question_mark_pos != -1 else url
+            root_url = root_url.lower()
             if stripped_title not in urls_with_title:
                 urls_with_title[stripped_title] = {root_url}
             else:
@@ -196,7 +197,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
 
                 # Test if there is already a previous article with the same title and the same root_url.
                 # If so, the current article is considered a doublon and is skipped.
-                if root_url in urls or is_similar_to_other_urls(url, urls):
+                if root_url in urls or is_similar_to_other_urls(root_url, urls):
                     doublon_urls.add((stripped_title, url))
                     return
 
