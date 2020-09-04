@@ -1,5 +1,6 @@
 import bs4
 import datetime
+from difflib import SequenceMatcher
 import glob
 import hashlib
 import json
@@ -137,6 +138,21 @@ def get_all_versions(parent_dir, file_dir_prefix):
     return res
 
 
+def is_similar_to_other_urls(url_to_check, urls):
+    for url in urls:
+        # Skip first characters that should be the same.
+        i = 0
+        while i < min(len(url), len(url_to_check)) and url[i] == url_to_check[i]:
+            i += 1
+
+        seq = SequenceMatcher(a=url_to_check[i:], b=url[i:])
+        if seq.ratio() > 0.7:
+            print(f"is_similar_to_other_urls urls={url_to_check} vs {url} ratio={seq.ratio()}")
+            return True
+    print(f"is_similar_to_other_urls urls={url_to_check} -> False")
+    return False
+
+
 def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path):
     print("process_file parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
@@ -170,16 +186,18 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
         soup = bs4.BeautifulSoup(content, 'html.parser')
         title = soup.find('title')
         if title is not None:
+            stripped_title = title.string.strip()
             question_mark_pos = url.find("?")
             root_url = url[:question_mark_pos] if question_mark_pos != -1 else url
-            if title.string not in urls_with_title:
-                urls_with_title[title.string] = {root_url}
+            if stripped_title not in urls_with_title:
+                urls_with_title[stripped_title] = {root_url}
             else:
-                urls = urls_with_title[title.string]
+                urls = urls_with_title[stripped_title]
 
                 # Test if there is already a previous article with the same title and the same root_url.
                 # If so, the current article is considered a doublon and is skipped.
-                if root_url in urls:
+                if root_url in urls or is_similar_to_other_urls(url, urls):
+                    doublon_urls.add((stripped_title, url))
                     return
 
                 # The title is exactly like a previously processed file but the url
@@ -341,6 +359,7 @@ for domain in os.listdir(db_dir):
 
     nb_html_files = 0
     urls_with_title = {}
+    doublon_urls = set()
 
     lang = config['domains'][real_domain]['language']
     region = config['domains'][real_domain]['region']
@@ -378,6 +397,18 @@ for domain in os.listdir(db_dir):
 
     with open(run_filename, 'w') as run_file:
         json.dump(processed_db_per_domain[real_domain], run_file)
+
+    print(f"urls_with_title ({len(urls_with_title)} items)")
+    for title in urls_with_title:
+        print(f"{title}: {urls_with_title[title]}")
+    print("===============")
+
+    print(f"doublon_urls ({len(doublon_urls)} items)")
+    for url in doublon_urls:
+        print(f"{url}")
+    print("===============")
+
+    print(f"nb_html_files={nb_html_files}")
 
 stats_file = os.path.join(run_dir, 'stats', 'stats-{}.json'.format(now.strftime('%Y-%m-%d-%H-%M')))
 write_stats_file(stats_file)
