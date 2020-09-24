@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if req.status_code == 200:
         new_domains = set()
         for line in req.text.splitlines():
-            match = re.search('a href="\./(.+)">.+</a>', line)
+            match = re.search('a href="(.+)">.+</a>', line)
             if match:
                 domain = match.group(1)
                 domain = domain.replace("_", ".")
