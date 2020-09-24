@@ -1,6 +1,13 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
     "domains": {
+        "bundle.au": {
+            "region": "au",
+            "language": "en",
+            "subdomains": ["www\\.health\\.gov\\.au"],
+            "sources": ["www.health.gov.au"]
+        },
+
         "bundle.br": {
             "region": "br",
             "language": "pt",
@@ -210,6 +217,13 @@
             "language": "en",
             "subdomains": ["[a-zA-Z.-]+\\.usa\\.gov"],
             "sources": ["usa.gov"]
+        },
+
+        "bundle.za": {
+            "region": "za",
+            "language": "en",
+            "subdomains": ["sacoronavirus\\.co\\.za", "[a-zA-Z.-]+\\.sacoronavirus\\.co\\.za"],
+            "sources": ["sacoronavirus.co.za"]
         }
     },
     "domains_ignored": {
