@@ -9,6 +9,7 @@ verify_ssl = true
 requests = "*"
 filelock = "*"
 bs4 = "*"
+elasticsearch = "*"
 
 [requires]
 python_version = "3.6"
