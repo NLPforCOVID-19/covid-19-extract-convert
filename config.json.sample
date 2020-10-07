@@ -260,6 +260,11 @@
         "password": "mypassword",
         "from": "noreply.covid19.dbchecker@gmail.com",
         "cc": "someone@example.com"
+    },
+    "elastic_search": {
+        "host": "localhost",
+        "port": 9200,
+        "index": "covid-19-index"
     }
 }
 
