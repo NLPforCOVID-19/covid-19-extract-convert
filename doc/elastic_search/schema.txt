@@ -1,0 +1,186 @@
+Elastic Search Schema
+=====================
+
+Aliases
+-------
+
+covid19-pages-ja => covid19-pages-ja-v1
+
+
+Indices
+-------
+
+covid19-pages-ja-v1: 
+
+
+Mappings:
+
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "domain": {
+          "type": "keyword"
+        },
+        "filename": {
+          "type": "keyword"
+        },
+        "path": {
+          "type": "keyword"
+        },
+        "region": {
+          "type": "keyword"
+        },
+        "text": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "kuromoji"
+        },
+        "timestamp": {
+          "type": "nested",
+          "properties": {
+            "day": {
+              "type": "integer"
+            },
+            "full": {
+              "type": "date"
+            },
+            "hh": {
+              "type": "integer"
+            },
+            "mm": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer"
+            },
+            "year": {
+              "type": "integer"
+            }
+          }
+        },
+        "url": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
+
+Settings:
+
+{
+  "index.blocks.read_only_allow_delete": "false",
+  "index.priority": "1",
+  "index.query.default_field": [
+    "*"
+  ],
+  "index.refresh_interval": "1s",
+  "index.write.wait_for_active_shards": "1",
+  "index.analysis.analyzer.ja_search_analyzer.filter": [
+    "kuromoji_baseform",
+    "ja_stop",
+    "kuromoji_number",
+    "kuromoji_stemmer"
+  ],
+  "index.analysis.analyzer.ja_search_analyzer.type": "custom",
+  "index.analysis.analyzer.ja_search_analyzer.tokenizer": "ja_search_tokenizer",
+  "index.analysis.analyzer.ja_analyzer.filter": [
+    "kuromoji_baseform",
+    "kuromoji_number",
+    "kuromoji_stemmer"
+  ],
+  "index.analysis.analyzer.ja_analyzer.type": "custom",
+  "index.analysis.analyzer.ja_analyzer.tokenizer": "ja_search_tokenizer",
+  "index.analysis.tokenizer.ja_tokenizer.mode": "normal",
+  "index.analysis.tokenizer.ja_tokenizer.type": "kuromoji_tokenizer",
+  "index.analysis.tokenizer.ja_search_tokenizer.mode": "search",
+  "index.analysis.tokenizer.ja_search_tokenizer.type": "kuromoji_tokenizer",
+  "index.number_of_replicas": "1"
+}
+
+
+Command to create the index:
+
+
+PUT covid19-pages-ja-v1
+{
+    "settings": {
+        "analysis": {
+            "tokenizer": {
+                "ja_tokenizer": {
+                    "type": "kuromoji_tokenizer",
+                    "mode": "normal"
+                },
+                "ja_search_tokenizer": {
+                    "type": "kuromoji_tokenizer",
+                    "mode": "search"
+                }
+            },
+            "analyzer":{
+                "ja_analyzer":{
+                    "type":"custom",
+                    "tokenizer":"ja_search_tokenizer",
+                    "filter": [
+                        "kuromoji_baseform",
+                        "kuromoji_number",
+                        "kuromoji_stemmer"
+                    ]
+                },
+                "ja_search_analyzer":{
+                    "type":"custom",
+                    "tokenizer":"ja_search_tokenizer",
+                    "filter": [
+                        "kuromoji_baseform",
+                        "ja_stop",
+                        "kuromoji_number",
+                        "kuromoji_stemmer"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "region": {"type": "keyword"},
+            "domain": {"type": "keyword"},
+            "path": {"type": "keyword"},
+            "filename": {"type": "keyword"},
+            "url": {"type": "keyword"},
+            "timestamp": {
+                "type": "nested",
+                "properties": {
+                    "year": {"type": "integer"},
+                    "month": {"type": "integer"},
+                    "day": {"type": "integer"},
+                    "hh": {"type": "integer"},
+                    "mm": {"type": "integer"},
+                    "full": {"type": "date"}
+                }
+            },
+            "text": {
+                "type": "text",
+                "analyzer": "kuromoji",
+                "fields": {
+                    "raw": { "type": "keyword" }
+                }
+            }
+        }
+    }
+}
+
+POST /_aliases
+{
+    "actions": [
+        { "add": {
+            "alias": "covid19-pages-ja",
+            "index": "covid19-pages-ja-v1"
+        }}
+    ]
+}
+

@@ -1,0 +1,221 @@
+Cheatsheet
+==========
+
+#
+# List all indices.
+#
+GET /_cat/indices
+
+
+#
+# List all aliases.
+#
+GET /_cat/aliases
+
+
+#
+# List all records of an index.
+# By default, the page size is 10 so
+# only the 10 first records are shown.
+#
+
+GET /covid19-pages-ja/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+
+
+#
+# List all records of an index.
+# In this case, the page size is 30 and 
+# we want the page 2.
+#
+
+GET /covid19-pages-ja/_search
+{
+  "query": {
+    "match_all": {}
+  },
+  "size": 30,
+  "from": 30
+}
+
+
+#
+# Search records which their text field contains "名古屋".
+#
+
+GET /covid19-pages-ja/_search
+{
+  "query": {
+    "match": {
+      "text": "名古屋市"
+    }
+  }
+}
+
+
+#
+# Open an index.
+#
+
+POST /covid19-pages-ja/_open
+
+#
+# Block (or unblock) writing operations on an index.
+#
+
+PUT /covid19-pages-ja/_settings
+{
+    "settings": { "index.blocks.write": "true" }
+}
+
+
+#
+# And clone the index (make a copy of it).
+#
+
+POST /covid19-pages-ja/_clone/covid19-pages-ja-temp
+{
+    "settings": { "index.blocks.write": null }
+}
+
+
+#
+# Wait until the status of an index becomes green.
+#
+
+GET /_cluster/health/covid19-pages-ja-v1?wait_for_status=green&timeout=10s
+
+
+#
+# Delete an index.
+#
+
+DELETE /covid-19-index-v2
+
+#
+# Create an alias.
+#
+
+POST /_aliases
+{
+    "actions": [
+        { "add": {
+            "alias": "covid19-pages-ja",
+            "index": "covid19-pages-ja-v1"
+        }}
+    ]
+}
+
+
+#
+# Update a mapping.
+#
+
+PUT covid-19-index/_mapping
+{
+    "properties": {
+        "text_ja": {
+            "type": "text",
+            "analyzer": "kuromoji",
+            "fields": {
+                "raw": { "type": "keyword" }
+            }
+        }
+    }
+}
+
+
+#
+# Reindex all records.
+#
+
+POST _reindex
+{
+  "source": {
+    "index": "covid19-pages-ja-v1"
+  },
+  "dest": {
+    "index": "covid19-pages-ja-v2"
+  }
+}
+
+
+#
+# Get the status of an index.
+#
+
+GET covid-19-index/_stats
+
+
+# Create a complex index.
+PUT covid19-pages-ja-v1
+{
+    "settings": {
+        "analysis": {
+            "tokenizer": {
+                "ja_tokenizer": {
+                    "type": "kuromoji_tokenizer",
+                    "mode": "normal"
+                },
+                "ja_search_tokenizer": {
+                    "type": "kuromoji_tokenizer",
+                    "mode": "search"
+                }
+            },
+            "analyzer":{
+                "ja_analyzer":{
+                    "type":"custom",
+                    "tokenizer":"ja_search_tokenizer",
+                    "filter": [
+                        "kuromoji_baseform",
+                        "kuromoji_number",
+                        "kuromoji_stemmer"
+                    ]
+                },
+                "ja_search_analyzer":{
+                    "type":"custom",
+                    "tokenizer":"ja_search_tokenizer",
+                    "filter": [
+                        "kuromoji_baseform",
+                        "ja_stop",
+                        "kuromoji_number",
+                        "kuromoji_stemmer"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "region": {"type": "keyword"},
+            "domain": {"type": "keyword"},
+            "path": {"type": "keyword"},
+            "filename": {"type": "keyword"},
+            "url": {"type": "keyword"},
+            "timestamp": {
+                "type": "nested",
+                "properties": {
+                    "year": {"type": "integer"},
+                    "month": {"type": "integer"},
+                    "day": {"type": "integer"},
+                    "hh": {"type": "integer"},
+                    "mm": {"type": "integer"},
+                    "full": {"type": "date"}
+                }
+            },
+            "text": {
+                "type": "text",
+                "analyzer": "kuromoji",
+                "fields": {
+                    "raw": { "type": "keyword" }
+                }
+            }
+        }
+    }
+}
+
+
