@@ -123,7 +123,7 @@ class Producer(threading.Thread):
 
 class Converter(threading.Thread):
 
-    def __init__(self, identifier, new_xml_files_dir, elastic_search_handler):
+    def __init__(self, identifier, new_xml_files_dir, elastic_search_handler=None):
         threading.Thread.__init__(self)
         self.name = "Converter: {}".format(identifier)
         self.identifier = identifier
@@ -155,7 +155,8 @@ class Converter(threading.Thread):
                             xml_file.write(process.stdout)
                         logger.info("Output file {}: OK".format(www2sf_output_file))
 
-                        elastic_search_handler.update_record(www2sf_input_file)
+                        if self.elastic_search_handler is not None:
+                            self.elastic_search_handler.update_record(www2sf_input_file)
 
                         new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
                         new_xml_file_lock = "{0}.lock".format(new_xml_filename)
@@ -234,7 +235,7 @@ class ElasticSearchHandler:
             text = text_file.read()
 
         record = {
-            'text_ja': text,
+            'text': text,
             'region': region,
             'domain': domain,
             'path': path,
@@ -284,7 +285,9 @@ if __name__ == '__main__':
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
         
-        elastic_search_handler = ElasticSearchHandler(config['elastic_search'])
+        elastic_search_handler = None
+        if 'elastic_search' in config:
+            elastic_search_handler = ElasticSearchHandler(config['elastic_search'])
 
         now = datetime.datetime.now()
 
