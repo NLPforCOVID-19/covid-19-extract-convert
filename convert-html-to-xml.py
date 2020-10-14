@@ -1,4 +1,5 @@
 import datetime
+from dateutil import tz
 from elasticsearch import Elasticsearch
 from filelock import FileLock
 import glob
@@ -213,6 +214,8 @@ class ElasticSearchHandler:
         timestamp_month = dirs[-3]
         timestamp_day_time = dirs[-2]
         timestamp_day, timestamp_hh, timestamp_mm = timestamp_day_time.split("-")
+        timestamp_local = datetime.datetime(int(timestamp_year), int(timestamp_month), int(timestamp_day), int(timestamp_hh), int(timestamp_mm))
+        timestamp_utc = timestamp_local.astimezone(tz.gettz('UTC')).replace(tzinfo=None)
         filename = dirs[-1][:-5]
 
         record_id = "/".join([region, domain, path, filename])
@@ -245,7 +248,8 @@ class ElasticSearchHandler:
                 'day': int(timestamp_day),
                 'hh': int(timestamp_hh),
                 'mm': int(timestamp_mm),
-                'full': datetime.datetime(int(timestamp_year), int(timestamp_month), int(timestamp_day), int(timestamp_hh), int(timestamp_mm))
+                'local': timestamp_local,
+                'utc': timestamp_utc
             },
             'filename': filename,
             'url': url

@@ -46,8 +46,11 @@ Mappings:
             "day": {
               "type": "integer"
             },
-            "full": {
+            "utc": {
               "type": "date"
+            },
+            "local": {
+              "type": "keyword"
             },
             "hh": {
               "type": "integer"
@@ -160,7 +163,8 @@ PUT covid19-pages-ja-v1
                     "day": {"type": "integer"},
                     "hh": {"type": "integer"},
                     "mm": {"type": "integer"},
-                    "full": {"type": "date"}
+                    "local": {"type": "keyword"},
+                    "utc": {"type": "date"}
                 }
             },
             "text": {
