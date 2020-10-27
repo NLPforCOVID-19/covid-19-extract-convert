@@ -1,6 +1,11 @@
 Cheatsheet
 ==========
 
+All the REST APIs are there:
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html
+
+
 #
 # List all indices.
 #
@@ -25,6 +30,11 @@ GET /covid19-pages-ja/_search
     "match_all": {}
   }
 }
+
+#
+# Get a specific record.
+# The <_id> part must be urlencoded (e.g.: / becomes %2F).
+GET /covid19-pages-ja/_doc/<_id>
 
 
 #

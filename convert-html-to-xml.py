@@ -1,6 +1,5 @@
 import datetime
-from dateutil import tz
-from elasticsearch import Elasticsearch
+from elastic_search_utils import ElasticSearchImporter
 from filelock import FileLock
 import glob
 import json
@@ -13,6 +12,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 
 
 def signal_handler(sig, frame):
@@ -157,7 +157,7 @@ class Converter(threading.Thread):
                         logger.info("Output file {}: OK".format(www2sf_output_file))
 
                         if self.elastic_search_handler is not None:
-                            self.elastic_search_handler.update_record(www2sf_input_file)
+                            self.elastic_search_handler.update_record(www2sf_input_file[:-5] + ".txt")
 
                         new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
                         new_xml_file_lock = "{0}.lock".format(new_xml_filename)
@@ -192,72 +192,8 @@ class Converter(threading.Thread):
             except:
                 e = sys.exc_info()[0]
                 logger.info("An error has occurred: %s" % e)
+                # logger.info("An error has occurred: %s" % traceback.format_exc())
 
-
-class ElasticSearchHandler:
-
-    def __init__(self, config):
-        self.host = config['host']
-        self.port = config['port']
-        self.index = config['index']
-
-        self.es = Elasticsearch([f'http://{self.host}:{self.port}'], use_ssl=False)
-
-    def update_record(self, input_file):
-        logger.info(f"ES update_record: {input_file}")
-
-        dirs = input_file[len(html_dir) + 1:].split("/")
-        region = dirs[0]
-        domain = dirs[2]
-        path = "/".join(dirs[3:-4])
-        timestamp_year = dirs[-4]
-        timestamp_month = dirs[-3]
-        timestamp_day_time = dirs[-2]
-        timestamp_day, timestamp_hh, timestamp_mm = timestamp_day_time.split("-")
-        timestamp_local = datetime.datetime(int(timestamp_year), int(timestamp_month), int(timestamp_day), int(timestamp_hh), int(timestamp_mm))
-        timestamp_utc = timestamp_local.astimezone(tz.gettz('UTC')).replace(tzinfo=None)
-        filename = dirs[-1][:-5]
-
-        record_id = "/".join([region, domain, path, filename])
-
-        url_filename = f"{html_dir}/{region}/orig/{domain}/{path}/{timestamp_year}/{timestamp_month}/{timestamp_day_time}/{filename}.url"
-        txt_filename = f"{html_dir}/{region}/ja_translated/{domain}/{path}/{timestamp_year}/{timestamp_month}/{timestamp_day_time}/{filename}.txt"
-       
-        if not os.path.isfile(url_filename):
-            logger.info(f"url_file {url_filename} not found so skip it.")
-            return
-
-        if not os.path.isfile(txt_filename):
-            logger.info(f"txt_file {txt_filename}is not found so skip it.")
-            return
-
-        with open(url_filename, encoding='utf-8') as url_file:
-            url = url_file.read()
-
-        with open(txt_filename, encoding='utf-8') as text_file:
-            text = text_file.read()
-
-        record = {
-            'text': text,
-            'region': region,
-            'domain': domain,
-            'path': path,
-            'timestamp': {
-                'year': int(timestamp_year),
-                'month': int(timestamp_month),
-                'day': int(timestamp_day),
-                'hh': int(timestamp_hh),
-                'mm': int(timestamp_mm),
-                'local': timestamp_local,
-                'utc': timestamp_utc
-            },
-            'filename': filename,
-            'url': url
-        }
-
-        logger.info(f"Update entry on elastic search: id={record_id} record={record}")
-        res = self.es.index(index=self.index, id=record_id, body=record)
-        logger.info(f"Response for {record_id}={res}")
 
 if __name__ == '__main__':
     import argparse
@@ -291,7 +227,14 @@ if __name__ == '__main__':
         
         elastic_search_handler = None
         if 'elastic_search' in config:
-            elastic_search_handler = ElasticSearchHandler(config['elastic_search'])
+            elastic_search_handler = ElasticSearchImporter(
+                config['elastic_search']['host'],
+                config['elastic_search']['port'],
+                f"{config['elastic_search']['index_basename']}-ja",
+                config['html_dir'],
+                "ja",
+                logger
+            )
 
         now = datetime.datetime.now()
 

@@ -264,7 +264,8 @@
     "elastic_search": {
         "host": "localhost",
         "port": 9200,
-        "index": "covid-19-index"
+        "index_basename": "covid19-pages",
+        "index_period": 14
     }
 }
 

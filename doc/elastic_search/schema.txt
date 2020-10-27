@@ -188,3 +188,54 @@ POST /_aliases
     ]
 }
 
+PUT covid19-pages-en-v1
+{
+    "settings": {
+        "analysis": {
+            "analyzer":{
+                "en_analyzer": {
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase"
+                    ]
+                }
+            }
+        }
+    },
+    "mappings": {
+        "properties": {
+            "region": {"type": "keyword"},
+            "domain": {"type": "keyword"},
+            "path": {"type": "keyword"},
+            "filename": {"type": "keyword"},
+            "url": {"type": "keyword"},
+            "timestamp": {
+                "type": "nested",
+                "properties": {
+                    "year": {"type": "integer"},
+                    "month": {"type": "integer"},
+                    "day": {"type": "integer"},
+                    "hh": {"type": "integer"},
+                    "mm": {"type": "integer"},
+                    "local": {"type": "keyword"},
+                    "utc": {"type": "date"}
+                }
+            },
+            "text": {
+                "type": "text",
+                "analyzer": "en_analyzer"
+            }
+        }
+    }
+}
+
+POST /_aliases
+{
+    "actions": [
+        { "add": {
+            "alias": "covid19-pages-en",
+            "index": "covid19-pages-en-v1"
+        }}
+    ]
+}
+
