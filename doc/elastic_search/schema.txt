@@ -4,13 +4,13 @@ Elastic Search Schema
 Aliases
 -------
 
-covid19-pages-ja => covid19-pages-ja-v1
+covid19-pages-ja => covid19-pages-ja-v2
 
 
 Indices
 -------
 
-covid19-pages-ja-v1: 
+covid19-pages-ja-v2: Same as v1 but without the text.raw field.
 
 
 Mappings:
@@ -32,11 +32,7 @@ Mappings:
           "type": "keyword"
         },
         "text": {
-          "type": "text",
-          "fields": {
-            "raw": {
-              "type": "keyword"
-            }
+          "type": "text"
           },
           "analyzer": "kuromoji"
         },
@@ -111,7 +107,7 @@ Settings:
 Command to create the index:
 
 
-PUT covid19-pages-ja-v1
+PUT covid19-pages-ja-v2
 {
     "settings": {
         "analysis": {
@@ -169,10 +165,7 @@ PUT covid19-pages-ja-v1
             },
             "text": {
                 "type": "text",
-                "analyzer": "kuromoji",
-                "fields": {
-                    "raw": { "type": "keyword" }
-                }
+                "analyzer": "kuromoji"
             }
         }
     }

@@ -112,52 +112,34 @@ class Importer(threading.Thread):
     def run(self):
         global queue_files_to_import
         while True:
-            if self.stopped:
-                logger.info(f"Importer {self.identifier} has been stopped.")
-                break
+            try:
+                if self.stopped:
+                    logger.info(f"Importer {self.identifier} has been stopped.")
+                    break
 
-            if queue_files_to_import.empty():
-                break
+                if queue_files_to_import.empty():
+                    break
 
-            file_to_import = queue_files_to_import.get()
-            logger.info(f"Process file: {file_to_import}")
-            record_id = self.elastic_search_handler.update_record(file_to_import)
-            if record_id is not None:
+                file_to_import = queue_files_to_import.get()
+                logger.info(f"Process file: {file_to_import}")
+                record_id = self.elastic_search_handler.update_record(file_to_import)
+                if record_id is not None:
+                    mutex.acquire()
+                    try:
+                        added_records.add(record_id)
+                    finally:
+                        mutex.release()
+
                 mutex.acquire()
                 try:
-                    added_records.add(record_id)
+                    processed_files.append(file_to_import)
                 finally:
                     mutex.release()
+                queue_files_to_import.task_done()
 
-            mutex.acquire()
-            try:
-                processed_files.append(file_to_import)
-            finally:
-                mutex.release()
-            queue_files_to_import.task_done()
-
-            # try:
-            #     if self.stopped:
-            #         logger.info(f"Importer {self.identifier} has been stopped.")
-            #         break
-
-            #     if queue_files_to_import.empty():
-            #         break
-
-            #     file_to_import = queue_files_to_import.get()
-            #     logger.info(f"Process file: {file_to_import}")
-            #     self.elastic_search_handler.update_record(file_to_import)
-
-            #     mutex.acquire()
-            #     try:
-            #         processed_files.append(file_to_import)
-            #     finally:
-            #         mutex.release()
-            #     queue_files_to_import.task_done()
-
-            # except:
-            #     e = sys.exc_info()[0]
-            #     logger.info("An error has occurred: %s" % e)
+            except:
+                e = sys.exc_info()[0]
+                logger.info("An error has occurred: %s" % e)
 
 
 def check_positive(value):
@@ -232,8 +214,8 @@ if __name__ == '__main__':
         importers = []
 
         for region in os.listdir(html_dir):
-            if region != 'cn':
-                continue
+            # if region != 'cn':
+            #     continue
             producer = Producer(args.lang, region, period_start)
             producers.append(producer)
             producer.start()

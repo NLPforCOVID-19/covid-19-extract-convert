@@ -140,7 +140,7 @@ PUT covid-19-index/_mapping
 
 
 #
-# Reindex all records.
+# Reindex all records for a small index.
 #
 
 POST _reindex
@@ -152,6 +152,24 @@ POST _reindex
     "index": "covid19-pages-ja-v2"
   }
 }
+
+
+#
+# Reindex all records for a large index.
+#
+
+POST _reindex?wait_for_completion=false
+{
+  "source": {
+    "index": "covid19-pages-ja-v1"
+  },
+  "dest": {
+    "index": "covid19-pages-ja-v2"
+  }
+}
+
+# Retrieve the status of the reindexing task.
+GET .tasks/_doc/{taskId}
 
 
 #
