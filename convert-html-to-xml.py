@@ -232,6 +232,8 @@ if __name__ == '__main__':
         mutex = threading.Lock()
 
         producers = []
+        converters = []
+
         for region in os.listdir(html_dir):
             # Skip French region temporarily.
             # if region == 'fr':
@@ -256,7 +258,6 @@ if __name__ == '__main__':
         #     queue_html_files.task_done()
 
         converter_count = 40
-        converters = []
         for c in range(0, converter_count):
             converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
