@@ -10,7 +10,9 @@ covid19-pages-ja => covid19-pages-ja-v2
 Indices
 -------
 
+covid19-pages-ja-v3: Same as v2 with changed analyzer and search_analyzer for the text field.
 covid19-pages-ja-v2: Same as v1 but without the text.raw field.
+covid19-pages-ja-v1: Original.
 
 
 Mappings:
@@ -32,9 +34,9 @@ Mappings:
           "type": "keyword"
         },
         "text": {
-          "type": "text"
-          },
-          "analyzer": "kuromoji"
+          "type": "text",
+          "analyzer": "ja_analyzer",
+          "search_analyzer": "ja_search_analyzer"
         },
         "timestamp": {
           "type": "nested",
@@ -42,20 +44,20 @@ Mappings:
             "day": {
               "type": "integer"
             },
-            "utc": {
-              "type": "date"
+            "hh": {
+              "type": "integer"
             },
             "local": {
               "type": "keyword"
-            },
-            "hh": {
-              "type": "integer"
             },
             "mm": {
               "type": "integer"
             },
             "month": {
               "type": "integer"
+            },
+            "utc": {
+              "type": "date"
             },
             "year": {
               "type": "integer"
@@ -70,44 +72,295 @@ Mappings:
   }
 }
 
-
 Settings:
 
 {
-  "index.blocks.read_only_allow_delete": "false",
-  "index.priority": "1",
-  "index.query.default_field": [
-    "*"
-  ],
-  "index.refresh_interval": "1s",
-  "index.write.wait_for_active_shards": "1",
-  "index.analysis.analyzer.ja_search_analyzer.filter": [
-    "kuromoji_baseform",
-    "ja_stop",
-    "kuromoji_number",
-    "kuromoji_stemmer"
-  ],
-  "index.analysis.analyzer.ja_search_analyzer.type": "custom",
-  "index.analysis.analyzer.ja_search_analyzer.tokenizer": "ja_search_tokenizer",
-  "index.analysis.analyzer.ja_analyzer.filter": [
-    "kuromoji_baseform",
-    "kuromoji_number",
-    "kuromoji_stemmer"
-  ],
-  "index.analysis.analyzer.ja_analyzer.type": "custom",
-  "index.analysis.analyzer.ja_analyzer.tokenizer": "ja_search_tokenizer",
-  "index.analysis.tokenizer.ja_tokenizer.mode": "normal",
-  "index.analysis.tokenizer.ja_tokenizer.type": "kuromoji_tokenizer",
-  "index.analysis.tokenizer.ja_search_tokenizer.mode": "search",
-  "index.analysis.tokenizer.ja_search_tokenizer.type": "kuromoji_tokenizer",
-  "index.number_of_replicas": "1"
+  "settings": {
+    "index": {
+      "number_of_shards": "1",
+      "provided_name": "covid19-pages-ja-v3",
+      "creation_date": "1603846093916",
+      "analysis": {
+        "analyzer": {
+          "ja_search_analyzer": {
+            "filter": [
+              "kuromoji_baseform",
+              "ja_stop",
+              "kuromoji_number",
+              "kuromoji_stemmer"
+            ],
+            "type": "custom",
+            "tokenizer": "ja_search_tokenizer"
+          },
+          "ja_analyzer": {
+            "filter": [
+              "kuromoji_baseform",
+              "kuromoji_number",
+              "kuromoji_stemmer"
+            ],
+            "type": "custom",
+            "tokenizer": "ja_search_tokenizer"
+          }
+        },
+        "tokenizer": {
+          "ja_tokenizer": {
+            "mode": "normal",
+            "type": "kuromoji_tokenizer"
+          },
+          "ja_search_tokenizer": {
+            "mode": "search",
+            "type": "kuromoji_tokenizer"
+          }
+        }
+      },
+      "number_of_replicas": "1",
+      "uuid": "eAL-bsYOSy-zxoaFVKkXew",
+      "version": {
+        "created": "7090299"
+      }
+    }
+  },
+  "defaults": {
+    "index": {
+      "flush_after_merge": "512mb",
+      "final_pipeline": "_none",
+      "max_inner_result_window": "100",
+      "unassigned": {
+        "node_left": {
+          "delayed_timeout": "1m"
+        }
+      },
+      "max_terms_count": "65536",
+      "lifecycle": {
+        "name": "",
+        "parse_origination_date": "false",
+        "indexing_complete": "false",
+        "rollover_alias": "",
+        "origination_date": "-1"
+      },
+      "routing_partition_size": "1",
+      "force_memory_term_dictionary": "false",
+      "max_docvalue_fields_search": "100",
+      "merge": {
+        "scheduler": {
+          "max_thread_count": "4",
+          "auto_throttle": "true",
+          "max_merge_count": "9"
+        },
+        "policy": {
+          "reclaim_deletes_weight": "2.0",
+          "floor_segment": "2mb",
+          "max_merge_at_once_explicit": "30",
+          "max_merge_at_once": "10",
+          "max_merged_segment": "5gb",
+          "expunge_deletes_allowed": "10.0",
+          "segments_per_tier": "10.0",
+          "deletes_pct_allowed": "33.0"
+        }
+      },
+      "max_refresh_listeners": "1000",
+      "max_regex_length": "1000",
+      "load_fixed_bitset_filters_eagerly": "true",
+      "number_of_routing_shards": "1",
+      "write": {
+        "wait_for_active_shards": "1"
+      },
+      "verified_before_close": "false",
+      "mapping": {
+        "coerce": "false",
+        "nested_fields": {
+          "limit": "50"
+        },
+        "depth": {
+          "limit": "20"
+        },
+        "field_name_length": {
+          "limit": "9223372036854775807"
+        },
+        "total_fields": {
+          "limit": "1000"
+        },
+        "nested_objects": {
+          "limit": "10000"
+        },
+        "ignore_malformed": "false"
+      },
+      "source_only": "false",
+      "soft_deletes": {
+        "enabled": "false",
+        "retention": {
+          "operations": "0"
+        },
+        "retention_lease": {
+          "period": "12h"
+        }
+      },
+      "max_script_fields": "32",
+      "query": {
+        "default_field": [
+          "*"
+        ],
+        "parse": {
+          "allow_unmapped_fields": "true"
+        }
+      },
+      "format": "0",
+      "frozen": "false",
+      "sort": {
+        "missing": [],
+        "mode": [],
+        "field": [],
+        "order": []
+      },
+      "priority": "1",
+      "codec": "default",
+      "max_rescore_window": "10000",
+      "max_adjacency_matrix_filters": "100",
+      "analyze": {
+        "max_token_count": "10000"
+      },
+      "gc_deletes": "60s",
+      "top_metrics_max_size": "10",
+      "optimize_auto_generated_id": "true",
+      "max_ngram_diff": "1",
+      "hidden": "false",
+      "translog": {
+        "generation_threshold_size": "64mb",
+        "flush_threshold_size": "512mb",
+        "sync_interval": "5s",
+        "retention": {
+          "size": "512MB",
+          "age": "12h"
+        },
+        "durability": "REQUEST"
+      },
+      "auto_expand_replicas": "false",
+      "mapper": {
+        "dynamic": "true"
+      },
+      "recovery": {
+        "type": ""
+      },
+      "requests": {
+        "cache": {
+          "enable": "true"
+        }
+      },
+      "data_path": "",
+      "highlight": {
+        "max_analyzed_offset": "1000000"
+      },
+      "routing": {
+        "rebalance": {
+          "enable": "all"
+        },
+        "allocation": {
+          "enable": "all",
+          "total_shards_per_node": "-1"
+        }
+      },
+      "search": {
+        "slowlog": {
+          "level": "TRACE",
+          "threshold": {
+            "fetch": {
+              "warn": "-1",
+              "trace": "-1",
+              "debug": "-1",
+              "info": "-1"
+            },
+            "query": {
+              "warn": "-1",
+              "trace": "-1",
+              "debug": "-1",
+              "info": "-1"
+            }
+          }
+        },
+        "idle": {
+          "after": "30s"
+        },
+        "throttled": "false"
+      },
+      "fielddata": {
+        "cache": "node"
+      },
+      "default_pipeline": "_none",
+      "max_slices_per_scroll": "1024",
+      "shard": {
+        "check_on_startup": "false"
+      },
+      "xpack": {
+        "watcher": {
+          "template": {
+            "version": ""
+          }
+        },
+        "version": "",
+        "ccr": {
+          "following_index": "false"
+        }
+      },
+      "percolator": {
+        "map_unmapped_fields_as_text": "false"
+      },
+      "allocation": {
+        "max_retries": "5",
+        "existing_shards_allocator": "gateway_allocator"
+      },
+      "refresh_interval": "1s",
+      "indexing": {
+        "slowlog": {
+          "reformat": "true",
+          "threshold": {
+            "index": {
+              "warn": "-1",
+              "trace": "-1",
+              "debug": "-1",
+              "info": "-1"
+            }
+          },
+          "source": "1000",
+          "level": "TRACE"
+        }
+      },
+      "compound_format": "0.1",
+      "blocks": {
+        "metadata": "false",
+        "read": "false",
+        "read_only_allow_delete": "false",
+        "read_only": "false",
+        "write": "false"
+      },
+      "max_result_window": "10000",
+      "store": {
+        "stats_refresh_interval": "10s",
+        "type": "",
+        "fs": {
+          "fs_lock": "native"
+        },
+        "preload": []
+      },
+      "queries": {
+        "cache": {
+          "enabled": "true"
+        }
+      },
+      "warmer": {
+        "enabled": "true"
+      },
+      "max_shingle_diff": "3",
+      "query_string": {
+        "lenient": "false"
+      }
+    }
+  }
 }
 
 
 Command to create the index:
 
-
-PUT covid19-pages-ja-v2
+PUT covid19-pages-ja-v3
 {
     "settings": {
         "analysis": {
@@ -165,7 +418,8 @@ PUT covid19-pages-ja-v2
             },
             "text": {
                 "type": "text",
-                "analyzer": "kuromoji"
+                "analyzer": "ja_analyzer",
+                "search_analyzer": "ja_search_analyzer"
             }
         }
     }
