@@ -1,5 +1,4 @@
 import datetime
-from elastic_search_utils import ElasticSearchImporter
 from filelock import FileLock
 import glob
 import json
@@ -124,13 +123,12 @@ class Producer(threading.Thread):
 
 class Converter(threading.Thread):
 
-    def __init__(self, identifier, new_xml_files_dir, elastic_search_handler=None):
+    def __init__(self, identifier, new_xml_files_dir):
         threading.Thread.__init__(self)
         self.name = "Converter: {}".format(identifier)
         self.identifier = identifier
         self.stopped = False
         self.new_xml_files_dir = new_xml_files_dir
-        self.elastic_search_handler = elastic_search_handler
 
     def run(self):
         global queue_html_files
@@ -155,9 +153,6 @@ class Converter(threading.Thread):
                         with open(www2sf_output_file, "wb") as xml_file:
                             xml_file.write(process.stdout)
                         logger.info("Output file {}: OK".format(www2sf_output_file))
-
-                        if self.elastic_search_handler is not None:
-                            self.elastic_search_handler.update_record(www2sf_input_file[:-5] + ".txt")
 
                         new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
                         new_xml_file_lock = "{0}.lock".format(new_xml_filename)
@@ -225,17 +220,6 @@ if __name__ == '__main__':
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
         
-        elastic_search_handler = None
-        if 'elastic_search' in config:
-            elastic_search_handler = ElasticSearchImporter(
-                config['elastic_search']['host'],
-                config['elastic_search']['port'],
-                f"{config['elastic_search']['index_basename']}-ja",
-                config['html_dir'],
-                "ja",
-                logger
-            )
-
         now = datetime.datetime.now()
 
         queue_html_files = queue.Queue()
@@ -274,7 +258,7 @@ if __name__ == '__main__':
         converter_count = 40
         converters = []
         for c in range(0, converter_count):
-            converter = Converter(c, new_xml_files_dir, elastic_search_handler)
+            converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
             converter.start()
 
