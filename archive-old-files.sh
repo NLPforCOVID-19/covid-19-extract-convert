@@ -50,15 +50,19 @@ do
     # Archive new-html-files.
     mkdir -p $ARCHIVE_DIR/new-html-files/$tmp_year/$tmp_month
     mv $NEW_HTML_FILES_DIR/new-html-files-$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/new-html-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-html-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
 
     # Archive new-translated-files.
     mkdir -p $ARCHIVE_DIR/new-translated-files/$tmp_year/$tmp_month
     mv $NEW_TRANSLATED_FILES_DIR/new-translated-files-$tmp_year-$tmp_month*.txt* $ARCHIVE_DIR/new-translated-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-translated-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     mv $NEW_TRANSLATED_FILES_DIR/new-translated-files-en-$tmp_year-$tmp_month*.txt* $ARCHIVE_DIR/new-translated-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-translated-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     
     # Archive new-xml-files.
     mkdir -p $ARCHIVE_DIR/new-xml-files/$tmp_year/$tmp_month
     mv $NEW_XML_FILES_DIR/new-xml-files-$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/new-xml-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-xml-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     rm -f $NEW_XML_FILES_DIR/new-xml-files-$tmp_year-$tmp_month*.txt.lock
 
     # Archive extract
@@ -67,6 +71,7 @@ do
         domain=$(basename $domain_dir)
         mkdir -p $ARCHIVE_DIR/extracter/$domain/$tmp_year/$tmp_month
         mv $domain_dir/extracter_$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/extracter/$domain/$tmp_year/$tmp_month/.
+        find $ARCHIVE_DIR/extracter/$domain/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     done
 
 
