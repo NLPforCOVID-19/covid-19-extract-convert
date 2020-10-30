@@ -11,6 +11,8 @@ NEW_HTML_FILES_DIR=$COVID_RUN_DIR/new-html-files
 NEW_TRANSLATED_FILES_DIR=$COVID_RUN_DIR/new-translated-files
 NEW_XML_FILES_DIR=$COVID_RUN_DIR/new-xml-files
 EXTRACTER_DIR=$COVID_RUN_DIR/extracter
+EXTRACTER_LOG_DIR=/home/frederic/covid19/translation/logs
+CONVERTER_LOG_DIR=/home/frederic/covid19/translation/logs
 
 
 now=$(date +'%Y/%m/%d %H:%M')
@@ -65,7 +67,7 @@ do
     find $ARCHIVE_DIR/new-xml-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     rm -f $NEW_XML_FILES_DIR/new-xml-files-$tmp_year-$tmp_month*.txt.lock
 
-    # Archive extract
+    # Archive extracted files.
     for domain_dir in $EXTRACTER_DIR/*
     do
         domain=$(basename $domain_dir)
@@ -73,6 +75,16 @@ do
         mv $domain_dir/extracter_$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/extracter/$domain/$tmp_year/$tmp_month/.
         find $ARCHIVE_DIR/extracter/$domain/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
     done
+
+    # Archive extracter log files.
+    mkdir -p $ARCHIVE_DIR/logs/extracter/$tmp_year/$tmp_month
+    mv $EXTRACTER_LOG_DIR/extracter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/extracter/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/logs/extracter/$tmp_year/$tmp_month -type f -exec gzip {} \;
+
+    # Archive converter log files.
+    mkdir -p $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month
+    mv $converter_LOG_DIR/converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month -type f -exec gzip {} \;
 
 
     if [[ ${tmp_month#0} -eq 12 ]];
