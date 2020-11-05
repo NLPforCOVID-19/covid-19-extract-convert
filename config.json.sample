@@ -1,5 +1,6 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
+    "default_similarity_threshold": 0.8,
     "domains": {
         "bundle.au": {
             "region": "au",
@@ -101,7 +102,8 @@
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.francetvinfo\\.fr"],
-            "sources": ["francetvinfo.fr"]
+            "sources": ["francetvinfo.fr"],
+            "similarity_threshold": 0.7
         },
         "www.gouvernement.fr": {
             "region": "fr",
@@ -210,7 +212,8 @@
             "region": "us",
             "language": "en",
             "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"],
-            "sources": ["nytimes.com"]
+            "sources": ["nytimes.com"],
+            "similarity_threshold": 0.7
         },
         "www.usa.gov": {
             "region": "us",
