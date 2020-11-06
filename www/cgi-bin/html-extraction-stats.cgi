@@ -152,9 +152,10 @@ for stat_filename in sorted(glob.glob('stats/stats-*')):
         data_json = json.load(stat_file)
         for domain in data_json:
             count = data_json[domain]
-            if domain not in config['domains']:
+            if domain not in config['domains'] and domain not in config['domains_disabled']:
                 continue
-            region = config['domains'][domain]['region']
+
+            region = config['domains'][domain]['region'] if domain in config['domains'] else config['domains_disabled'][domain]['region']
             if domain in totals_per_domain:
                 totals_per_domain[domain] += count
             else:
