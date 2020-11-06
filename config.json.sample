@@ -47,12 +47,6 @@
             "subdomains": ["[a-zA-Z.-]+\\.bundesregierung\\.de"],
             "sources": ["bundesregierung.de"]
         },
-        "www.rki.de": {
-            "region": "de",
-            "language": "de",
-            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
-            "sources": ["rki.de"]
-        },
         "www.spiegel.de": {
             "region": "de",
             "language": "de",
@@ -245,6 +239,14 @@
         "www.salute.gov.it": {
             "region": "it",
             "language": "it"
+        }
+    },
+    "domains_disabled": {
+        "www.rki.de": {
+            "region": "de",
+            "language": "de",
+            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
+            "sources": ["rki.de"]
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
