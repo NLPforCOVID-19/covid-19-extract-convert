@@ -7,6 +7,173 @@ Aliases
 covid19-pages-ja => covid19-pages-ja-v2
 
 
+Index Lifecycle Policies
+------------------------
+
+covid19-docs-ilm-policy:
+    - Hot phase: 14 days
+    - Delete phase: 7 days
+    - Wait for snapshot policy: daily-snapshot
+
+
+Index Templates
+---------------
+
+covid19-docs-ja-template:
+    - Index patterns: covid19-docs-ja-*
+    - Create data stream: Yes
+    - Index settings:
+        {
+          "index": {
+            "analysis": {
+              "analyzer": {
+                "ja_search_analyzer": {
+                  "filter": [
+                    "kuromoji_baseform",
+                    "ja_stop",
+                    "kuromoji_number",
+                    "kuromoji_stemmer"
+                  ],
+                  "type": "custom",
+                  "tokenizer": "ja_search_tokenizer"
+                },
+                "ja_analyzer": {
+                  "filter": [
+                    "kuromoji_baseform",
+                    "kuromoji_number",
+                    "kuromoji_stemmer"
+                  ],
+                  "type": "custom",
+                  "tokenizer": "ja_search_tokenizer"
+                }
+              },
+              "tokenizer": {
+                "ja_tokenizer": {
+                  "mode": "normal",
+                  "type": "kuromoji_tokenizer"
+                },
+                "ja_search_tokenizer": {
+                  "mode": "search",
+                  "type": "kuromoji_tokenizer"
+                }
+              }
+            },
+            "lifecycle": {
+              "name": "covid19-docs-ilm-policy",
+              "rollover_alias": "covid19-docs-ja"
+            }
+          }
+        }
+    - Mappings:
+        {
+          "properties": {
+            "domain": {
+              "type": "keyword"
+            },
+            "filename": {
+              "type": "keyword"
+            },
+            "path": {
+              "type": "keyword"
+            },
+            "region": {
+              "type": "keyword"
+            },
+            "text": {
+              "type": "text",
+              "analyzer": "ja_analyzer",
+              "search_analyzer": "ja_search_analyzer"
+            },
+            "timestamp": {
+              "type": "nested",
+              "properties": {
+                "day": {
+                  "type": "integer"
+                },
+                "hh": {
+                  "type": "integer"
+                },
+                "local": {
+                  "type": "keyword"
+                },
+                "mm": {
+                  "type": "integer"
+                },
+                "month": {
+                  "type": "integer"
+                },
+                "utc": {
+                  "type": "date"
+                },
+                "year": {
+                  "type": "integer"
+                }
+              }
+            },
+            "url": {
+              "type": "keyword"
+            }
+          }
+        }
+
+
+covid19-docs-en-template:
+    - Index patterns: covid19-docs-en-*
+    - Create data stream: Yes
+    - Index settings:
+        {
+          "index": {
+            "analysis": {
+              "analyzer": {
+                "en_analyzer": {
+                  "filter": [
+                    "lowercase"
+                  ],
+                  "tokenizer": "standard"
+                }
+              }
+            },
+            "lifecycle": {
+              "name": "covid19-docs-ilm-policy",
+              "rollover_alias": "covid19-docs-en"
+            }
+          }
+        }
+    - Mappings:
+        {
+            "properties": {
+                "region": {"type": "keyword"},
+                "domain": {"type": "keyword"},
+                "path": {"type": "keyword"},
+                "filename": {"type": "keyword"},
+                "url": {"type": "keyword"},
+                "timestamp": {
+                    "type": "nested",
+                    "properties": {
+                        "year": {"type": "integer"},
+                        "month": {"type": "integer"},
+                        "day": {"type": "integer"},
+                        "hh": {"type": "integer"},
+                        "mm": {"type": "integer"},
+                        "local": {"type": "keyword"},
+                        "utc": {"type": "date"}
+                    }
+                },
+                "text": {
+                    "type": "text",
+                    "analyzer": "en_analyzer"
+                }
+            }
+        }
+
+
+Data Streams
+------------
+
+Created automatically by the the Index Templates.
+
+
+
 Indices
 -------
 
@@ -357,6 +524,222 @@ Settings:
   }
 }
 
+
+Commands to create the Index Lifecylce Policies:
+
+PUT _ilm/policy/covid19-docs-ilm-policy
+{
+  "policy": {
+    "phases": {
+      "hot": {
+        "min_age": "0ms",
+        "actions": {
+          "rollover": {
+            "max_age": "14d",
+            "max_size": "50gb"
+          },
+          "set_priority": {
+            "priority": 100
+          }
+        }
+      },
+      "delete": {
+        "min_age": "7d",
+        "actions": {
+          "wait_for_snapshot": {
+            "policy": "daily-snapshots"
+          },
+          "delete": {
+            "delete_searchable_snapshot": true
+          }
+        }
+      }
+    }
+  }
+}
+
+
+Commands to create the Index Templates:
+
+PUT _index_template/covid19-docs-ja-template
+{
+  "template": {
+    "settings": {
+      "index": {
+        "analysis": {
+          "analyzer": {
+            "ja_search_analyzer": {
+              "filter": [
+                "kuromoji_baseform",
+                "ja_stop",
+                "kuromoji_number",
+                "kuromoji_stemmer"
+              ],
+              "type": "custom",
+              "tokenizer": "ja_search_tokenizer"
+            },
+            "ja_analyzer": {
+              "filter": [
+                "kuromoji_baseform",
+                "kuromoji_number",
+                "kuromoji_stemmer"
+              ],
+              "type": "custom",
+              "tokenizer": "ja_search_tokenizer"
+            }
+          },
+          "tokenizer": {
+            "ja_tokenizer": {
+              "mode": "normal",
+              "type": "kuromoji_tokenizer"
+            },
+            "ja_search_tokenizer": {
+              "mode": "search",
+              "type": "kuromoji_tokenizer"
+            }
+          }
+        },
+        "lifecycle": {
+          "name": "covid19-docs-ilm-policy",
+          "rollover_alias": "covid19-docs-ja"
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "path": {
+          "type": "keyword"
+        },
+        "filename": {
+          "type": "keyword"
+        },
+        "domain": {
+          "type": "keyword"
+        },
+        "text": {
+          "search_analyzer": "ja_search_analyzer",
+          "analyzer": "ja_analyzer",
+          "type": "text"
+        },
+        "region": {
+          "type": "keyword"
+        },
+        "url": {
+          "type": "keyword"
+        },
+        "timestamp": {
+          "type": "nested",
+          "properties": {
+            "hh": {
+              "type": "integer"
+            },
+            "mm": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer"
+            },
+            "utc": {
+              "type": "date"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "day": {
+              "type": "integer"
+            },
+            "local": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    }
+  },
+  "index_patterns": [
+    "covid19-docs-ja"
+  ],
+  "data_stream": {},
+  "composed_of": []
+}
+
+PUT _index_template/covid19-docs-en-template
+{
+  "template": {
+    "settings": {
+      "index": {
+        "analysis": {
+          "analyzer": {
+            "en_analyzer": {
+              "filter": [
+                "lowercase"
+              ],
+              "tokenizer": "standard"
+            }
+          }
+        },
+        "lifecycle": {
+          "name": "covid19-docs-ilm-policy",
+          "rollover_alias": "covid19-docs-en"
+        }
+      }
+    },
+    "mappings": {
+      "properties": {
+        "domain": {
+          "type": "keyword"
+        },
+        "filename": {
+          "type": "keyword"
+        },
+        "path": {
+          "type": "keyword"
+        },
+        "region": {
+          "type": "keyword"
+        },
+        "text": {
+          "analyzer": "en_analyzer",
+          "type": "text"
+        },
+        "timestamp": {
+          "type": "nested",
+          "properties": {
+            "day": {
+              "type": "integer"
+            },
+            "hh": {
+              "type": "integer"
+            },
+            "local": {
+              "type": "keyword"
+            },
+            "mm": {
+              "type": "integer"
+            },
+            "month": {
+              "type": "integer"
+            },
+            "utc": {
+              "type": "date"
+            },
+            "year": {
+              "type": "integer"
+            }
+          }
+        },
+        "url": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "index_patterns": [
+    "covid19-docs-en"
+  ],
+  "data_stream": {},
+  "composed_of": []
+}
 
 Command to create the index:
 

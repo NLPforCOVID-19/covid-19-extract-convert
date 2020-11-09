@@ -19,6 +19,15 @@ GET /_cat/aliases
 
 
 #
+# Insert a document into an index.
+#
+PUT /timeseries/_doc/tm-01
+{
+    "text": "Hello"
+}
+
+
+#
 # List all records of an index.
 # By default, the page size is 10 so
 # only the 10 first records are shown.
@@ -30,6 +39,24 @@ GET /covid19-pages-ja/_search
     "match_all": {}
   }
 }
+
+#
+# List all records of an index sorted by dates.
+# By default, the page size is 10 so
+# only the 10 first records are shown.
+#
+
+GET /covid19-pages-ja/_search
+{
+  "sort": [
+    { "timestamp.local": {"order": "desc", "nested_path": "timestamp"}}
+  ],
+  "query": {
+    "match_all": {}
+  }
+}
+
+
 
 #
 # Get a specific record.
