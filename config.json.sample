@@ -1,5 +1,6 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
+    "default_similarity_threshold": 0.8,
     "domains": {
         "bundle.au": {
             "region": "au",
@@ -46,17 +47,12 @@
             "subdomains": ["[a-zA-Z.-]+\\.bundesregierung\\.de"],
             "sources": ["bundesregierung.de"]
         },
-        "www.rki.de": {
-            "region": "de",
-            "language": "de",
-            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
-            "sources": ["rki.de"]
-        },
         "www.spiegel.de": {
             "region": "de",
             "language": "de",
             "subdomains": ["[a-zA-Z.-]+\\.spiegel\\.de"],
-            "sources": ["spiegel.de"]
+            "sources": ["spiegel.de"],
+            "similarity_threshold": 0.7
         },
         "www.zusammengegencorona.de": {
             "region": "de",
@@ -101,7 +97,8 @@
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.francetvinfo\\.fr"],
-            "sources": ["francetvinfo.fr"]
+            "sources": ["francetvinfo.fr"],
+            "similarity_threshold": 0.7
         },
         "www.gouvernement.fr": {
             "region": "fr",
@@ -113,13 +110,15 @@
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.lci\\.fr"],
-            "sources": ["lci.fr"]
+            "sources": ["lci.fr"],
+            "similarity_threshold": 0.7
         },
         "www.lemonde.fr": {
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.lemonde\\.fr"],
-            "sources": ["lemonde.fr"]
+            "sources": ["lemonde.fr"],
+            "similarity_threshold": 0.7
         },
 
         "www.who.int": {
@@ -210,7 +209,8 @@
             "region": "us",
             "language": "en",
             "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"],
-            "sources": ["nytimes.com"]
+            "sources": ["nytimes.com"],
+            "similarity_threshold": 0.7
         },
         "www.usa.gov": {
             "region": "us",
@@ -242,6 +242,14 @@
         "www.salute.gov.it": {
             "region": "it",
             "language": "it"
+        }
+    },
+    "domains_disabled": {
+        "www.rki.de": {
+            "region": "de",
+            "language": "de",
+            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
+            "sources": ["rki.de"]
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",

@@ -330,9 +330,10 @@ def process_row(row, real_domain, region, db_file_basename, urls_with_title, tes
 
     # Consider similarity when the file exists.
     if os.path.exists(full_path) and test_similarity:
-        print("sim: {0} main_text_sim: {1} compared against: {2}".format(similarity, main_text_similarity, compared_against))
-        if compared_against is not None and main_text_similarity >= 0.8 :
-            print("url too similar to previous version sim: {0} main_text_sim={1}".format(similarity, main_text_similarity))
+        similarity_threshold = config['domains'][real_domain]['similarity_threshold'] if 'similarity_threshold' in config['domains'][real_domain] else config['default_similarity_threshold'] 
+        print("sim: {0} main_text_sim: {1} compared against: {2} sim_threshold={3}".format(similarity, main_text_similarity, compared_against, similarity_threshold))
+        if compared_against is not None and main_text_similarity >= similarity_threshold:
+            print("url too similar to previous version sim: {0} main_text_sim={1} sim_treshold={2}".format(similarity, main_text_similarity, similarity_threshold))
             return
 
     process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path)

@@ -73,6 +73,8 @@ if __name__ == "__main__":
                     continue
                 if 'domains_ignored' in config and domain in config['domains_ignored']:
                     continue
+                if 'domains_disabled' in config and domain in config['domains_disabled']:
+                    continue
                 new_domains.add(domain)
 
         if len(new_domains) > 0:
