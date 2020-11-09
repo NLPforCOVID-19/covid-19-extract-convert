@@ -51,7 +51,8 @@
             "region": "de",
             "language": "de",
             "subdomains": ["[a-zA-Z.-]+\\.spiegel\\.de"],
-            "sources": ["spiegel.de"]
+            "sources": ["spiegel.de"],
+            "similarity_threshold": 0.7
         },
         "www.zusammengegencorona.de": {
             "region": "de",
@@ -109,13 +110,15 @@
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.lci\\.fr"],
-            "sources": ["lci.fr"]
+            "sources": ["lci.fr"],
+            "similarity_threshold": 0.7
         },
         "www.lemonde.fr": {
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.lemonde\\.fr"],
-            "sources": ["lemonde.fr"]
+            "sources": ["lemonde.fr"],
+            "similarity_threshold": 0.7
         },
 
         "www.who.int": {
