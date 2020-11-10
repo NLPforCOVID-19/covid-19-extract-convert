@@ -138,6 +138,24 @@ def get_all_versions(parent_dir, file_dir_prefix):
     return res
 
 
+def is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
+    for url_data in urls_data:
+        url, filename, parent_dir, file_dir_prefix, full_path = url_data
+        all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
+        if len(all_versions) > 0:
+            # Only considerf the most recent version.
+            file = all_versions[-1]
+            if os.path.isdir(file):
+                content_on_disk = get_content(file, filename)
+                if content_on_disk is not None:
+                    seq = SequenceMatcher(a=content.decode('utf-8'), b=content_on_disk.decode('utf-8'))
+                    ratio = seq.quick_ratio()
+                    print(f"is_content_similar_to_other_urls url={url} if sim_ratio={ratio} > {similarity_threshold}? Discarded!")
+                    if ratio > similarity_threshold:
+                        return True
+    return False
+
+
 def is_similar_to_other_urls(url_to_check, urls):
     for url in urls:
         # Skip first characters that should be the same.
@@ -146,14 +164,15 @@ def is_similar_to_other_urls(url_to_check, urls):
             i += 1
 
         seq = SequenceMatcher(a=url_to_check[i:], b=url[i:])
-        if seq.ratio() > 0.7:
-            print(f"is_similar_to_other_urls urls={url_to_check} vs {url} ratio={seq.ratio()}")
+        ratio = seq.ratio()
+        if ratio > 0.7:
+            print(f"is_similar_to_other_urls urls={url_to_check} vs {url} ratio={ratio}")
             return True
     print(f"is_similar_to_other_urls urls={url_to_check} -> False")
     return False
 
 
-def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path):
+def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold):
     print("process_file parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
     # print("all_versions={0}".format(all_versions))
@@ -191,19 +210,20 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
             root_url = url[:question_mark_pos] if question_mark_pos != -1 else url
             root_url = root_url.lower()
             if stripped_title not in urls_with_title:
-                urls_with_title[stripped_title] = {root_url}
+                urls_with_title[stripped_title] = {(root_url, filename, parent_dir, file_dir_prefix, full_path)}
             else:
-                urls = urls_with_title[stripped_title]
+                urls_data = urls_with_title[stripped_title]
+                urls = {data[0] for data in urls_data}
 
                 # Test if there is already a previous article with the same title and the same root_url.
                 # If so, the current article is considered a doublon and is skipped.
-                if root_url in urls or is_similar_to_other_urls(root_url, urls):
+                if root_url in urls or is_similar_to_other_urls(root_url, urls) or is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
                     doublon_urls.add((stripped_title, url))
                     return
 
                 # The title is exactly like a previously processed file but the url
                 # is different so it's assumed that they are different document.
-                urls.add(root_url)
+                urls_data.add((root_url, filename, parent_dir, file_dir_prefix, full_path))
 
     source = same_as or db_file_basename
     write_html_file(full_path, filename, url, content, source, domain_path)
@@ -328,15 +348,15 @@ def process_row(row, real_domain, region, db_file_basename, urls_with_title, tes
     print("full_path {0} filename={1} parent_dir={2} file_dir_prefix={3}".format(full_path, filename, parent_dir, file_dir_prefix))
     print("glob expr={0}/{1}*".format(parent_dir, file_dir_prefix))
 
+    similarity_threshold = config['domains'][real_domain]['similarity_threshold'] if 'similarity_threshold' in config['domains'][real_domain] else config['default_similarity_threshold']
     # Consider similarity when the file exists.
     if os.path.exists(full_path) and test_similarity:
-        similarity_threshold = config['domains'][real_domain]['similarity_threshold'] if 'similarity_threshold' in config['domains'][real_domain] else config['default_similarity_threshold'] 
         print("sim: {0} main_text_sim: {1} compared against: {2} sim_threshold={3}".format(similarity, main_text_similarity, compared_against, similarity_threshold))
         if compared_against is not None and main_text_similarity >= similarity_threshold:
             print("url too similar to previous version sim: {0} main_text_sim={1} sim_treshold={2}".format(similarity, main_text_similarity, similarity_threshold))
             return
 
-    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path)
+    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold)
 
 
 for domain in os.listdir(db_dir):
