@@ -193,6 +193,13 @@
             "sources": ["worldometers.info"]
         },
 
+        "bundle.np": {
+            "region": "np",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]+\\.who\\.int/countries/npl", "[a-zA-Z.-]+\\.worldometers.info/coronavirus/country/nepal"],
+            "sources": ["who.int", "worldometers.info"]
+        }
+
         "globalbiodefense.com": {
             "region": "us",
             "language": "en",
