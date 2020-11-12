@@ -167,6 +167,13 @@
             "sources": ["cdc.gov.kr"]
         },
 
+        "bundle.my": {
+            "region": "my",
+            "language": "id",
+            "subdomains": ["covid-19\\.moh\\.gov\\.my/"],
+            "sources": ["covid-19.moh.gov.my"]
+        },
+
         "www.covid19india.org": {
             "region": "in",
             "language": "en",
