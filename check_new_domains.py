@@ -1,50 +1,9 @@
 import argparse
 import email
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 import json
 import re
 import requests
-import smtplib
-
-def send_mail(to, subject, text):
-    resp_msg = MIMEMultipart()
-    resp_msg['From'] = config['smtp']['from']
-
-    # Never send a message to a daemon user.
-    if to is not None and "daemon" in to.lower():
-        return
-
-    resp_msg['To'] = to
-    cc = None
-    bcc = None
-    if 'cc' in config['smtp']:
-        resp_msg['Cc'] = config['smtp']['cc']
-        cc = config['smtp']['cc'].split(",")
-    if 'bcc' in config['smtp']:
-        resp_msg['Bcc'] = config['smtp']['bcc']
-        bcc = config['smtp']['bcc'].split(",")
-
-    dests = []
-    if to:
-        dests.append(to)
-    if cc:
-        dests += cc
-    if bcc:
-        dests += bcc
-
-    if len(dests) == 0:
-        return
-
-    resp_msg['Subject'] = subject
-    resp_msg.attach(MIMEText(text, 'plain', 'utf-8'))
-
-    smtp_server = smtplib.SMTP(config['smtp']['host'], config['smtp']['port'])
-    smtp_server.starttls()
-    smtp_server.login(config['smtp']['user'], config['smtp']['password'])
-    text = resp_msg.as_string().encode('ascii')
-    smtp_server.sendmail(config['smtp']['from'], dests, text)
-    smtp_server.quit()
+import utils
 
 
 if __name__ == "__main__":
@@ -78,4 +37,8 @@ if __name__ == "__main__":
                 new_domains.add(domain)
 
         if len(new_domains) > 0:
-            send_mail(args.to, "New domains discovered for COVID-19", str(new_domains))
+            utils.send_mail(config['smtp']['host'], config['smtp']['port'], config['smtp']['user'], config['smtp']['password'],
+                config['smtp']['from'], args.to,
+                None if 'cc' not in config['smtp'] else config['smtp']['cc'],
+                None if 'bcc' not in config['smtp'] else config['smtp']['bcc'],
+                "New domains discovered for COVID-19", str(new_domains))
