@@ -45,7 +45,8 @@
             "region": "de",
             "language": "de",
             "subdomains": ["[a-zA-Z.-]+\\.bundesregierung\\.de"],
-            "sources": ["bundesregierung.de"]
+            "sources": ["bundesregierung.de"],
+            "similarity_threshold": 0.7
         },
         "www.spiegel.de": {
             "region": "de",
