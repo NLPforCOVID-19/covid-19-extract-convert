@@ -1,3 +1,4 @@
+import bs4
 import datetime
 import json
 import os
@@ -5,6 +6,7 @@ import re
 import requests
 import sqlite3
 import sys
+import utils
 
 max_attempts = 10
 
@@ -25,11 +27,22 @@ def get_available_databases(domain):
         index_url = '{0}/{1}'.format(config['crawled_data_repository'], domain.replace('.', '_'))
     req = requests.get(index_url)
     if req.status_code == 200:
-        for line in req.text.splitlines():
-            match = re.search('a href="(.*?\.db)', line)
-            if match:
-                db_filename = match.group(1)
-                dbs.append(db_filename)
+        soup = bs4.BeautifulSoup(req.text, 'html.parser')
+        all_rows = soup.find_all('tr')
+        for row in all_rows:
+            cols = row.find_all('td')
+            if len(cols) == 3:
+                db_name = cols[0].find('a').get('href')
+                size_txt = cols[1].get_text()
+
+                match = re.match("^([0-9]+) [A-Za-z]+$", size_txt)
+                if match:
+                    try:
+                        size = int(match.group(1))
+                        dbs.append((db_name, size))
+                    except ValueError:
+                        # Skip this row if the size is not a number.
+                        break
     return dbs
 
 
@@ -82,6 +95,7 @@ run_dir = config['run_dir']
 
 now = datetime.datetime.now()
 
+empty_databases = {}
 for domain in config['domains']:
     if input_domain != 'all' and domain != input_domain:
         continue
@@ -89,6 +103,19 @@ for domain in config['domains']:
     print("Processing domain: {}...".format(domain))
     processed_dbs = get_processed_databases(domain)
     available_dbs = get_available_databases(domain)
-    for db in available_dbs:
+    for db, size in available_dbs:
         if not db in processed_dbs:
-            retrieve_database(domain, db)
+            if size == 0:
+                if domain not in empty_databases:
+                    empty_databases[domain] = [db]
+                else:
+                    empty_databases[domain].append(db)
+            else:
+                retrieve_database(domain, db)
+
+if len(empty_databases) > 0:
+    utils.send_mail(config['smtp']['host'], config['smtp']['port'], config['smtp']['user'], config['smtp']['password'],
+        config['smtp']['from'], None,
+        None if 'cc' not in config['smtp'] else config['smtp']['cc'],
+        None if 'bcc' not in config['smtp'] else config['smtp']['bcc'],
+        "Empty databases were found", str(empty_databases))
