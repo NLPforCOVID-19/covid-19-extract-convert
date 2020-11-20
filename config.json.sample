@@ -159,12 +159,11 @@
             "sources": ["niid.go.jp"]
         },
 
-        "www.cdc.gov.kr": {
+        "www.kdca.go.kr": {
             "region": "kr",
             "language": "ko",
-            "prefix": "www.cdc.go.kr",
-            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov\\.kr"],
-            "sources": ["cdc.gov.kr"]
+            "subdomains": ["[a-zA-Z.-]+\\.kdca\\.go\\.kr"],
+            "sources": ["kdca.go.kr"]
         },
 
         "bundle.my": {
@@ -264,6 +263,14 @@
             "language": "de",
             "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
             "sources": ["rki.de"]
+        },
+
+        "www.cdc.gov.kr": {
+            "region": "kr",
+            "language": "ko",
+            "prefix": "www.cdc.go.kr",
+            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov\\.kr"],
+            "sources": ["cdc.gov.kr"]
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
