@@ -96,6 +96,13 @@ run_dir = config['run_dir']
 now = datetime.datetime.now()
 
 empty_databases = {}
+empty_databases_filename = f'{run_dir}/empty_databases.json'
+if os.path.exists(empty_databases_filename):
+    with open(empty_databases_filename, 'r') as empty_databases_file:
+        empty_databases = json.load(empty_databases_file)
+
+new_empty_databases = {}
+
 for domain in config['domains']:
     if input_domain != 'all' and domain != input_domain:
         continue
@@ -106,16 +113,28 @@ for domain in config['domains']:
     for db, size in available_dbs:
         if not db in processed_dbs:
             if size == 0:
-                if domain not in empty_databases:
-                    empty_databases[domain] = [db]
+                # If the notification has already been sent, no need to send it again.
+                if domain in empty_databases and db in empty_databases[domain]:
+                    continue
+
+                if domain not in new_empty_databases:
+                    new_empty_databases[domain] = [db]
                 else:
-                    empty_databases[domain].append(db)
+                    new_empty_databases[domain].append(db)
             else:
                 retrieve_database(domain, db)
 
-if len(empty_databases) > 0:
+if len(new_empty_databases) > 0:
     utils.send_mail(config['smtp']['host'], config['smtp']['port'], config['smtp']['user'], config['smtp']['password'],
         config['smtp']['from'], None,
         None if 'cc' not in config['smtp'] else config['smtp']['cc'],
         None if 'bcc' not in config['smtp'] else config['smtp']['bcc'],
-        "Empty databases were found", str(empty_databases))
+        "Empty databases were found", str(new_empty_databases))
+    for domain in new_empty_databases:
+        for db in new_empty_databases[domain]:
+            if domain not in empty_databases:
+                empty_databases[domain] = [db]
+            else:
+                empty_databases[domain].append(db)
+    with open(empty_databases_filename, 'w', encoding='utf8') as updated_empty_databases_file:
+        json.dump(empty_databases, updated_empty_databases_file)
