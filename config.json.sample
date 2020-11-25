@@ -174,12 +174,6 @@
             "sources": ["covid-19.moh.gov.my"]
         },
 
-        "www.covid19india.org": {
-            "region": "in",
-            "language": "en",
-            "subdomains": ["[a-zA-Z.-]+\\.covid19india\\.org"],
-            "sources": ["covid19india.org"]
-        },
         "www.mohfw.gov.in": {
             "region": "in",
             "language": "en",
@@ -264,6 +258,13 @@
             "language": "de",
             "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
             "sources": ["rki.de"]
+        },
+
+        "www.covid19india.org": {
+            "region": "in",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]+\\.covid19india\\.org"],
+            "sources": ["covid19india.org"]
         },
 
         "www.cdc.gov.kr": {
