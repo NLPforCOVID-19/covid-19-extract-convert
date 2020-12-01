@@ -129,7 +129,7 @@ def show_combined_total_files_per_day(html_files_per_day_per_domain, translated_
 
 
 # In days.
-period = 7
+period = 14
 
 date_min = None
 date_max = None
