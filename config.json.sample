@@ -160,6 +160,12 @@
             "sources": ["niid.go.jp"]
         },
 
+        "bundle.kr": {
+            "region": "kr",
+            "language": "ko",
+            "subdomains": ["www\\.mohw\\.go\\.kr", "ncov\\.mohw\\.go\\.kr"],
+            "sources": ["mohw.go.kr"]
+        },
         "www.kdca.go.kr": {
             "region": "kr",
             "language": "ko",
@@ -200,6 +206,13 @@
             "subdomains": ["[a-zA-Z.-]+\\.who\\.int/countries/npl", "[a-zA-Z.-]+\\.worldometers.info/coronavirus/country/nepal"],
             "sources": ["who.int", "worldometers.info"]
         }
+
+        "bundle.sg": {
+            "region": "sg",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.sg"],
+            "sources": ["gov.sg"]
+        },
 
         "globalbiodefense.com": {
             "region": "us",
