@@ -231,7 +231,7 @@
             "language": "en",
             "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"],
             "sources": ["nytimes.com"],
-            "similarity_threshold": 0.7
+            "similarity_threshold": 0.6
         },
         "www.usa.gov": {
             "region": "us",
