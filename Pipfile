@@ -11,6 +11,7 @@ filelock = "*"
 bs4 = "*"
 elasticsearch = "*"
 python-dateutil = "*"
+python-twitter = "*"
 
 [requires]
 python_version = "3.6"
