@@ -125,10 +125,10 @@ for domain in config['domains']:
                 retrieve_database(domain, db)
 
 if len(new_empty_databases) > 0:
-    utils.send_mail(config['smtp']['host'], config['smtp']['port'], config['smtp']['user'], config['smtp']['password'],
-        config['smtp']['from'], None,
-        None if 'cc' not in config['smtp'] else config['smtp']['cc'],
-        None if 'bcc' not in config['smtp'] else config['smtp']['bcc'],
+    utils.send_mail(config['mail']['from'],
+        None if 'to' not in config['mail'] else config['mail']['to'],
+        None if 'cc' not in config['mail'] else config['mail']['cc'],
+        None if 'bcc' not in config['mail'] else config['mail']['bcc'],
         "Empty databases were found", str(new_empty_databases))
     for domain in new_empty_databases:
         for db in new_empty_databases[domain]:

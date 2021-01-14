@@ -4,3 +4,5 @@ extracter_logging.conf
 es_importer_logging.conf
 logs/
 .venv/
+credentials.json
+token.pickle

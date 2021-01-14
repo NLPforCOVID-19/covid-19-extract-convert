@@ -11,6 +11,8 @@ filelock = "*"
 bs4 = "*"
 elasticsearch = "*"
 python-dateutil = "*"
+google-api-python-client = "*"
+google-auth-oauthlib = "*"
 
 [requires]
 python_version = "3.6"
