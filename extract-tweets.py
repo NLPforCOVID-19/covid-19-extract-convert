@@ -353,7 +353,7 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
     tweet_status = twitter.models.Status.NewFromJsonDict(tweet_json)
     try:
         tweet_country_code = utils.convert_country_to_iso_3166_alpha_2(tweet_country)
-    except LookupError ex:
+    except LookupError as ex:
         print(ex)
 
     tweets[tweet_id] = {
