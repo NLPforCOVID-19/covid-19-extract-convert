@@ -351,10 +351,13 @@ processed_databases = []
 def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str):
     tweet_json = json.loads(tweet_json_str)
     tweet_status = twitter.models.Status.NewFromJsonDict(tweet_json)
+    tweet_country_code = None
     try:
         tweet_country_code = utils.convert_country_to_iso_3166_alpha_2(tweet_country)
     except LookupError as ex:
-        print(ex)
+        undefined_countries.add(tweet_country)
+        print("Tweet {tweet_id} has been ignored because it refers to an undefined country: {tweet_country}.") 
+        return
 
     tweets[tweet_id] = {
         "count": tweet_count,
@@ -371,7 +374,7 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
     print(f"location={tweet_status.location}")
     print(f"place={tweet_status.place}")
     print(f"country={tweet_country}")
-    print(f"2-alpha code={utils.convert_country_to_iso_3166_alpha_2(tweet_country)}")
+    print(f"2-alpha code={tweet_country_code}")
     print(f"retweet_count={tweet_status.retweet_count}")
     print(f"lang={tweet_status.lang}")
     print(f"created_at={tweet_status.created_at}")
@@ -397,6 +400,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
 
     tweets = {}
     tweet_count_per_country = {}
+    undefined_countries = set()
 
     with open(db_filename, 'r', encoding='latin-1') as twitter_data_file:
         for line in twitter_data_file:
@@ -412,6 +416,12 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
                 print(f"Invalid line: {line}")
 
     processed_databases.append(os.path.basename(db_filename))
+
+    if len(undefined_countries) > 0:
+        utils.send_mail(config['mail']['from'], config['mail']['to'], config['mail']['cc'], None, "Undefined countries found",
+            (f"Some tweets are referring to these countries: {sorted(undefined_countries)} but no corresponding ISO-3166-2 Alpha-2 code are defined.\n\n"
+            "Adjust the country_codes.txt file accordingly to prevent this error from occurring again."))
+
     # if os.path.exists(db_filename):
     #     os.remove(db_filename)
 

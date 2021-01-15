@@ -53,7 +53,7 @@ def send_mail(fromm, to, cc, bcc, subject, text):
 def convert_country_to_iso_3166_alpha_2(country):
     if "-" == country:
         return None
-    if hasattr(convert_country_to_iso_3166_alpha_2, "country_codes") and country not in convert_country_to_iso_3166_alpha_2.country_codes:
+    if hasattr(convert_country_to_iso_3166_alpha_2, "country_codes") and country in convert_country_to_iso_3166_alpha_2.country_codes:
         return convert_country_to_iso_3166_alpha_2.country_codes[country]
     convert_country_to_iso_3166_alpha_2.country_codes = {}
     country_codes_filename = "country_codes.txt" # Should be defined in the config.
