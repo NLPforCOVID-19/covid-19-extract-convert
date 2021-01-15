@@ -16,13 +16,13 @@ echo "Start time: $NOW"
 
 cd "$SCRIPTS"
 
-echo "Fetching twitter db file..."
+echo "Fetching twitter db files..."
 $PIPENV run python fetch-twitter-db.py
-echo "The db file have been fetched."
+echo "The db files have been fetched."
 
-# echo "Extracting tweets from db file..."
-# $PIPENV run python extract-tweets.py
-# echo "The tweets have been extracted."
+echo "Extracting tweets from db files..."
+$PIPENV run python extract-tweets.py
+echo "The tweets have been extracted."
 
 echo "Done"
 
