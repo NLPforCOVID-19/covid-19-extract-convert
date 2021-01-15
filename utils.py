@@ -69,3 +69,8 @@ def convert_country_to_iso_3166_alpha_2(country):
         return convert_country_to_iso_3166_alpha_2.country_codes[country]
 
     raise LookupError(f"Country {country} undefined. Cannot find corresponding ISO-3166 Alpha-2 code.")
+
+
+def get_country_code_dir(country_code):
+    return '_' if country_code is None else country_code.lower()
+

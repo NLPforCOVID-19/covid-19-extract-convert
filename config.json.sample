@@ -1,5 +1,12 @@
 {
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
+    "twitter": {
+        "crawled_data_repository": "https://tokyo.tkl.iis.u-tokyo.ac.jp:7088/~toyoda/Twitter/covid19world",
+        "user": "???",
+        "password": "???",
+        "html_dir": "/mnt/hinoki/share/covid19/twitter/html",
+        "xml_dir": "/mnt/hinoki/share/covid19/twitter/xml"
+    }
     "default_similarity_threshold": 0.8,
     "domains": {
         "bundle.au": {

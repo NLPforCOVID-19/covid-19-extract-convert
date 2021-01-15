@@ -17,6 +17,7 @@ Copy the ```config.json.sample``` file to ```config.json``` and edit it accordin
 | Parameter | Description |
 | --- | --- |
 | crawled_data_repository |  Url of the harvested page databases. |
+| twitter |  Settings for Twitter data extraction.  See below for more information. |
 | default_similarity_threshold | Articles that are too similar will be ignored. |
 | domains | Domains to consider.  Each domain contains several parameters.  See below for more information. |
 | domains_ignored | Domains to ignore.  For some reasons, a domain might be irrelevant.  It can be put into this section so that it is ignored. |
@@ -57,3 +58,13 @@ From the https://console.developers.google.com page, it's required to create an 
 The ```send_mail()``` function in ```utils.py``` must be called from a desktop computer having access to Internet.  Doing so will lead the user to authenticate himself to Google and authorize mail notifications.  A resulting ```token.pickle``` will be generated.  This file must be copied in the same directory that contains the ```config.json``` file.  It will enable mail notifications without user interaction.
 
 This procedure is not very convenient but I know no alternative to it at the moment.
+
+The twitter section contains settings related to data extraction from Twitter: 
+
+| Parameter | Description |
+| --- | --- |
+| crawled_data_repository |  Url of the harvested page databases. |
+| user | Login of the user authorized to access the data. |
+| password | Password of the user authorized to access the data. |
+| html_dir | Directory where the extracted Twitter html files are stored. |
+| xml_dir | Directory where the converted Twitter xml files are stored. |
