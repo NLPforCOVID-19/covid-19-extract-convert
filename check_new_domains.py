@@ -9,7 +9,6 @@ import utils
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("--config", default="config.json", help="Path to configuration file.")
-    argparser.add_argument("--to", help="Email address of the listener.")
     args = argparser.parse_args()
 
     with open(args.config, 'r') as config_file:
@@ -39,8 +38,8 @@ if __name__ == "__main__":
                 new_domains.add(domain)
 
         if len(new_domains) > 0:
-            utils.send_mail(config['smtp']['host'], config['smtp']['port'], config['smtp']['user'], config['smtp']['password'],
-                config['smtp']['from'], args.to,
-                None if 'cc' not in config['smtp'] else config['smtp']['cc'],
-                None if 'bcc' not in config['smtp'] else config['smtp']['bcc'],
+            utils.send_mail(config['mail']['from'],
+                None if 'to' not in config['mail'] else config['mail']['to'],
+                None if 'cc' not in config['mail'] else config['mail']['cc'],
+                None if 'bcc' not in config['mail'] else config['mail']['bcc'],
                 "New domains discovered for COVID-19", str(new_domains))

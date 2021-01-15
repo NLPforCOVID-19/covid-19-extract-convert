@@ -12,6 +12,8 @@ bs4 = "*"
 elasticsearch = "*"
 python-dateutil = "*"
 python-twitter = "*"
+google-api-python-client = "*"
+google-auth-oauthlib = "*"
 
 [requires]
 python_version = "3.6"

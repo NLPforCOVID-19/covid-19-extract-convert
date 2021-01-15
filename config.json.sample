@@ -231,7 +231,7 @@
             "language": "en",
             "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"],
             "sources": ["nytimes.com"],
-            "similarity_threshold": 0.7
+            "similarity_threshold": 0.6
         },
         "www.usa.gov": {
             "region": "us",
@@ -297,13 +297,11 @@
     "WWW2sf_dir": "/home/frederic/WWW2sf",
     "detectblocks_dir": "/home/frederic/detectblocks",
     "grace_period_before_pruning": 14,
-    "smtp": {
-        "host": "smtp.gmail.com",
-        "port": 587,
-        "user": "myaccount@gmail.com",
-        "password": "mypassword",
+    "mail": {
         "from": "noreply.covid19.dbchecker@gmail.com",
-        "cc": "someone@example.com"
+        "to": "someone@example.com",
+        "cc": "someone.else@example.com",
+        "bcc": "someone.else.again@example.com"
     },
     "elastic_search": {
         "host": "localhost",
