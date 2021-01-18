@@ -82,12 +82,6 @@
             "sources": ["ecdc.europa.eu"]
         },
 
-        "fr.reuters.com": {
-            "region": "fr",
-            "language": "fr",
-            "subdomains": ["[a-zA-Z.-]+\\.fr\\.reuters\\.com"],
-            "sources": ["fr.reuters.com"]
-        },
         "www.france24.com": {
             "region": "fr",
             "language": "fr",
@@ -165,12 +159,6 @@
             "language": "ko",
             "subdomains": ["www\\.mohw\\.go\\.kr", "ncov\\.mohw\\.go\\.kr"],
             "sources": ["mohw.go.kr"]
-        },
-        "www.kdca.go.kr": {
-            "region": "kr",
-            "language": "ko",
-            "subdomains": ["[a-zA-Z.-]+\\.kdca\\.go\\.kr"],
-            "sources": ["kdca.go.kr"]
         },
 
         "bundle.my": {
@@ -273,6 +261,13 @@
             "sources": ["rki.de"]
         },
 
+        "fr.reuters.com": {
+            "region": "fr",
+            "language": "fr",
+            "subdomains": ["[a-zA-Z.-]+\\.fr\\.reuters\\.com"],
+            "sources": ["fr.reuters.com"]
+        },
+
         "www.covid19india.org": {
             "region": "in",
             "language": "en",
@@ -286,6 +281,12 @@
             "prefix": "www.cdc.go.kr",
             "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov\\.kr"],
             "sources": ["cdc.gov.kr"]
+        },
+        "www.kdca.go.kr": {
+            "region": "kr",
+            "language": "ko",
+            "subdomains": ["[a-zA-Z.-]+\\.kdca\\.go\\.kr"],
+            "sources": ["kdca.go.kr"]
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
