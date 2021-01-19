@@ -14,6 +14,10 @@ table, th, td {
     width: 4440px;
 }
 
+.tweet-count-table {
+    width: 600px;
+}
+
 th, td {
     padding: 6px;
 }
@@ -134,5 +138,16 @@ th, td {
 .right {
     float: right;
     width: 50%;
+}
+
+.column {
+    float: left;
+    width: 33.33%;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
 }
 

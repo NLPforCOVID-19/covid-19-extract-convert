@@ -7,7 +7,7 @@ export HTTPS_PROXY=http://proxy.kuins.net:8080
 export ftp_proxy=http://proxy.kuins.net:8080
 export FTP_PROXY=http://proxy.kuins.net:8080
 
-SCRIPTS=/home/frederic/covid19/translation-dev
+SCRIPTS=/home/frederic/covid19/translation
 PIPENV=/home/frederic/.local/bin/pipenv
 
 
