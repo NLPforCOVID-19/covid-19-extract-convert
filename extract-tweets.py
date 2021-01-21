@@ -6,6 +6,8 @@ import re
 import twitter
 import utils
 
+# # Uncomment to test import into Elastic Search database.
+# from elastic_search_utils import ElasticSearchTwitterImporter
 
 config_filename = 'config.json'
  
@@ -20,6 +22,13 @@ run_dir = config['run_dir']
 now = datetime.datetime.now()
 
 processed_databases = []
+
+# # Uncomment to test import into Elastic Search database.
+# es_importer = {
+#     'ja': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'ja'),
+#     'en': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'en')
+# }
+
 
 def write_tweet_data(tweet_id):
     print(f"write_tweet_data tweet_id={tweet_id}")
@@ -57,7 +66,7 @@ def write_tweet_data(tweet_id):
         with open(html_filename, 'w') as html_file:
             html_str = (
                 "<!DOCTYPE html>\n"
-                "<html lang=\"ja\">\n"
+                f"<html lang=\"{tweet['status'].lang}\">\n"
                 "<head><meta charset=\"utf-8\"/></head>\n"
                 "<body>\n"
                 f"<p>{tweet_text_for_html}</p>\n"
@@ -70,6 +79,11 @@ def write_tweet_data(tweet_id):
         with open(new_html_filename, 'a') as new_html_file:
             new_html_file.write(html_filename)
             new_html_file.write("\n")
+
+
+        # # Uncomment to test import into Elastic Search database.
+        # es_index = config['elastic_search']['twitter_index_basename'] + '-' + tweet['status'].lang
+        # es_importer[tweet['status'].lang].update_record(html_filename[:-4]+"txt", index=es_index, is_data_stream=True)
 
         if country_code_dir in tweet_count_per_country:
             tweet_count_per_country[country_code_dir] += 1
