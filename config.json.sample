@@ -318,8 +318,7 @@
         "host": "localhost",
         "port": 9200,
         "index_basename": "covid19-pages",
-        "twitter_index_basename": "covid19-tweets",
-        "index_period": 14
+        "twitter_index_basename": "covid19-tweets"
     }
 }
 
