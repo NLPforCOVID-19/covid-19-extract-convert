@@ -2,6 +2,7 @@ config.json
 converter_logging.conf
 extracter_logging.conf
 twitter_extracter_logging.conf
+twitter_converter_logging.conf
 es_importer_logging.conf
 logs/
 .venv/
