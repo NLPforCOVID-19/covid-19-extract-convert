@@ -207,6 +207,13 @@ translated_file_glob_en = "new-translated-files/new-translated-files-en-{0}*.txt
 totals_translated_per_day = get_total_files_per_day(translated_file_pattern, translated_file_glob)
 totals_translated_per_day_en = get_total_files_per_day(translated_file_pattern_en, translated_file_glob_en)
 
+translated_file_pattern = ".*/twitter/html/(.+?)/ja_translated/.+?/.*"
+translated_file_pattern_en = ".*/twitter/html/(.+?)/en_translated/.+?/.*"
+translated_file_glob = "new-translated-files/new-twitter-translated-files-{0}*.txt"
+translated_file_glob_en = "new-translated-files/new-twitter-translated-files-en-{0}*.txt"
+totals_twitter_translated_per_day = get_total_files_per_day(translated_file_pattern, translated_file_glob)
+totals_twitter_translated_per_day_en = get_total_files_per_day(translated_file_pattern_en, translated_file_glob_en);
+
 xml_file_pattern = ".*/xml/.+?/ja_translated/(.+?)/.*"
 xml_file_glob = "new-xml-files/new-xml-files-{0}*.txt"
 totals_xml_per_day = get_total_files_per_day(xml_file_pattern, xml_file_glob)
@@ -257,6 +264,16 @@ print("<br/>")
 
 twitter_html_table_title = f"Number of tweets extracted per day per country (last {period} days)"
 show_total_files_per_day(totals_twitter_html_per_day, twitter_html_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+
+print("<br/>")
+
+twitter_translated_table_title = f"Number of translated tweets (to Japanese) per day per country (last {period} days)"
+show_total_files_per_day(totals_twitter_translated_per_day, twitter_translated_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+
+print("<br/>")
+
+twitter_translated_table_title_en = f"Number of translated tweets (to English) per day per country (last {period} days)"
+show_total_files_per_day(totals_twitter_translated_per_day_en, twitter_translated_table_title_en, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
 
 print("<br/>")
 
