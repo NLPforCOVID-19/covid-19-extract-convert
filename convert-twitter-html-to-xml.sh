@@ -11,11 +11,12 @@ echo "Start time: $NOW"
 
 cd "$SCRIPTS"
 
-echo "Converting HTML files to XML..."
-$PIPENV run python convert-html-to-xml.py
-echo "The HTML files have been converted."
+echo "Converting Twitter HTML files to XML..."
+$PIPENV run python convert-twitter-html-to-xml.py --log_config twitter_converter_logging.conf
+echo "The Twitter HTML files have been converted."
 
 echo "Done"
 
 NOW=$(date +"%Y-%m-%d %H:%M:%S")
 echo "Stop time: $NOW"
+
