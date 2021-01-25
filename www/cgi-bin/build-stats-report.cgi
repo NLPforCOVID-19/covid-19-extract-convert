@@ -218,6 +218,10 @@ xml_file_pattern = ".*/xml/.+?/ja_translated/(.+?)/.*"
 xml_file_glob = "new-xml-files/new-xml-files-{0}*.txt"
 totals_xml_per_day = get_total_files_per_day(xml_file_pattern, xml_file_glob)
 
+twitter_xml_file_pattern = ".*/twitter/xml/(.+?)/ja_translated/.*"
+twitter_xml_file_glob = "new-xml-files/new-twitter-xml-files-{0}*.txt"
+totals_twitter_xml_per_day = get_total_files_per_day(twitter_xml_file_pattern, twitter_xml_file_glob)
+
 delta = date_max - date_min
 
 print("<!doctype html>")
@@ -274,6 +278,11 @@ print("<br/>")
 
 twitter_translated_table_title_en = f"Number of translated tweets (to English) per day per country (last {period} days)"
 show_total_files_per_day(totals_twitter_translated_per_day_en, twitter_translated_table_title_en, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+
+print("<br/>")
+
+twitter_xml_table_title = f"Number of twitter XML files converted per day per domain (last {period} days)"
+show_total_files_per_day(totals_twitter_xml_per_day, twitter_xml_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
 
 print("<br/>")
 
