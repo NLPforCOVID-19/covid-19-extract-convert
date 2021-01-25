@@ -274,7 +274,7 @@ if __name__ == '__main__':
 
         logger.info("Iteration over.")
 
-        stopped = True
+        # stopped = True
 
     logger.info("Stop running.")
 
