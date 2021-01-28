@@ -5,6 +5,7 @@
 * Python 3.6.5
 * WWW2sf
 * detectblocks
+* Elastic Search
 
 ## Configuration
 
@@ -68,3 +69,58 @@ The twitter section contains settings related to data extraction from Twitter:
 | password | Password of the user authorized to access the data. |
 | html_dir | Directory where the extracted Twitter html files are stored. |
 | xml_dir | Directory where the converted Twitter xml files are stored. |
+
+### ElasticSearch
+
+This project uses [ElasticSearch](https://www.elastic.co/) to implement full-text search queries.
+
+Download the latest version and install it on 3 different hosts:
+
+```
+curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.9.2-linux-x86_64.tar.gz
+tar -xvf elasticsearch-7.9.2-linux-x86_64.tar.gz
+```
+
+From now on, we will assume that `$ES_HOME` is the location where Elastic Search has been installed.
+
+Each node must be configured properly beforehand. 
+
+Copy the default `$ES_HOME/config` file with a different name like `$ES_HOME/config-covid19-node-$NN` where `$NN` is the number of the node (for instance, 01, 02, and 03). Edit the new file and adjust it to specify the following information:
+
+```
+cluster.name: covid19
+none.name: node-$NN
+path.data: $ES_NODE_NN_DIR/data
+path.log: $ES_NODE_NN_DIR/logs
+path.repo: $ES_REPO_DIR
+network.host: 0.0.0.0
+discovery.seed_hosts: ["$HOST_NODE_01", "$HOST_NODE_02", "$HOST_NODE_03"] 
+```
+
+where:
+
+- `$NN` is the number of the node (for instance, 01, 02, and 03);
+- `$ES_NODE_NN_DIR` is the location where the data and logs of this particular node will be stored;
+- `ES_REPO_DIR` is the shared location where the snapshots of the whole repository will be stored;
+- `$HOST_NODE_01`, `$HOST_NODE_02`, and `$HOST_NODE_03` are the hostnames of the 3 nodes.
+
+The analysis-kuromoji plugin must also be installed into your Elastic Search instance(s) like this:
+
+```
+cd $ES_HOME
+./elasticsearch-plugin install analysis-kuromoji
+```
+
+To start an Elastic Search node:
+
+```
+cd $ES_HOME/bin
+ES_PATH_CONF=$ES_HOME/config-covid19-node-$NN ./elasticsearch
+```
+
+To run the node as a daemon, use the `-d -p pid-node-$NN` options.
+
+To create the indices, data streams, and other Elastic Search objects, refer to [this document](https://github.com/NLPforCOVID-19/covid-19-extract-convert/blob/master/doc/elastic_search/schema.txt).
+
+
+
