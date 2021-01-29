@@ -42,7 +42,7 @@ Cape_Verde CV
 Cambodia KH
 Cameroon CM
 Canada CA
-# Cayman_Islands KY
+Cayman_Islands KY
 Central_African_Republic CF
 Chad TD
 Chile CL
