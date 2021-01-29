@@ -3,9 +3,12 @@ import datetime
 import json
 import logging
 import logging.config
+import os
 import signal
+import subprocess
 import sys
 import threading
+from threading import Event
 import time
 import traceback
 
@@ -13,12 +16,12 @@ import traceback
 # Number of seconds to wait before checking again for new twitter data.
 INTER_CHECKS_DELAY = 60 * 60 * 2
 
+exit = Event()
+
 
 def signal_handler(sig, frame):
-    print("Ctrl+C has been pressed. Let's stop the workers.")
-    global stopped
-    stopped = True
-    print("The script should stop in a few moments.  Please be patient.")
+    print("Ctrl+C has been pressed. The script should stop in a few moments. Please be patient.")
+    exit.set()
 
 
 class Extracter(threading.Thread):
@@ -69,8 +72,7 @@ if __name__ == "__main__":
 
     extracter = None
 
-    stopped = False
-    while not stopped:
+    while not exit.is_set():
 
        try:
 
@@ -82,8 +84,8 @@ if __name__ == "__main__":
             extracter = Extracter(logger, run_dir)
             extracter.start()
 
-            if not stopped:
-                time.sleep(INTER_CHECKS_DELAY)
+            if not exit.is_set():
+                exit.wait(INTER_CHECKS_DELAY)
 
        except:
            (typ, val, tb) = sys.exc_info()
