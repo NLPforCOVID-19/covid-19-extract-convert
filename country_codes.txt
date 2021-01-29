@@ -38,7 +38,7 @@ Brunei Darussalam BN
 Bulgaria BG
 Burkina_Faso BF
 Burundi BI
-Cabo_Verde CV
+Cape_Verde CV
 Cambodia KH
 Cameroon CM
 Canada CA
@@ -52,7 +52,7 @@ Christmas Island CX
 Colombia CO
 Comoros KM
 Congo_(The_Democratic_Republic_of_the) CD
-Congo (the) CG
+Congo CG
 # Cook_Islands (the) CK
 Costa_Rica CR
 Croatia HR
@@ -64,7 +64,7 @@ Côte_d'Ivoire CI
 Denmark DK
 Djibouti DJ
 Dominica DM
-# Dominican Republic (the) DO
+Dominican_Republic DO
 Ecuador EC
 Egypt EG
 El_Salvador SV
@@ -146,7 +146,7 @@ Mauritius MU
 Mayotte YT
 Mexico MX
 # Micronesia_(Federated_States_of) FM
-# Moldova_(the_Republic_of) MD
+Moldova_(Republic_of) MD
 Monaco MC
 Mongolia MN
 Montenegro ME
@@ -181,7 +181,7 @@ Poland PL
 Portugal PT
 Puerto_Rico PR
 Qatar QA
-Republic_of_North_Macedonia MK
+Macedonia_(The_former_Yugoslav_Republic_of) MK
 Romania RO
 Russian_Federation RU
 Rwanda RW
@@ -220,7 +220,7 @@ Switzerland CH
 Syrian_Arab_Republic SY
 Taiwan_(Province_of_China) TW
 Tajikistan TJ
-Tanzania,_United_Republic_of TZ
+Tanzania_(United_Republic_of) TZ
 Thailand TH
 Timor-Leste TL
 Togo TG
