@@ -10,7 +10,7 @@ import utils
 # from elastic_search_utils import ElasticSearchTwitterImporter
 
 config_filename = 'config.json'
- 
+
 with open(config_filename, 'r') as config_file:
     config = json.load(config_file)
 
@@ -28,6 +28,11 @@ processed_databases = []
 #     'ja': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'ja'),
 #     'en': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'en')
 # }
+
+
+def extract_date_from(db_filename):
+    bn = os.path.basename(db_filename)
+    return bn[bn.index("_") + 1:bn.index(".txt")]
 
 
 def write_tweet_data(tweet_id):
@@ -107,7 +112,7 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
         tweet_country_code = utils.convert_country_to_iso_3166_alpha_2(tweet_country)
     except LookupError as ex:
         undefined_countries.add(tweet_country)
-        print("Tweet {tweet_id} has been ignored because it refers to an undefined country: {tweet_country}.") 
+        print("Tweet {tweet_id} has been ignored because it refers to an undefined country: {tweet_country}.")
         return
 
     tweets[tweet_id] = {
@@ -119,7 +124,7 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
         "status": tweet_status
     }
 
-    write_tweet_data(tweet_id) 
+    write_tweet_data(tweet_id)
 
 run_filename = os.path.join(run_dir, 'twitter.json')
 for database_filename in os.listdir(twitter_db_dir):
@@ -150,7 +155,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
             else:
                 print(f"Invalid line: {line}")
 
-    processed_databases.append(os.path.basename(db_filename))
+    processed_databases.append(extract_date_from(db_filename))
 
     if len(undefined_countries) > 0:
         utils.send_mail(config['mail']['from'], config['mail']['to'], config['mail']['cc'], None, "Undefined countries found",

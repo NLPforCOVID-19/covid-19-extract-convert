@@ -25,12 +25,13 @@ def get_available_databases():
         all_rows = soup.find_all('li')
         for row in all_rows:
             link = row.find('a').get('href')
-            match = re.search('(\d\d\d\d-\d\d-\d\d-\d\d-\d\d)/', link) 
+            match = re.search('(\d\d\d\d-\d\d-\d\d-\d\d-\d\d)/', link)
             if match:
                 dbs.append(match.group(1))
-    return dbs
- 
- 
+    # Remove the last entry because it's assumed that it's not been completely computed yet.
+    return dbs[:-1]
+
+
 def retrieve_database(database):
     print(f"Retrieving db: {database}")
     database_url = os.path.join(config['twitter']['crawled_data_repository'], database, 'rtjobs')
