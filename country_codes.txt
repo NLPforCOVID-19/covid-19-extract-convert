@@ -167,7 +167,7 @@ Netherlands NL
 New_Caledonia NC
 New_Zealand NZ
 Nicaragua NI
-Niger_(the) NE
+Niger NE
 Nigeria NG
 Niue NU
 Norfolk_Island NF
