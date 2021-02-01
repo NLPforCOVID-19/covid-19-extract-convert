@@ -20,7 +20,7 @@ exit = Event()
 
 
 def signal_handler(sig, frame):
-    print("Ctrl+C has been pressed. The script should stop in a few moments. Please be patient.")
+    print("Ctrl+C has been pressed. The script should stop in a few minutes. Please be patient.")
     exit.set()
 
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     logger = logging.getLogger('default')
 
     signal.signal(signal.SIGINT, signal_handler)
-    print("Hit CTRL+C and wait a little bit to stop the script.")
+    print("Hit CTRL+C and wait a until the script stops.")
 
     extracter = None
 
@@ -83,6 +83,7 @@ if __name__ == "__main__":
 
             extracter = Extracter(logger, run_dir)
             extracter.start()
+            extracter.join()
 
             if not exit.is_set():
                 exit.wait(INTER_CHECKS_DELAY)

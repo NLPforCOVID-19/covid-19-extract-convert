@@ -1,6 +1,7 @@
 import datetime
 import glob
 import json
+from json import JSONDecodeError
 import os
 import re
 import twitter
@@ -127,13 +128,11 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
     write_tweet_data(tweet_id)
 
 run_filename = os.path.join(run_dir, 'twitter.json')
-for database_filename in os.listdir(twitter_db_dir):
-    print(f"database_filename={database_filename}")
-    if os.path.exists(run_filename):
-        with open(run_filename, 'r') as run_file:
-            run_data = json.load(run_file)
-            print(f"run_data={run_data}")
-            processed_databases = run_data
+if os.path.exists(run_filename):
+    with open(run_filename, 'r') as run_file:
+        run_data = json.load(run_file)
+        print(f"run_data={run_data}")
+        processed_databases = run_data
 
 for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
     print(f"Processing {db_filename}")
@@ -151,7 +150,10 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
                 tweet_lang = match.group(3)
                 tweet_country = match.group(4)
                 tweet_json_str = match.group(5)
-                process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str)
+                try:
+                    process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str)
+                except JSONDecodeError as json_err:
+                    print(f"Tweet {tweet_id} had invalid json and has been ignored. json_err={json_err}")
             else:
                 print(f"Invalid line: {line}")
 
