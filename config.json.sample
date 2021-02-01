@@ -96,7 +96,8 @@
             "region": "fr",
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.france24\\.com"],
-            "sources": ["france24.com"]
+            "sources": ["france24.com"],
+            "similarity_threshold": 0.7
         },
         "www.francetvinfo.fr": {
             "region": "fr",
