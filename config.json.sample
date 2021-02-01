@@ -126,6 +126,13 @@
             "similarity_threshold": 0.7
         },
 
+        "bundle.uk": {
+            "region": "gb",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk"],
+            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk"]
+        },
+
         "www.who.int": {
             "region": "int",
             "language": "en",
