@@ -2,6 +2,11 @@
 # Country codes from ISO-3166 Alpha-2
 #
 
+#
+# Some countries share the same code.
+# For example: both Serbia and Kosovo_(Republic_of) use RS.
+#
+
 Afghanistan AF
 Albania AL
 Algeria DZ
@@ -34,7 +39,7 @@ Botswana BW
 Bouvet_Island BV
 Brazil BR
 # British_Indian_Ocean_Territory IO
-Brunei Darussalam BN
+Brunei_Darussalam BN
 Bulgaria BG
 Burkina_Faso BF
 Burundi BI
@@ -82,7 +87,7 @@ French_Guiana GF
 French_Polynesia PF
 # French_Southern_Territories_(the) TF
 Gabon GA
-# Gambia_(the) GM
+Gambia GM
 Georgia GE
 Germany DE
 Ghana GH
@@ -121,6 +126,7 @@ Kenya KE
 Kiribati KI
 Korea_(Democratic_People's_Republic_of) KP
 Korea_(Republic_of) KR
+Kosovo_(Republic_of) RS
 Kuwait KW
 Kyrgyzstan KG
 Lao_People's_Democratic_Republic LA
@@ -165,7 +171,7 @@ Niger_(the) NE
 Nigeria NG
 Niue NU
 Norfolk_Island NF
-Northern_Mariana_Islands_(the) MP
+Northern_Mariana_Islands MP
 Norway NO
 Oman OM
 Pakistan PK
@@ -212,9 +218,10 @@ South_Georgia_and_the_South_Sandwich_Islands GS
 South_Sudan SS
 Spain ES
 Sri_Lanka LK
-Sudan_(the) SD
+Sudan SD
 Suriname SR
 Svalbard_and_Jan_Mayen SJ
+Swaziland SZ
 Sweden SE
 Switzerland CH
 Syrian_Arab_Republic SY
