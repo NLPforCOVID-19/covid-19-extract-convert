@@ -128,13 +128,11 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
     write_tweet_data(tweet_id)
 
 run_filename = os.path.join(run_dir, 'twitter.json')
-for database_filename in os.listdir(twitter_db_dir):
-    print(f"database_filename={database_filename}")
-    if os.path.exists(run_filename):
-        with open(run_filename, 'r') as run_file:
-            run_data = json.load(run_file)
-            print(f"run_data={run_data}")
-            processed_databases = run_data
+if os.path.exists(run_filename):
+    with open(run_filename, 'r') as run_file:
+        run_data = json.load(run_file)
+        print(f"run_data={run_data}")
+        processed_databases = run_data
 
 for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
     print(f"Processing {db_filename}")
