@@ -1,6 +1,7 @@
 import datetime
 import glob
 import json
+from json import JSONDecodeError
 import os
 import re
 import twitter
@@ -151,7 +152,10 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
                 tweet_lang = match.group(3)
                 tweet_country = match.group(4)
                 tweet_json_str = match.group(5)
-                process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str)
+                try:
+                    process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str)
+                except JSONDecodeError as json_err:
+                    print(f"Tweet {tweet_id} had invalid json and has been ignored. json_err={json_err}")
             else:
                 print(f"Invalid line: {line}")
 
