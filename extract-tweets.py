@@ -20,8 +20,6 @@ twitter_db_dir = f"{db_dir}/twitter"
 twitter_html_dir = config['twitter']['html_dir']
 run_dir = config['run_dir']
 
-now = datetime.datetime.now()
-
 processed_databases = []
 
 # # Uncomment to test import into Elastic Search database.
@@ -29,7 +27,6 @@ processed_databases = []
 #     'ja': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'ja'),
 #     'en': ElasticSearchTwitterImporter(config['elastic_search']['host'], config['elastic_search']['port'], twitter_html_dir, 'en')
 # }
-
 
 def extract_date_from(db_filename):
     bn = os.path.basename(db_filename)
@@ -40,7 +37,7 @@ def write_tweet_data(tweet_id):
     print(f"write_tweet_data tweet_id={tweet_id}")
     try:
         tweet = tweets[tweet_id]
-        timestamp = now.strftime('%Y-%m-%d-%H-%M')
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')
         tweet_timestamp = datetime.datetime.fromtimestamp(tweet['status'].created_at_in_seconds)
         country_code_dir = utils.get_country_code_dir(tweet['country_code'])
         timestamp_path = tweet_timestamp.strftime('%Y/%m/%d/%H-%M')
@@ -50,6 +47,8 @@ def write_tweet_data(tweet_id):
         while temp_path != twitter_html_dir:
             os.chmod(temp_path, 0o775)
             temp_path = os.path.dirname(temp_path)
+
+        print(f"tweet_path={html_orig_tweet_dir}")
 
         json_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.json")
         with open(json_filename, 'w') as json_file:
@@ -166,7 +165,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
 
     print(f"tweet_count_per_country={tweet_count_per_country}")
 
-    stats_file = os.path.join(run_dir, 'stats', f"twitter-stats-{now.strftime('%Y-%m-%d-%H-%M')}.json")
+    stats_file = os.path.join(run_dir, 'stats', f"twitter-stats-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.json")
     write_stats_file(stats_file, tweet_count_per_country)
 
     # Remove database to save disk space.
