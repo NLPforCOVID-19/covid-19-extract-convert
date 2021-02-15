@@ -138,6 +138,14 @@ def get_all_versions(parent_dir, file_dir_prefix):
     return res
 
 
+def get_content_to_compare(content, dom_element_to_compare=None):
+    if dom_element_to_compare is None:
+        return content
+    soup = bs4.BeautifulSoup(content, "html.parser")
+    elem = soup.find(dom_element_to_compare)
+    return elem.get_text() if elem is not None else content
+
+
 def is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
     for url_data in urls_data:
         url, filename, parent_dir, file_dir_prefix, full_path = url_data
@@ -199,10 +207,13 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), is_same_content))
                 if is_same_content:
                     return
-                seq = SequenceMatcher(a=content.decode('utf-8'), b=content_on_disk.decode('utf-8'))
+                dom_element_to_compare = None if "dom_element_to_compare" not in config['domains'][real_domain] else config['domains'][real_domain]['dom_element_to_compare']
+                content_a = get_content_to_compare(content.decode('utf-8'), dom_element_to_compare)
+                content_b = get_content_to_compare(content_on_disk.decode('utf-8'), dom_element_to_compare)
+                seq = SequenceMatcher(a=content_a, b=content_b)
                 sim_ratio = seq.quick_ratio()
                 is_similar_content = sim_ratio >= similarity_threshold
-                print(f"sim with content on disk ({file}): {sim_ratio}")
+                print(f"sim with content on disk ({file}) dom_element_to_compare={dom_element_to_compare}: {sim_ratio}")
                 if is_similar_content:
                     print(f"sim >= threshold={similarity_threshold} so skip it.")
                     return

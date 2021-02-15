@@ -104,7 +104,8 @@
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.francetvinfo\\.fr"],
             "sources": ["francetvinfo.fr"],
-            "similarity_threshold": 0.7
+            "similarity_threshold": 0.7,
+            "dom_element_to_compare": "article"
         },
         "www.gouvernement.fr": {
             "region": "fr",
