@@ -195,15 +195,16 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 md5_content = hashlib.md5(content)
                 md5_content_on_disk = hashlib.md5(content_on_disk)
                 # print("content == content_on_disk? {}".format(content == content_on_disk))
-                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), md5_content.hexdigest() == md5_content_on_disk.hexdigest()))
                 is_same_content = md5_content.hexdigest() == md5_content_on_disk.hexdigest()
+                print("md5_content={0} md5_content_on_disk={1} equal? {2}".format(md5_content.hexdigest(), md5_content_on_disk.hexdigest(), is_same_content))
                 if is_same_content:
                     return
                 seq = SequenceMatcher(a=content.decode('utf-8'), b=content_on_disk.decode('utf-8'))
                 sim_ratio = seq.quick_ratio()
                 is_similar_content = sim_ratio >= similarity_threshold
+                print(f"sim with content on disk ({file}): {sim_ratio}")
                 if is_similar_content:
-                    print(f"sim with content on disk: {sim_ratio} vs threshold={similarity_threshold}? {is_similar_content} so skip it.")
+                    print(f"sim >= threshold={similarity_threshold} so skip it.")
                     return
 
     # Add the root_url to the urls_with_title so that we can detect doublons and skip them.
