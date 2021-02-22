@@ -156,11 +156,17 @@ def is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
             if os.path.isdir(file):
                 content_on_disk = get_content(file, filename)
                 if content_on_disk is not None:
-                    seq = SequenceMatcher(a=content.decode('utf-8'), b=content_on_disk.decode('utf-8'))
-                    ratio = seq.quick_ratio()
-                    print(f"is_content_similar_to_other_urls url={url} if sim_ratio={ratio} > {similarity_threshold}? Discarded!")
-                    if ratio > similarity_threshold:
-                        return True
+                    try:
+                        decoded_content_a = content.decode('utf-8')
+                        decoded_content_b = content_on_disk.decode('utf-8')
+                        seq = SequenceMatcher(a=decoded_content_a, b=decoded_content_b)
+                        ratio = seq.quick_ratio()
+                        print(f"is_content_similar_to_other_urls url={url} if sim_ratio={ratio} > {similarity_threshold}? Discarded!")
+                        if ratio > similarity_threshold:
+                            return True
+                    except UnicodeDecodeError as decoding_error:
+                        print("An error has occurred while decoding content: {0} so assume that content is not similar.".format(decoding_error))
+                        return False
     return False
 
 

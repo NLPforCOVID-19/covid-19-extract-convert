@@ -128,6 +128,25 @@
             "similarity_threshold": 0.7
         },
 
+        "bundle.id": {
+            "region": "id",
+            "language": "id",
+            "subdomains": [
+                "[a-zA-Z.-]+\\.indonesia\\.go\\.id",
+                "[a-zA-Z.-]+\\.detik\\.com",
+                "corona\\.jakarta\\.go\\.id",
+                "covid19\\.go\\.id",
+                "[a-zA-Z.-]+\\.kemkes\\.go\\.id"
+            ],
+            "sources": [
+                "indonesia.go.id",
+                "www.detik.com",
+                "corona.jakarta.go.id",
+                "covid19.go.id",
+                "www.kemkes.go.id"
+            ]
+        },
+
         "bundle.uk": {
             "region": "gb",
             "language": "en",
