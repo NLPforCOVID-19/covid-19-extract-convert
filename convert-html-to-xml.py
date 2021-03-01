@@ -81,41 +81,41 @@ class Producer(threading.Thread):
         root_input_dir = "{0}/ja_translated".format(self.region)
         root_output_dir = "{0}/ja_translated".format(self.region)
 
+
         root_abs_input_dir = os.path.join(html_dir, root_input_dir)
         root_abs_output_dir = os.path.join(xml_dir, root_output_dir)
+        
         if os.path.exists(root_abs_input_dir):
             for domain in os.listdir(root_abs_input_dir):
                 logger.info("Processing domain: {}...".format(domain))
                 self.files_to_process[domain] = []
-                for top, dirs, files in os.walk(os.path.join(root_abs_input_dir, domain)):
-                    # logger.debug("top={0} dirs={1} files={2}".format(top, dirs, files))
-                    for file in files:
+                html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
+                sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime)
+        
+                for html_file in sorted_html_files:
+                    www2sf_input_file = html_file
+                    www2sf_output_file = os.path.join(root_abs_output_dir, domain, html_file[len(root_abs_input_dir) + len(domain) + 2:html_file.index('.html')] + '.xml')
+                    logger.debug(f"www2sf_input_file ={www2sf_input_file}")
+                    logger.debug(f"www2sf_output_file={www2sf_output_file}")
 
-                        if self.stopped:
-                            logger.info("Producer for region {0} has been stopped.".format(self.region))
-                            return
+                    logger.debug("Checking file: {}".format(www2sf_input_file))
+                    if www2sf_input_file in unconvertable_files:
+                        logger.debug("Skip {} because it's flagged as unconvertable.".format(www2sf_input_file))
+                        continue
 
-                        if file.endswith('.html'):
-                            www2sf_input_file = os.path.join(top, file)
-                            www2sf_output_file = os.path.join(root_abs_output_dir, domain, top[top.index(domain) + len(domain) + 1:], file[:file.index('.html')] + '.xml')
-                            logger.debug("Checking file: {}".format(www2sf_input_file))
-                            if www2sf_input_file in unconvertable_files:
-                                logger.debug("Skip {} because it's flagged as unconvertable.".format(www2sf_input_file))
-                                continue
+                    if www2sf_output_file in prev_processed_files:
+                        logger.debug("Skip {} because already processed.".format(www2sf_output_file))
+                        continue
 
-                            if www2sf_output_file in prev_processed_files:
-                                logger.debug("Skip {} because already processed.".format(www2sf_output_file))
-                                continue
-
-                            timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
-                            logger.debug("Adding {} to files to process.".format(www2sf_input_file))
-                            self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
+                    timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
+                    logger.debug("Adding {} to files to process.".format(www2sf_input_file))
+                    self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
 
                 # Process the 200 most recent files first for this domain. 
                 logger.debug("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
                 self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])[:200]
                 for file in self.most_recent_files_first:
-                    logger.info("Adding {} to queue.".format(www2sf_input_file))
+                    logger.info("Adding {} to queue.".format(file[0]))
                     queue_html_files.put((file[0], file[1]))
                     
         logger.info("Finished processing files from region: {}...".format(self.region))
