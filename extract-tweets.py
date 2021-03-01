@@ -50,10 +50,12 @@ def write_tweet_data(tweet_id):
 
         print(f"tweet_path={html_orig_tweet_dir}")
 
+        # EVen if the json file already exists, it's updated.
         json_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.json")
         with open(json_filename, 'w') as json_file:
             json.dump(tweet['json'], json_file)
 
+        # EVen if the metadata file already exists, it's updated.
         metadata_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.metadata")
         with open(metadata_filename, 'w') as metadata_file:
             metadata = {
@@ -64,36 +66,37 @@ def write_tweet_data(tweet_id):
             }
             json.dump(metadata, metadata_file)
 
+        # Write html file only if it doesn't exist yet.
         tweet_text_for_html = tweet['status'].full_text if tweet['status'].tweet_mode == 'extended' else tweet['status'].text
         tweet_text_for_html = re.sub("https://t.co/\w+", "", tweet_text_for_html) # Remove urls from text.
         tweet_text_for_html = re.sub("#\w+\s*", "", tweet_text_for_html) # Remove hashtags from text.
         html_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.html")
-        with open(html_filename, 'w') as html_file:
-            html_str = (
-                "<!DOCTYPE html>\n"
-                f"<html lang=\"{tweet['status'].lang}\">\n"
-                "<head><meta charset=\"utf-8\"/></head>\n"
-                "<body>\n"
-                f"<p>{tweet_text_for_html}</p>\n"
-                "</body>\n"
-                "</html>\n"
-            )
-            html_file.write(html_str)
+        if not os.path.exists(html_filename):
+            with open(html_filename, 'w') as html_file:
+                html_str = (
+                    "<!DOCTYPE html>\n"
+                    f"<html lang=\"{tweet['status'].lang}\">\n"
+                    "<head><meta charset=\"utf-8\"/></head>\n"
+                    "<body>\n"
+                    f"<p>{tweet_text_for_html}</p>\n"
+                    "</body>\n"
+                    "</html>\n"
+                )
+                html_file.write(html_str)
 
-        new_html_filename = os.path.join(run_dir, 'new-html-files', f'new-twitter-html-files-{timestamp}.txt')
-        with open(new_html_filename, 'a') as new_html_file:
-            new_html_file.write(html_filename)
-            new_html_file.write("\n")
+            new_html_filename = os.path.join(run_dir, 'new-html-files', f'new-twitter-html-files-{timestamp}.txt')
+            with open(new_html_filename, 'a') as new_html_file:
+                new_html_file.write(html_filename)
+                new_html_file.write("\n")
 
+            # # Uncomment to test import into Elastic Search database.
+            # es_index = config['elastic_search']['twitter_index_basename'] + '-' + tweet['status'].lang
+            # es_importer[tweet['status'].lang].update_record(html_filename[:-4]+"txt", index=es_index, is_data_stream=True)
 
-        # # Uncomment to test import into Elastic Search database.
-        # es_index = config['elastic_search']['twitter_index_basename'] + '-' + tweet['status'].lang
-        # es_importer[tweet['status'].lang].update_record(html_filename[:-4]+"txt", index=es_index, is_data_stream=True)
-
-        if country_code_dir in tweet_count_per_country:
-            tweet_count_per_country[country_code_dir] += 1
-        else:
-            tweet_count_per_country[country_code_dir] = 1
+            if country_code_dir in tweet_count_per_country:
+                tweet_count_per_country[country_code_dir] += 1
+            else:
+                tweet_count_per_country[country_code_dir] = 1
     except OSError as os_err:
         print(f"An error has occurred in write_tweet_data(tweet_id={tweet_id}) os_err={os_err}")
 
