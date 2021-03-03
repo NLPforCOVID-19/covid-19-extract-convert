@@ -81,12 +81,16 @@ class Producer(threading.Thread):
         root_input_dir = "{0}/ja_translated".format(self.region)
         root_output_dir = "{0}/ja_translated".format(self.region)
 
-
         root_abs_input_dir = os.path.join(html_dir, root_input_dir)
         root_abs_output_dir = os.path.join(xml_dir, root_output_dir)
 
         if os.path.exists(root_abs_input_dir):
             for domain in os.listdir(root_abs_input_dir):
+
+                if 'domains_ignored' in config and domain in config['domains_ignored'] or \
+                    'domains_disabled' in config and domain in config['domains_disabled']:
+                    continue
+
                 logger.info("Processing domain: {}...".format(domain))
                 self.files_to_process[domain] = []
                 html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
