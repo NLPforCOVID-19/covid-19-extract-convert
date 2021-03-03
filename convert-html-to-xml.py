@@ -96,11 +96,16 @@ class Producer(threading.Thread):
                 html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
                 sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
 
-                # Consider the latest 200 files
-                for html_file in sorted_html_files[:200]:
+                for html_file in sorted_html_files:
                     if self.stopped:
                         logger.info("Producer for region {0} has been stopped.".format(self.region))
                         return
+
+                    # Do not consider files that are older than 7 days from now.
+                    ts_mtime = datetime.datetime.fromtimestamp(os.stat(html_file).st_mtime)
+                    delta_from_now = ts_now - ts_mtime
+                    if delta_from_now.days > 7:
+                        break
 
                     www2sf_input_file = html_file
                     www2sf_output_file = os.path.join(root_abs_output_dir, domain, html_file[len(root_abs_input_dir) + len(domain) + 2:html_file.index('.html')] + '.xml')
@@ -120,9 +125,12 @@ class Producer(threading.Thread):
                     logger.debug("Adding {} to files to process.".format(www2sf_input_file))
                     self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
 
+                    # Consider 200 files.
+                    if len(self.files_to_process[domain]) == 200:
+                        break
+
                 logger.info("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
-                self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])
-                for file in self.most_recent_files_first:
+                for file in self.files_to_process[domain]:
                     logger.info("Adding {} to queue.".format(file[0]))
                     queue_html_files.put((file[0], file[1]))
 
@@ -233,6 +241,7 @@ if __name__ == '__main__':
         detectblocks_dir = config['detectblocks_dir']
 
         now = datetime.datetime.now()
+        ts_now = datetime.datetime.fromtimestamp(time.time())
 
         queue_html_files = queue.Queue()
 
