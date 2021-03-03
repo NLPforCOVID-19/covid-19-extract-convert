@@ -15,7 +15,7 @@ echo "Converting HTML files to XML..."
 if [ $# -ne 0 ]
 then
     REGION=$1
-    $PIPENV run python convert-html-to-xml.py --log_config converter_logging_${REGION//,/_} $REGION
+    $PIPENV run python convert-html-to-xml.py --log_config converter_logging_${REGION//,/_}.conf $REGION
 else
     $PIPENV run python convert-html-to-xml.py
 fi
