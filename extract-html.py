@@ -214,15 +214,19 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 if is_same_content:
                     return
                 dom_element_to_compare = None if "dom_element_to_compare" not in config['domains'][real_domain] else config['domains'][real_domain]['dom_element_to_compare']
-                content_a = get_content_to_compare(content.decode('utf-8'), dom_element_to_compare)
-                content_b = get_content_to_compare(content_on_disk.decode('utf-8'), dom_element_to_compare)
-                seq = SequenceMatcher(a=content_a, b=content_b)
-                sim_ratio = seq.quick_ratio()
-                is_similar_content = sim_ratio >= similarity_threshold
-                print(f"sim with content on disk ({file}) dom_element_to_compare={dom_element_to_compare}: {sim_ratio}")
-                if is_similar_content:
-                    print(f"sim >= threshold={similarity_threshold} so skip it.")
-                    return
+                try:
+                    decoded_content_a = get_content_to_compare(content.decode('utf-8'), dom_element_to_compare)
+                    decoded_content_b = get_content_to_compare(content_on_disk.decode('utf-8'), dom_element_to_compare)
+                    seq = SequenceMatcher(a=decoded_, b=decoded_content_b)
+                    sim_ratio = seq.quick_ratio()
+                    is_similar_content = sim_ratio >= similarity_threshold
+                    print(f"sim with content on disk ({file}) dom_element_to_compare={dom_element_to_compare}: {sim_ratio}")
+                    if is_similar_content:
+                        print(f"sim >= threshold={similarity_threshold} so skip it.")
+                        return
+                except UnicodeDecodeError as decoding_error:
+                    print("An error has occurred while decoding content: {0} so assume that content is not similar.".format(decoding_error))
+
 
     # Add the root_url to the urls_with_title so that we can detect doublons and skip them.
     if content is not None:
