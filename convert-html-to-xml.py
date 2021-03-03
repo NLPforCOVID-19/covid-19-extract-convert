@@ -92,7 +92,8 @@ class Producer(threading.Thread):
                 html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
                 sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
 
-                for html_file in sorted_html_files[:400]:
+                # Consider the latest 200 files
+                for html_file in sorted_html_files[:200]:
                     if self.stopped:
                         logger.info("Producer for region {0} has been stopped.".format(self.region))
                         return
@@ -115,9 +116,8 @@ class Producer(threading.Thread):
                     logger.debug("Adding {} to files to process.".format(www2sf_input_file))
                     self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
 
-                # Process the 200 most recent files first for this domain.
                 logger.info("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
-                self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])[:200]
+                self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])
                 for file in self.most_recent_files_first:
                     logger.info("Adding {} to queue.".format(file[0]))
                     queue_html_files.put((file[0], file[1]))
@@ -158,6 +158,8 @@ class Converter(threading.Thread):
                             xml_file.write(process.stdout)
                         logger.info("Output file {}: OK".format(www2sf_output_file))
 
+                        # It's unlikely to happen but consider that 2 converter processes could start at the exact same time and conflict with each other.
+                        # I should test if the file exists and change the name a bit when it happens.
                         new_xml_filename = os.path.join(run_dir, 'new-xml-files', 'new-xml-files-{0}.txt'.format(now.strftime('%Y-%m-%d-%H-%M')))
                         new_xml_file_lock = "{0}.lock".format(new_xml_filename)
                         with FileLock(new_xml_file_lock):
@@ -200,6 +202,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Launch the converter.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--config", help="Location of config file.", type=str, default="config.json")
     parser.add_argument("--log_config", help="Log configuration file.", type=str, default="converter_logging.conf")
+    parser.add_argument("region", nargs='?', default=None)
     args = parser.parse_args(args=None)
 
     config_filename = args.config
@@ -239,13 +242,8 @@ if __name__ == '__main__':
         converters = []
 
         for region in os.listdir(html_dir):
-            # Skip French region temporarily.
-            # if region == 'fr':
-            #     continue
-
-            # Just process cn and de regions (temporarily).
-            # if region not in ['cn', 'de']:
-            #     continue
+            if args.region is not None and region != args.region:
+                continue
 
             producer = Producer(region)
             producers.append(producer)
@@ -261,7 +259,7 @@ if __name__ == '__main__':
         #     i += 1
         #     queue_html_files.task_done()
 
-        converter_count = 40
+        converter_count = 40 if args.region is None else 2
         for c in range(0, converter_count):
             converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
