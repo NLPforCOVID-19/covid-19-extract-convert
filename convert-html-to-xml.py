@@ -206,9 +206,10 @@ if __name__ == '__main__':
     args = parser.parse_args(args=None)
 
     config_filename = args.config
-
     logging.config.fileConfig(args.log_config)
     logger = logging.getLogger('default')
+
+    regions = None if args.region is None else args.region.split(',')
 
     signal.signal(signal.SIGINT, signal_handler)
     print("Hit CTRL+C and wait a little bit to stop the converter.")
@@ -242,7 +243,7 @@ if __name__ == '__main__':
         converters = []
 
         for region in os.listdir(html_dir):
-            if args.region is not None and region != args.region:
+            if regions is not None and region not in regions:
                 continue
 
             producer = Producer(region)
@@ -259,7 +260,7 @@ if __name__ == '__main__':
         #     i += 1
         #     queue_html_files.task_done()
 
-        converter_count = 40 if args.region is None else 10
+        converter_count = 40 if args.region is None else min(40, 10 * len(regions))
         for c in range(0, converter_count):
             converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
