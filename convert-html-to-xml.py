@@ -259,7 +259,7 @@ if __name__ == '__main__':
         #     i += 1
         #     queue_html_files.task_done()
 
-        converter_count = 40 if args.region is None else 2
+        converter_count = 40 if args.region is None else 10
         for c in range(0, converter_count):
             converter = Converter(c, new_xml_files_dir)
             converters.append(converter)
