@@ -37,9 +37,9 @@ def get_unconvertable_files(new_xml_files_dir):
 
 
 # For some reasons (like the script was killed abruptly), some xml files have
-# not been reported even though they have been converted.  
+# not been reported even though they have been converted.
 # Eventually, we should report these files?
-# For the moment, we skip these as they already 
+# For the moment, we skip these as they already
 def get_unreferred_files(new_xml_files_dir):
     files = set()
     unreferred_filename = "{0}/already_converted_but_unreferred_files.txt".format(new_xml_files_dir)
@@ -84,15 +84,19 @@ class Producer(threading.Thread):
 
         root_abs_input_dir = os.path.join(html_dir, root_input_dir)
         root_abs_output_dir = os.path.join(xml_dir, root_output_dir)
-        
+
         if os.path.exists(root_abs_input_dir):
             for domain in os.listdir(root_abs_input_dir):
                 logger.info("Processing domain: {}...".format(domain))
                 self.files_to_process[domain] = []
                 html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
-                sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime)
-        
-                for html_file in sorted_html_files:
+                sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
+
+                for html_file in sorted_html_files[:400]:
+                    if self.stopped:
+                        logger.info("Producer for region {0} has been stopped.".format(self.region))
+                        return
+
                     www2sf_input_file = html_file
                     www2sf_output_file = os.path.join(root_abs_output_dir, domain, html_file[len(root_abs_input_dir) + len(domain) + 2:html_file.index('.html')] + '.xml')
                     logger.debug(f"www2sf_input_file ={www2sf_input_file}")
@@ -111,13 +115,13 @@ class Producer(threading.Thread):
                     logger.debug("Adding {} to files to process.".format(www2sf_input_file))
                     self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
 
-                # Process the 200 most recent files first for this domain. 
-                logger.debug("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
+                # Process the 200 most recent files first for this domain.
+                logger.info("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
                 self.most_recent_files_first = sorted(self.files_to_process[domain], reverse=True, key=lambda x: x[-1])[:200]
                 for file in self.most_recent_files_first:
                     logger.info("Adding {} to queue.".format(file[0]))
                     queue_html_files.put((file[0], file[1]))
-                    
+
         logger.info("Finished processing files from region: {}...".format(self.region))
 
 
@@ -219,7 +223,7 @@ if __name__ == '__main__':
         new_xml_files_dir = "{0}/new-xml-files".format(run_dir)
         www2sf_dir = config['WWW2sf_dir']
         detectblocks_dir = config['detectblocks_dir']
-        
+
         now = datetime.datetime.now()
 
         queue_html_files = queue.Queue()
@@ -276,7 +280,7 @@ if __name__ == '__main__':
         #             new_xml_file.write(file)
         #             new_xml_file.write("\n")
         #     logger.info("Report written.")
-    
+
         logger.info("Iteration over.")
 
     logger.info("Stop running.")
