@@ -217,7 +217,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 try:
                     decoded_content_a = get_content_to_compare(content.decode('utf-8'), dom_element_to_compare)
                     decoded_content_b = get_content_to_compare(content_on_disk.decode('utf-8'), dom_element_to_compare)
-                    seq = SequenceMatcher(a=decoded_, b=decoded_content_b)
+                    seq = SequenceMatcher(a=decoded_content_a, b=decoded_content_b)
                     sim_ratio = seq.quick_ratio()
                     is_similar_content = sim_ratio >= similarity_threshold
                     print(f"sim with content on disk ({file}) dom_element_to_compare={dom_element_to_compare}: {sim_ratio}")
