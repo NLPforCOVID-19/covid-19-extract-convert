@@ -8,7 +8,8 @@
         "xml_dir": "/mnt/hinoki/share/covid19/twitter/xml",
         "stats": {
             "countries_of_interest": ["_", "jp", "us", "gb", "fr", "de", "au", "cn", "kr"]
-        }
+        },
+        "black_list": "/mnt/hinoki/share/covid19/twitter_black_list.txt"
     }
     "default_similarity_threshold": 0.8,
     "domains": {

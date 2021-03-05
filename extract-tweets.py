@@ -20,6 +20,12 @@ twitter_db_dir = f"{db_dir}/twitter"
 twitter_html_dir = config['twitter']['html_dir']
 run_dir = config['run_dir']
 
+rejected_expressions = []
+if "black_list" in config["twitter"]:
+    with open(config['twitter']['black_list'], 'r') as rejected_expressions_file:
+        for line in rejected_expressions_file:
+            rejected_expressions.append(line.strip())
+
 processed_databases = []
 
 # # Uncomment to test import into Elastic Search database.
@@ -31,6 +37,20 @@ processed_databases = []
 def extract_date_from(db_filename):
     bn = os.path.basename(db_filename)
     return bn[bn.index("_") + 1:bn.index(".txt")]
+
+
+def get_tweet_text(status):
+    tweet_text = status.full_text if status.tweet_mode == 'extended' else status.text
+    tweet_text = re.sub("https://t.co/\w+", "", tweet_text) # Remove urls from text.
+    tweet_text = re.sub("#\w+\s*", "", tweet_text) # Remove hashtags from text.
+    return tweet_text
+
+
+def search_black_list(tweet_text):
+    for expr in rejected_expressions:
+        if expr in tweet_text:
+            return expr
+    return None
 
 
 def write_tweet_data(tweet_id):
@@ -67,9 +87,7 @@ def write_tweet_data(tweet_id):
             json.dump(metadata, metadata_file)
 
         # Write html file only if it doesn't exist yet.
-        tweet_text_for_html = tweet['status'].full_text if tweet['status'].tweet_mode == 'extended' else tweet['status'].text
-        tweet_text_for_html = re.sub("https://t.co/\w+", "", tweet_text_for_html) # Remove urls from text.
-        tweet_text_for_html = re.sub("#\w+\s*", "", tweet_text_for_html) # Remove hashtags from text.
+        tweet_text_for_html = get_tweet_text(tweet['status'])
         html_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.html")
         if not os.path.exists(html_filename):
             with open(html_filename, 'w') as html_file:
@@ -110,6 +128,14 @@ def write_stats_file(filename, tweet_count_per_country):
 def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str):
     tweet_json = json.loads(tweet_json_str)
     tweet_status = twitter.models.Status.NewFromJsonDict(tweet_json)
+    tweet_text = get_tweet_text(tweet_status)
+
+    # Skip tweets that contain rejected words.
+    rejected_expr = search_black_list(tweet_text)
+    if rejected_expr is not None:
+        print(f"Tweet {tweet_id} has been skipped because it contains rejected expression: {rejected_expr}.")
+        return
+
     tweet_country_code = None
     try:
         tweet_country_code = utils.convert_country_to_iso_3166_alpha_2(tweet_country)
