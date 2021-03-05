@@ -235,7 +235,7 @@ print("<body>")
 # Local time without depending on pytz.
 now = datetime.now() + timedelta(hours=9)
 timestamp = now.strftime('%Y-%m-%d %H:%M')
-print(f"<h1>HTML file extraction, translation and conversion to XML ({timestamp})</h1>")
+print(f"<h1>HTML file extraction, translation and conversion to XML ({timestamp} <a href=\"?update=true\">Update!</a>)</h1>")
 
 print(f"<p>Date of first extraction: {date_min}</p>")
 print(f"<p>Date of last extraction: {date_max}</p>")

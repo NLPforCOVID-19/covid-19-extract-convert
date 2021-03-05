@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import cgi, cgitb
 from datetime import datetime, timedelta
 import os.path
 import subprocess
 import sys
 import time
 
+cgitb.enable()
+form = cgi.FieldStorage()
+
 build_report = True
 build_stats_report_script = './build-stats-report.cgi'
 report_file = '/tmp/report_covid19-stats.html'
 if os.path.exists(report_file):
     stat = os.stat(report_file)
-    time_delta = timedelta(seconds=time.time() - stat.st_mtime)
     if stat.st_size == 0:
         build_report = False
     else:
-        time_delta = timedelta(seconds=time.time() - stat.st_mtime)
-        if time_delta.seconds < 5 * 60:
+        report_age = timedelta(seconds=time.time() - stat.st_mtime)
+        # If no forced update is asked and if the report is no older than 2 hours, the existing report is shown.
+        if ("update" not in form or form["update"].value != "true") and report_age.seconds < 2 * 60 * 60:
             with open(report_file, 'r', encoding='utf-8') as input:
                 report = input.read()
                 print(report)
