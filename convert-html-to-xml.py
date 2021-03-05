@@ -137,9 +137,10 @@ class Producer(threading.Thread):
                             return
 
 
+
     def run(self):
         global queue_html_files
-        logger.info("Processing files...")
+        logger.info("Processing new-html-files.txt files...")
 
         new_html_files_files = glob.glob(os.path.join(run_dir, 'new-html-files') + '/**/new-html-files-*.txt', recursive=True)
         sorted_new_html_files_files = sorted(new_html_files_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
@@ -150,10 +151,15 @@ class Producer(threading.Thread):
             if self.file_count >= max_file_count:
                 break
 
-        logger.info("Finished processing files.")
+        logger.info("Finished processing new-html-files.txt files.")
 
         for domain in self.files_to_process.keys():
-            logger.debug(f"domain={domain} len={len(self.files_to_process[domain])}")
+            logger.info(f"domain={domain} len={len(self.files_to_process[domain])}")
+
+        for domain in self.files_to_process.keys():
+            for file in self.files_to_process[domain]:
+                logger.info(f"Adding {file[0]} to queue.")
+                queue_html_files.put((str(file[0]), str(file[1])))
 
 
 class Converter(threading.Thread):
