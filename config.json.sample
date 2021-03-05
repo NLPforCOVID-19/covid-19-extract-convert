@@ -7,7 +7,7 @@
         "html_dir": "/mnt/hinoki/share/covid19/twitter/html",
         "xml_dir": "/mnt/hinoki/share/covid19/twitter/xml",
         "stats": {
-            "countries_of_interest": ["_", "jp", "us", "gb", "fr", "de"]
+            "countries_of_interest": ["_", "jp", "us", "gb", "fr", "de", "au", "cn", "kr"]
         }
     }
     "default_similarity_threshold": 0.8,
