@@ -79,7 +79,7 @@ Estonia EE
 Eswatini SZ
 Ethiopia ET
 Falkland_Islands_(Malvinas) FK
-# Faroe Islands (the) FO
+Faroe_Islands FO
 Fiji FJ
 Finland FI
 France FR
