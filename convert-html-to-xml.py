@@ -5,6 +5,7 @@ import json
 import logging
 import logging.config
 import os
+import pathlib
 import queue
 import signal
 import subprocess
@@ -12,6 +13,10 @@ import sys
 import threading
 import time
 import traceback
+
+
+max_file_count = 1000
+max_file_count_per_domain = 200
 
 
 def signal_handler(sig, frame):
@@ -65,76 +70,96 @@ def get_processed_files(new_xml_files_dir):
 
     return files
 
-
 class Producer(threading.Thread):
 
-    def __init__(self, region):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.name = "Producer for region {}".format(region)
-        self.region = region
+        self.name = "Producer"
         self.stopped = False
         self.files_to_process = {}
+        self.file_count = 0
+
+
+    def process_new_html_files_file(self, new_html_files_file):
+        with open(new_html_files_file) as f:
+            for line in f:
+
+                if self.stopped:
+                    return
+
+                html_file = line.strip()
+                if html_file == '':
+                    continue
+
+                # Consider only valid lines.
+                if html_file.startswith(html_dir) and html_file.endswith(".html"):
+                    region, _, domain, *url_parts = pathlib.Path(html_file[len(html_dir) + 1:]).parts
+
+                    if self.file_count < max_file_count and (domain not in self.files_to_process or len(self.files_to_process[domain]) < max_file_count_per_domain):
+                        url_filename = pathlib.Path(*url_parts)
+
+                        www2sf_input_file = pathlib.Path(html_dir) / region / "ja_translated" / domain / url_filename
+                        www2sf_output_file = pathlib.Path(xml_dir) / region / "ja_translated" / domain / url_filename.with_suffix('.xml')
+                        logger.debug(f"www2sf_input_file={www2sf_input_file}")
+                        logger.debug(f"www2sf_output_file={www2sf_output_file}")
+
+                        logger.debug(f"Checking file: {www2sf_input_file}")
+
+                        if not os.path.exists(www2sf_input_file):
+                            logger.debug(f"Skip {www2sf_input_file} because it doesn't exist.")
+                            continue
+
+                        if www2sf_input_file in unconvertable_files:
+                            logger.debug(f"Skip {www2sf_input_file} because it's flagged as unconvertable.")
+                            continue
+
+                        if www2sf_output_file in prev_processed_files:
+                            logger.debug(f"Skip {www2sf_output_file} because already processed.")
+                            continue
+
+                        if os.path.exists(www2sf_output_file):
+                            logger.debug(f"Skip {www2sf_input_file} because {www2sf_output_file} already exists.")
+                            continue
+
+                        timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
+                        item = (www2sf_input_file, www2sf_output_file, timestamp)
+                        if domain in self.files_to_process and item in self.files_to_process[domain]:
+                            logger.debug(f"Skip {www2sf_input_file} because {www2sf_output_file} already registered.")
+                            continue
+
+                        logger.debug("Adding {} to files to process.".format(www2sf_input_file))
+                        if domain not in self.files_to_process:
+                            self.files_to_process[domain] = []
+                        self.files_to_process[domain].append(item)
+                        self.file_count += 1
+
+                        if self.file_count >= max_file_count or len(self.files_to_process[domain]) >= max_file_count_per_domain:
+                            return
+
+
 
     def run(self):
         global queue_html_files
-        logger.info("Processing files from region: {}...".format(self.region))
-        root_input_dir = "{0}/ja_translated".format(self.region)
-        root_output_dir = "{0}/ja_translated".format(self.region)
+        logger.info("Processing new-html-files.txt files...")
 
-        root_abs_input_dir = os.path.join(html_dir, root_input_dir)
-        root_abs_output_dir = os.path.join(xml_dir, root_output_dir)
+        new_html_files_files = glob.glob(os.path.join(run_dir, 'new-html-files') + '/**/new-html-files-*.txt', recursive=True)
+        sorted_new_html_files_files = sorted(new_html_files_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
 
-        if os.path.exists(root_abs_input_dir):
-            for domain in os.listdir(root_abs_input_dir):
+        for new_html_files_file in sorted_new_html_files_files:
 
-                if 'domains_ignored' in config and domain in config['domains_ignored'] or \
-                    'domains_disabled' in config and domain in config['domains_disabled']:
-                    continue
+            self.process_new_html_files_file(new_html_files_file)
+            if self.file_count >= max_file_count:
+                break
 
-                logger.info("Processing domain: {}...".format(domain))
-                self.files_to_process[domain] = []
-                html_files = glob.glob(os.path.join(root_abs_input_dir, domain) + '/**/*.html', recursive=True)
-                sorted_html_files = sorted(html_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
+        logger.info("Finished processing new-html-files.txt files.")
 
-                for html_file in sorted_html_files:
-                    if self.stopped:
-                        logger.info("Producer for region {0} has been stopped.".format(self.region))
-                        return
+        for domain in self.files_to_process.keys():
+            logger.info(f"domain={domain} len={len(self.files_to_process[domain])}")
 
-                    # Do not consider files that are older than 7 days from now.
-                    ts_mtime = datetime.datetime.fromtimestamp(os.stat(html_file).st_mtime)
-                    delta_from_now = ts_now - ts_mtime
-                    if delta_from_now.days > 7:
-                        break
-
-                    www2sf_input_file = html_file
-                    www2sf_output_file = os.path.join(root_abs_output_dir, domain, html_file[len(root_abs_input_dir) + len(domain) + 2:html_file.index('.html')] + '.xml')
-                    logger.debug(f"www2sf_input_file ={www2sf_input_file}")
-                    logger.debug(f"www2sf_output_file={www2sf_output_file}")
-
-                    logger.debug("Checking file: {}".format(www2sf_input_file))
-                    if www2sf_input_file in unconvertable_files:
-                        logger.debug("Skip {} because it's flagged as unconvertable.".format(www2sf_input_file))
-                        continue
-
-                    if www2sf_output_file in prev_processed_files:
-                        logger.debug("Skip {} because already processed.".format(www2sf_output_file))
-                        continue
-
-                    timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
-                    logger.debug("Adding {} to files to process.".format(www2sf_input_file))
-                    self.files_to_process[domain].append((www2sf_input_file, www2sf_output_file, timestamp) )
-
-                    # Consider 200 files.
-                    if len(self.files_to_process[domain]) == 200:
-                        break
-
-                logger.info("len(files_to_process[{0}]) for region {1}: {2}".format(domain, self.region, len(self.files_to_process[domain])))
-                for file in self.files_to_process[domain]:
-                    logger.info("Adding {} to queue.".format(file[0]))
-                    queue_html_files.put((file[0], file[1]))
-
-        logger.info("Finished processing files from region: {}...".format(self.region))
+        for domain in self.files_to_process.keys():
+            for file in self.files_to_process[domain]:
+                logger.info(f"Adding {file[0]} to queue.")
+                queue_html_files.put((str(file[0]), str(file[1])))
 
 
 class Converter(threading.Thread):
@@ -255,13 +280,9 @@ if __name__ == '__main__':
         producers = []
         converters = []
 
-        for region in os.listdir(html_dir):
-            if regions is not None and region not in regions:
-                continue
-
-            producer = Producer(region)
-            producers.append(producer)
-            producer.start()
+        producer = Producer()
+        producers.append(producer)
+        producer.start()
 
         for producer in producers:
             producer.join()
@@ -294,5 +315,7 @@ if __name__ == '__main__':
         #     logger.info("Report written.")
 
         logger.info("Iteration over.")
+
+        # stopped = True
 
     logger.info("Stop running.")
