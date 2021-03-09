@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/mnt/orange/brew/data/bin/python3
 # -*- coding: utf-8 -*-
 
 import cgi, cgitb
@@ -13,7 +13,7 @@ form = cgi.FieldStorage()
 
 build_report = True
 build_stats_report_script = './build-stats-report.cgi'
-report_file = '/tmp/report_covid19-stats.html'
+report_file = '../report_covid19-stats.html'
 if os.path.exists(report_file):
     stat = os.stat(report_file)
     if stat.st_size == 0:
@@ -38,7 +38,7 @@ print("<html lang=\"en\">")
 print("<head>")
 print("<meta charset=\"utf-8\">")
 print("<link rel=\"stylesheet\" href=\"../default.css\">")
-print("<meta http-equiv=\"refresh\" content=\"20\">")
+print("<meta http-equiv=\"refresh\" content=\"20; url=?update=false\">")
 print("</head>")
 print("<body>")
 print("<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>")

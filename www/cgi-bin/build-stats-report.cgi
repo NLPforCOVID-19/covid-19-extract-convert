@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/mnt/orange/brew/data/bin/python3
 # -*- coding: utf-8 -*-
 
 print("Content-Type: text/html")
