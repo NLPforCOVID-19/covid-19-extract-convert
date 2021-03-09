@@ -176,7 +176,7 @@ for stat_filename in sorted(glob.glob('stats/**/stats-*.json', recursive=True)):
 
 for stat_filename in sorted(glob.glob('twitter-stats/twitter-stats-*.json', recursive=True)):
     base_filename = os.path.basename(stat_filename)
-    date_str = stat_filename[14:30]
+    date_str = base_filename[14:30]
     date = datetime.strptime(date_str, '%Y-%m-%d-%H-%M')
     if date_min is None or date < date_min:
         date_min = date
