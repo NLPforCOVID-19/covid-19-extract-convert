@@ -28,8 +28,7 @@ def get_available_databases():
             match = re.search('(\d\d\d\d-\d\d-\d\d-\d\d-\d\d)/', link)
             if match:
                 dbs.append(match.group(1))
-    # Remove the last entry because it's assumed that it's not been completely computed yet.
-    return dbs[:-1]
+    return dbs
 
 
 def retrieve_database(database):
@@ -58,6 +57,9 @@ now = datetime.datetime.now()
 
 processed_dbs = get_processed_databases()
 available_dbs = get_available_databases()
-for db in available_dbs:
-    if not db in processed_dbs:
+for index, db in enumerate(available_dbs):
+    # Even if the last db has already been processed, it must be
+    # processed again because it's been updated with new data.
+    if not db in processed_dbs or index == len(available_dbs) - 1:
         retrieve_database(db)
+
