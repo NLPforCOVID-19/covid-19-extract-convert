@@ -20,11 +20,6 @@ year=$(date +'%Y')
 
 echo "Archiving old files. Started on $now."
 
-echo $now
-echo $year
-echo $month
-
-
 #
 # Initialize tmp_year and tmp_month.
 # I will move data that belong to the 3 previous
@@ -33,11 +28,9 @@ echo $month
 
 if [[ ${month#0} -gt 3 ]];
 then
-    echo "m is < 4"
     tmp_year=$year
     tmp_month=$(( ${month#0} - 3 ))
 else
-    echo "m is >= 4"
     tmp_year=$(( $year - 1 ))
     tmp_month=$(( 9 + ${month#0} ))
 fi
