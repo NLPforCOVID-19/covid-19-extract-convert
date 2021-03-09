@@ -115,6 +115,10 @@ do
     mv $CONVERTER_LOG_DIR/twitter_converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/twitter-converter/$tmp_year/$tmp_month/.
     find $ARCHIVE_DIR/logs/twitter-converter/$tmp_year/$tmp_month -type f -exec gzip {} \;
 
+    # Archive twitter stats files.
+    mkdir -p $COVID_RUN_DIR/twitter-stats/$tmp_year/$tmp_month
+    mv $COVID_RUN_DIR/twitter-stats/twitter-stats-$tmp_year-$tmp_month-* $COVID_RUN_DIR/twitter-stats/$tmp_year/$tmp_month/.
+
 
     if [[ ${tmp_month#0} -eq 12 ]];
     then
