@@ -11,6 +11,7 @@ import os
 import re
 import sys
 
+
 config_filename = sys.argv[1] if len(sys.argv) == 2 else 'config.json'
 with open(config_filename, 'r') as config_file:
     config = json.load(config_file)
@@ -147,8 +148,9 @@ totals_per_country = {}
 text = ''
 
 os.chdir(run_dir)
-for stat_filename in sorted(glob.glob('stats/stats-*.json')):
-    date_str = stat_filename[12:28]
+for stat_filename in sorted(glob.glob('stats/**/stats-*.json', recursive=True)):
+    base_filename = os.path.basename(stat_filename)
+    date_str = base_filename[6:22]
     date = datetime.strptime(date_str, '%Y-%m-%d-%H-%M')
     if date_min is None or date < date_min:
         date_min = date

@@ -86,6 +86,9 @@ do
     mv $converter_LOG_DIR/converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month/.
     find $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month -type f -exec gzip {} \;
 
+    # Archive stats files.
+    mkdir -p $COVID_RUN_DIR/stats/$tmp_year/$tmp_month
+    mv $COVID_RUN_DIR/stats/stats-$tmp_year-$tmp_month-* $COVID_RUN_DIR/stats/$tmp_year/$tmp_month/.
 
     if [[ ${tmp_month#0} -eq 12 ]];
     then
