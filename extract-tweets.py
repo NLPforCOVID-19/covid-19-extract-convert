@@ -196,7 +196,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
 
     print(f"tweet_count_per_country={tweet_count_per_country}")
 
-    stats_file = os.path.join(run_dir, 'stats', f"twitter-stats-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.json")
+    stats_file = os.path.join(run_dir, 'twitter-stats', f"twitter-stats-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.json")
     write_stats_file(stats_file, tweet_count_per_country)
 
     # Remove database to save disk space.

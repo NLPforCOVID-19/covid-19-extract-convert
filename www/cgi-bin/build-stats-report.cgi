@@ -174,8 +174,9 @@ for stat_filename in sorted(glob.glob('stats/**/stats-*.json', recursive=True)):
             else:
                 totals_per_region[region] = count
 
-for stat_filename in sorted(glob.glob('stats/twitter-stats-*.json')):
-    date_str = stat_filename[20:36]
+for stat_filename in sorted(glob.glob('twitter-stats/twitter-stats-*.json', recursive=True)):
+    base_filename = os.path.basename(stat_filename)
+    date_str = stat_filename[14:30]
     date = datetime.strptime(date_str, '%Y-%m-%d-%H-%M')
     if date_min is None or date < date_min:
         date_min = date
