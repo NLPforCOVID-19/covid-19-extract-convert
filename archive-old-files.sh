@@ -14,7 +14,6 @@ EXTRACTER_DIR=$COVID_RUN_DIR/extracter
 EXTRACTER_LOG_DIR=/home/frederic/covid19/translation/logs
 CONVERTER_LOG_DIR=/home/frederic/covid19/translation/logs
 
-
 now=$(date +'%Y/%m/%d %H:%M')
 month=$(date +'%m')
 year=$(date +'%Y')
@@ -83,12 +82,46 @@ do
 
     # Archive converter log files.
     mkdir -p $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month
-    mv $converter_LOG_DIR/converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month/.
+    mv $CONVERTER_LOG_DIR/converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month/.
     find $ARCHIVE_DIR/logs/converter/$tmp_year/$tmp_month -type f -exec gzip {} \;
 
     # Archive stats files.
     mkdir -p $COVID_RUN_DIR/stats/$tmp_year/$tmp_month
     mv $COVID_RUN_DIR/stats/stats-$tmp_year-$tmp_month-* $COVID_RUN_DIR/stats/$tmp_year/$tmp_month/.
+
+    # Archive new-twitter-html-files.
+    mkdir -p $ARCHIVE_DIR/new-twitter-html-files/$tmp_year/$tmp_month
+    mv $NEW_HTML_FILES_DIR/new-twitter-html-files-$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/new-twitter-html-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-twitter-html-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
+
+    # Archive new-twitter-translated-files.
+    mkdir -p $ARCHIVE_DIR/new-twitter-translated-files/$tmp_year/$tmp_month
+    mv $NEW_TRANSLATED_FILES_DIR/new-twitter-translated-files-$tmp_year-$tmp_month*.txt* $ARCHIVE_DIR/new-twitter-translated-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-twitter-translated-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
+    mv $NEW_TRANSLATED_FILES_DIR/new-twitter-translated-files-en-$tmp_year-$tmp_month*.txt* $ARCHIVE_DIR/new-twitter-translated-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-twitter-translated-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
+
+    # Archive new-twitter-xml-files.
+    mkdir -p $ARCHIVE_DIR/new-twitter-xml-files/$tmp_year/$tmp_month
+    mv $NEW_XML_FILES_DIR/new-twitter-xml-files-$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/new-twitter-xml-files/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/new-twitter-xml-files/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
+    rm -f $NEW_XML_FILES_DIR/new-twitter-xml-files-$tmp_year-$tmp_month*.txt.lock
+
+    # Archive twitter extracted files.
+    mkdir -p $ARCHIVE_DIR/twitter-extracter/$tmp_year/$tmp_month
+    mv $COVID_RUN_DIR/twitter-extracter/extracter_$tmp_year-$tmp_month*.txt $ARCHIVE_DIR/twitter-extracter/$tmp_year/$tmp_month
+    find $ARCHIVE_DIR/twitter-extracter/$tmp_year/$tmp_month -type f -iname "*.txt" -exec gzip {} \;
+
+    # Archive twitter extracter log files.
+    mkdir -p $ARCHIVE_DIR/logs/twitter-extracter/$tmp_year/$tmp_month
+    mv $EXTRACTER_LOG_DIR/twitter_extracter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/twitter-extracter/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/logs/twitter-extracter/$tmp_year/$tmp_month -type f -exec gzip {} \;
+
+    # Archive twitter converter log files.
+    mkdir -p $ARCHIVE_DIR/logs/twitter-converter/$tmp_year/$tmp_month
+    mv $CONVERTER_LOG_DIR/twitter_converter.log.$tmp_year-$tmp_month* $ARCHIVE_DIR/logs/twitter-converter/$tmp_year/$tmp_month/.
+    find $ARCHIVE_DIR/logs/twitter-converter/$tmp_year/$tmp_month -type f -exec gzip {} \;
+
 
     if [[ ${tmp_month#0} -eq 12 ]];
     then
