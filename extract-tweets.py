@@ -10,6 +10,8 @@ import utils
 # # Uncomment to test import into Elastic Search database.
 # from elastic_search_utils import ElasticSearchTwitterImporter
 
+now = datetime.datetime.now()
+
 config_filename = 'config.json'
 
 with open(config_filename, 'r') as config_file:
@@ -57,7 +59,7 @@ def write_tweet_data(tweet_id):
     print(f"write_tweet_data tweet_id={tweet_id}")
     try:
         tweet = tweets[tweet_id]
-        timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')
+        timestamp = now.strftime('%Y-%m-%d-%H-%M')
         tweet_timestamp = datetime.datetime.fromtimestamp(tweet['status'].created_at_in_seconds)
         country_code_dir = utils.get_country_code_dir(tweet['country_code'])
         timestamp_path = tweet_timestamp.strftime('%Y/%m/%d/%H-%M')
