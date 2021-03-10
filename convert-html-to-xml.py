@@ -19,6 +19,14 @@ max_file_count = 1000
 max_file_count_per_domain = 200
 
 
+def get_timestamp_from_filename(new_html_file_fn):
+    base_fn = os.path.basename(new_html_file_fn)
+    timestamp_str = base_fn[15:31]
+    [yyyy, mm, dd, hh, mn] = timestamp_str.split('-')
+    timestamp = datetime.datetime(int(yyyy), int(mm), int(dd), int(hh), int(mn))
+    return timestamp
+
+
 def signal_handler(sig, frame):
     print("Ctrl+C has been pressed. Let's stop the workers.")
     global stopped
@@ -143,7 +151,8 @@ class Producer(threading.Thread):
         logger.info("Processing new-html-files.txt files...")
 
         new_html_files_files = glob.glob(os.path.join(run_dir, 'new-html-files') + '/**/new-html-files-*.txt', recursive=True)
-        sorted_new_html_files_files = sorted(new_html_files_files, key=lambda t: os.stat(t).st_mtime, reverse=True)
+        recent_new_html_files_files = [new_html_file for new_html_file in new_html_files_files if (now - get_timestamp_from_filename(new_html_file)).days < 2]
+        sorted_new_html_files_files = sorted(recent_new_html_files_files, key=get_timestamp_from_filename, reverse=True)
 
         for new_html_files_file in sorted_new_html_files_files:
 
