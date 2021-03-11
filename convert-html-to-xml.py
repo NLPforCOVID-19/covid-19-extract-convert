@@ -19,9 +19,9 @@ max_file_count = 1000
 max_file_count_per_domain = 200
 
 
-def get_timestamp_from_filename(new_html_file_fn):
-    base_fn = os.path.basename(new_html_file_fn)
-    timestamp_str = base_fn[15:31]
+def get_timestamp_from_filename(new_translated_file_fn):
+    base_fn = os.path.basename(new_translated_file_fn)
+    timestamp_str = base_fn[21:37]
     [yyyy, mm, dd, hh, mn] = timestamp_str.split('-')
     timestamp = datetime.datetime(int(yyyy), int(mm), int(dd), int(hh), int(mn))
     return timestamp
@@ -88,20 +88,21 @@ class Producer(threading.Thread):
         self.file_count = 0
 
 
-    def process_new_html_files_file(self, new_html_files_file):
-        with open(new_html_files_file) as f:
+    def process_new_translated_files_file(self, new_translated_files_file):
+        logger.info(f"Processing {new_translated_files_file}...")
+        with open(new_translated_files_file) as f:
             for line in f:
 
                 if self.stopped:
                     return
 
-                html_file = line.strip()
-                if html_file == '':
+                translated_file = line.strip()
+                if translated_file == '':
                     continue
 
                 # Consider only valid lines.
-                if html_file.startswith(html_dir) and html_file.endswith(".html"):
-                    region, _, domain, *url_parts = pathlib.Path(html_file[len(html_dir) + 1:]).parts
+                if translated_file.startswith(html_dir) and translated_file.endswith(".html"):
+                    region, _, domain, *url_parts = pathlib.Path(translated_file[len(html_dir) + 1:]).parts
 
                     if self.file_count < max_file_count and (domain not in self.files_to_process or len(self.files_to_process[domain]) < max_file_count_per_domain):
                         url_filename = pathlib.Path(*url_parts)
@@ -145,22 +146,21 @@ class Producer(threading.Thread):
                             return
 
 
-
     def run(self):
         global queue_html_files
-        logger.info("Processing new-html-files.txt files...")
+        logger.info("Processing new-translated-files.txt files...")
 
-        new_html_files_files = glob.glob(os.path.join(run_dir, 'new-html-files') + '/**/new-html-files-*.txt', recursive=True)
-        recent_new_html_files_files = [new_html_file for new_html_file in new_html_files_files if (now - get_timestamp_from_filename(new_html_file)).days < 2]
-        sorted_new_html_files_files = sorted(recent_new_html_files_files, key=get_timestamp_from_filename, reverse=True)
+        new_translated_files_files = glob.glob(os.path.join(run_dir, 'new-translated-files') + '/**/new-translated-files-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9].txt', recursive=True)
+        recent_new_translated_files_files = [new_translated_file for new_translated_file in new_translated_files_files if (now - get_timestamp_from_filename(new_translated_file)).days < 3]
+        sorted_new_translated_files_files = sorted(recent_new_translated_files_files, key=get_timestamp_from_filename, reverse=True)
 
-        for new_html_files_file in sorted_new_html_files_files:
+        for new_translated_files_file in sorted_new_translated_files_files:
 
-            self.process_new_html_files_file(new_html_files_file)
+            self.process_new_translated_files_file(new_translated_files_file)
             if self.file_count >= max_file_count:
                 break
 
-        logger.info("Finished processing new-html-files.txt files.")
+        logger.info("Finished processing new-translated-files.txt files.")
 
         for domain in self.files_to_process.keys():
             logger.info(f"domain={domain} len={len(self.files_to_process[domain])}")
@@ -326,5 +326,8 @@ if __name__ == '__main__':
         logger.info("Iteration over.")
 
         # stopped = True
+
+        # Wait 1 hour before next iteration.
+        time.sleep(60 * 60)
 
     logger.info("Stop running.")
