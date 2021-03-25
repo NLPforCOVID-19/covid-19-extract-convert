@@ -28,7 +28,7 @@ if "black_list" in config["twitter"]:
         for line in rejected_expressions_file:
             rejected_expressions.append(line.strip())
 
-processed_databases = []
+processed_databases = set()
 
 # # Uncomment to test import into Elastic Search database.
 # es_importer = {
@@ -162,7 +162,7 @@ if os.path.exists(run_filename):
     with open(run_filename, 'r') as run_file:
         run_data = json.load(run_file)
         print(f"run_data={run_data}")
-        processed_databases = run_data
+        processed_databases = set(run_data)
 
 for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
     print(f"Processing {db_filename}")
@@ -187,7 +187,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
             else:
                 print(f"Invalid line: {line}")
 
-    processed_databases.append(extract_date_from(db_filename))
+    processed_databases.add(extract_date_from(db_filename))
 
     if len(undefined_countries) > 0:
         utils.send_mail(config['mail']['from'], config['mail']['to'], config['mail']['cc'], None, "Undefined countries found",
@@ -205,4 +205,4 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
 
 # Remember that the file has been processed.
 with open(run_filename, 'w') as run_file:
-    json.dump(processed_databases, run_file)
+    json.dump(sorted(list(processed_databases)), run_file)
