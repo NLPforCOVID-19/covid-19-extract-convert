@@ -10,6 +10,9 @@ import utils
 # # Uncomment to test import into Elastic Search database.
 # from elastic_search_utils import ElasticSearchTwitterImporter
 
+# Number of iterations that have produced no new tweets in day before sending notification to admin.
+EMPTY_ITERATION_NOTIF_THRESHOLD = 3
+
 now = datetime.datetime.now()
 
 config_filename = 'config.json'
@@ -29,6 +32,7 @@ if "black_list" in config["twitter"]:
             rejected_expressions.append(line.strip())
 
 processed_databases = set()
+empty_extractions = []
 
 # # Uncomment to test import into Elastic Search database.
 # es_importer = {
@@ -157,6 +161,23 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
 
     write_tweet_data(tweet_id)
 
+
+#
+# The heuristics should be appropriate most of the times.
+#
+def is_twitter_db_admin_notif_required(empty_extractions, now):
+    "Returns True if EMPTY_ITERATION_NOTIF_THRESHOLD iterations have been recorded as empty today with no prior empty iterations on the previous day (to prevent unneeded repeated notifs)."
+    today = now.strftime('%Y-%m-%d')
+    yesterday = (now - datetime.timedelta(1)).strftime('%Y-%m-%d')
+
+    counts_per_date = {}
+    for timestamp in empty_extractions:
+        date_str = timestamp[:10]
+        counts_per_date[date_str] = counts_per_date.get(date_str, 0) + 1
+
+    return counts_per_date.get(today, 0) == EMPTY_ITERATION_NOTIF_THRESHOLD and counts_per_date.get(yesterday, 0) == 0
+
+
 run_filename = os.path.join(run_dir, 'twitter.json')
 if os.path.exists(run_filename):
     with open(run_filename, 'r') as run_file:
@@ -164,6 +185,12 @@ if os.path.exists(run_filename):
         print(f"run_data={run_data}")
         processed_databases = set(run_data)
 
+empty_extractions_filename = os.path.join(run_dir, 'twitter_empty_extractions.json')
+if os.path.exists(empty_extractions_filename):
+    with open(empty_extractions_filename, 'r') as empty_extractions_file:
+        empty_extractions = json.load(empty_extractions_file)
+
+total_tweets_for_all_db = 0
 for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
     print(f"Processing {db_filename}")
 
@@ -195,7 +222,9 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
             "Adjust the country_codes.txt file accordingly to prevent this error from occurring again."))
 
     print(f"tweet_count_per_country={tweet_count_per_country}")
-    print(f"Total tweets: {sum(tweet_count_per_country.values())}")
+    total_tweets = sum(tweet_count_per_country.values())
+    print(f"Total tweets: {total_tweets}")
+    total_tweets_for_all_db += total_tweets
 
     stats_file = os.path.join(run_dir, 'twitter-stats', f"twitter-stats-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.json")
     write_stats_file(stats_file, tweet_count_per_country)
@@ -207,3 +236,13 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
 # Remember that the file has been processed.
 with open(run_filename, 'w') as run_file:
     json.dump(sorted(list(processed_databases)), run_file)
+
+if total_tweets_for_all_db == 0:
+    empty_extractions.append(now.strftime('%Y-%m-%d-%H-%M'))
+    with open(empty_extractions_filename, 'w') as empty_extractions_file:
+        json.dump(empty_extractions, empty_extractions_file)
+    if is_twitter_db_admin_notif_required(empty_extractions, now):
+        print("Notification sent.")
+        utils.send_mail(config['mail']['from'], config['mail']['to'], config['mail']['cc'], None, "No new data from Twitter databases",
+            (f"There was {EMPTY_ITERATION_NOTIF_THRESHOLD} extract-tweets iterations that have not produced any new tweets. Most likely that there is an issue with the updates of the Twitter databases.\n\n"
+            "Contact the person in charge to check this issue."))
