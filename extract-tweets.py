@@ -195,6 +195,7 @@ for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
             "Adjust the country_codes.txt file accordingly to prevent this error from occurring again."))
 
     print(f"tweet_count_per_country={tweet_count_per_country}")
+    print(f"Total tweets: {sum(tweet_count_per_country.values())}")
 
     stats_file = os.path.join(run_dir, 'twitter-stats', f"twitter-stats-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.json")
     write_stats_file(stats_file, tweet_count_per_country)
