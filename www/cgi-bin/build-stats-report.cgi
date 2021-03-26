@@ -46,9 +46,9 @@ def get_total_files_per_day(filename_pattern, glob_pattern):
     return files_per_day_per_column
 
 
-def show_total_files_per_day(files_per_day_per_domain, title, columns, table_css_class='file-count-table'):
+def show_total_files_per_day(files_per_day_per_domain, title, columns, table_css_class='file-count-table', table_header_css_class='table-header-rotated'):
     print(f"<h2>{title}</h2>")
-    print(f"<table class=\"{table_css_class} table table-header-rotated table-striped table-hover table-striped-column\">")
+    print(f"<table class=\"{table_css_class} table {table_header_css_class} table-striped table-hover table-striped-column\">")
     print("<thead>")
     print("<tr><th class=\"row-header\" >Date</th>")
     for column in columns:
@@ -270,22 +270,22 @@ show_combined_total_files_per_day(totals_html_per_day, totals_translated_per_day
 print("<br/>")
 
 twitter_html_table_title = f"Number of tweets extracted per day per country (last {period} days)"
-show_total_files_per_day(totals_twitter_html_per_day, twitter_html_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+show_total_files_per_day(totals_twitter_html_per_day, twitter_html_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table', table_header_css_class='table-header-rotated-short')
 
 print("<br/>")
 
 twitter_translated_table_title = f"Number of translated tweets (to Japanese) per day per country (last {period} days)"
-show_total_files_per_day(totals_twitter_translated_per_day, twitter_translated_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+show_total_files_per_day(totals_twitter_translated_per_day, twitter_translated_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table', table_header_css_class='table-header-rotated-short')
 
 print("<br/>")
 
 twitter_translated_table_title_en = f"Number of translated tweets (to English) per day per country (last {period} days)"
-show_total_files_per_day(totals_twitter_translated_per_day_en, twitter_translated_table_title_en, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+show_total_files_per_day(totals_twitter_translated_per_day_en, twitter_translated_table_title_en, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table', table_header_css_class='table-header-rotated-short')
 
 print("<br/>")
 
 twitter_xml_table_title = f"Number of twitter XML files converted per day per domain (last {period} days)"
-show_total_files_per_day(totals_twitter_xml_per_day, twitter_xml_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table')
+show_total_files_per_day(totals_twitter_xml_per_day, twitter_xml_table_title, config['twitter']['stats']['countries_of_interest'] + ['others'], table_css_class='tweet-count-table', table_header_css_class='table-header-rotated-short')
 
 print("<br/>")
 

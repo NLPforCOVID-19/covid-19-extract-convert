@@ -37,7 +37,7 @@ th, td {
     text-align: right;
 }
 
-.table-header-rotated th.rotate-45{
+.table-header-rotated th.rotate-45 {
   height: 200px;
   width: 40px;
   min-width: 40px;
@@ -50,7 +50,20 @@ th, td {
   border: 0;
 }
 
-.combined-table-header-rotated th.rotate-45{
+.table-header-rotated-short th.rotate-45 {
+  height: 70px;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  position: relative;
+  vertical-align: bottom;
+  padding: 0;
+  font-size: 12px;
+  line-height: 0.8;
+  border: 0;
+}
+
+.combined-table-header-rotated th.rotate-45 {
   height: 200px;
   width: 110px;
   min-width: 110px;
@@ -63,7 +76,7 @@ th, td {
   border: 0;
 }
 
-.table-header-rotated th.rotate-45 > div{
+.table-header-rotated th.rotate-45 > div {
   position: relative;
   top: 0px;
   left: -100px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
@@ -77,7 +90,21 @@ th, td {
 
 }
 
-.combined-table-header-rotated th.rotate-45 > div{
+.table-header-rotated-short th.rotate-45 > div {
+  position: relative;
+  top: 0px;
+  left: -35px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
+  height: 100%;
+  -ms-transform:skew(45deg,0deg);
+  -moz-transform:skew(45deg,0deg);
+  -webkit-transform:skew(45deg,0deg);
+  -o-transform:skew(45deg,0deg);
+  transform:skew(45deg,0deg);
+  overflow: hidden;
+
+}
+
+.combined-table-header-rotated th.rotate-45 > div {
   position: relative;
   top: 0px;
   left: -100px; /* 80 * tan(45) / 2 = 40 where 80 is the height on the cell and 45 is the transform angle*/
@@ -99,6 +126,22 @@ th, td {
   transform:skew(-45deg,0deg) rotate(45deg);
   position: absolute;
   bottom: 158px; /* 40 cos(45) = 28 with an additional 2px margin*/
+  left: -25px; /*Because it looked good, but there is probably a mathematical link here as well*/
+  display: inline-block;
+  width: 100%;
+  width: 85px; /* 80 / cos(45) - 40 cos (45) = 85 where 80 is the height of the cell, 40 the width of the cell and 45 the transform angle*/
+  text-align: left;
+  white-space: nowrap; /*whether to display in one line or not*/
+}
+
+.table-header-rotated-short th.rotate-45 span {
+  -ms-transform:skew(-45deg,0deg) rotate(45deg);
+  -moz-transform:skew(-45deg,0deg) rotate(45deg);
+  -webkit-transform:skew(-45deg,0deg) rotate(45deg);
+  -o-transform:skew(-45deg,0deg) rotate(45deg);
+  transform:skew(-45deg,0deg) rotate(45deg);
+  position: absolute;
+  bottom: 29px; /* 40 cos(45) = 28 with an additional 2px margin*/
   left: -25px; /*Because it looked good, but there is probably a mathematical link here as well*/
   display: inline-block;
   width: 100%;
