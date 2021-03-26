@@ -12,17 +12,16 @@ PIPENV=/home/frederic/.local/bin/pipenv
 
 
 NOW=$(date +"%Y-%m-%d %H:%M:%S")
-TIMESTAMP=$(date +"%Y-%m-%d-%H-%M")
 echo "Start time: $NOW"
 
 cd "$SCRIPTS"
 
 echo "Fetching db files..."
-$PIPENV run python fetch-db.py $1 | tee logs/fetch-db_$TIMESTAMP.log
+$PIPENV run python fetch-db.py $1
 echo "The db files have been fetched."
 
 echo "Extracting HTML files from db files..."
-$PIPENV run python extract-html.py $1 | tee logs/extract-html_$TIMESTAMP.log
+$PIPENV run python extract-html.py $1
 echo "The HTML files have been extracted."
 
 echo "Done"

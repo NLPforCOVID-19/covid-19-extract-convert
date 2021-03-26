@@ -12,17 +12,16 @@ PIPENV=/home/frederic/.local/bin/pipenv
 
 
 NOW=$(date +"%Y-%m-%d %H:%M:%S")
-TIMESTAMP=$(date +"%Y-%m-%d-%H-%M")
 echo "Start time: $NOW"
 
 cd "$SCRIPTS"
 
 echo "Fetching twitter db files..."
-$PIPENV run python fetch-twitter-db.py | tee logs/fetch-twitter-db_$TIMESTAMP.log
+$PIPENV run python fetch-twitter-db.py
 echo "The db files have been fetched."
 
 echo "Extracting tweets from db files..."
-$PIPENV run python extract-tweets.py | tee logs/extract-tweets_$TIMESTAMP.log
+$PIPENV run python extract-tweets.py
 echo "The tweets have been extracted."
 
 echo "Done"
