@@ -33,7 +33,13 @@ def get_total_files_per_day(filename_pattern, glob_pattern):
         files_per_day_per_column[str_date] = daily_totals_per_column
         for stat_filename in glob.glob(stat_filename_glob):
             with open(stat_filename, "r") as stat_file:
+                lines = set();
                 for line in stat_file:
+                    # Consider only the first occurence of duplicated lines.
+                    if line in lines:
+                        continue
+                    lines.add(line)
+
                     m = re.match(filename_pattern, line)
                     if m:
                         column = m.group(1)
