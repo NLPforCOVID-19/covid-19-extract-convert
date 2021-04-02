@@ -20,6 +20,7 @@ max_file_count_per_country = 1000
 # Number of days to look back when searching for files to convert.
 last_days = 3
 
+
 def get_timestamp_from_filename(new_translated_file_fn):
     base_fn = os.path.basename(new_translated_file_fn)
     timestamp_str = base_fn[29:45]
@@ -89,6 +90,7 @@ class Producer(threading.Thread):
         self.files_to_process = {}
         self.file_count = 0
 
+
     def process_new_translated_files_file(self, new_translated_files_file):
         logger.info(f"Processing {new_translated_files_file}...")
 
@@ -143,8 +145,9 @@ class Producer(threading.Thread):
                         logger.debug("Adding {} to files to process.".format(www2sf_input_file))
                         if country not in self.files_to_process:
                             self.files_to_process[country] = []
-                        self.files_to_process[country].append(item)
-                        self.file_count += 1
+                        if item not in self.files_to_process[country]:
+                            self.files_to_process[country].append(item)
+                            self.file_count += 1
 
                         if self.file_count >= max_file_count or len(self.files_to_process[country]) >= max_file_count_per_country:
                             return
@@ -183,6 +186,7 @@ class Converter(threading.Thread):
         self.identifier = identifier
         self.stopped = False
         self.new_xml_files_dir = new_xml_files_dir
+
 
     def run(self):
         global queue_html_files

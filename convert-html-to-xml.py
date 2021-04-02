@@ -21,6 +21,7 @@ max_file_count_per_domain = 200
 # Number of days to look back when searching for files to convert.
 last_days = 3
 
+
 def get_timestamp_from_filename(new_translated_file_fn):
     base_fn = os.path.basename(new_translated_file_fn)
     timestamp_str = base_fn[21:37]
@@ -79,6 +80,7 @@ def get_processed_files(new_xml_files_dir):
         files.add(entry)
 
     return files
+
 
 class Producer(threading.Thread):
 
@@ -141,8 +143,9 @@ class Producer(threading.Thread):
                         logger.debug("Adding {} to files to process.".format(www2sf_input_file))
                         if domain not in self.files_to_process:
                             self.files_to_process[domain] = []
-                        self.files_to_process[domain].append(item)
-                        self.file_count += 1
+                        if item not in self.files_to_process[domain]:
+                            self.files_to_process[domain].append(item)
+                            self.file_count += 1
 
                         if self.file_count >= max_file_count or len(self.files_to_process[domain]) >= max_file_count_per_domain:
                             return
@@ -181,6 +184,7 @@ class Converter(threading.Thread):
         self.identifier = identifier
         self.stopped = False
         self.new_xml_files_dir = new_xml_files_dir
+
 
     def run(self):
         global queue_html_files
