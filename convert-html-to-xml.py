@@ -18,6 +18,8 @@ import traceback
 max_file_count = 1000
 max_file_count_per_domain = 200
 
+# Number of days to look back when searching for files to convert.
+last_days = 3
 
 def get_timestamp_from_filename(new_translated_file_fn):
     base_fn = os.path.basename(new_translated_file_fn)
@@ -151,7 +153,7 @@ class Producer(threading.Thread):
         logger.info("Processing new-translated-files.txt files...")
 
         new_translated_files_files = glob.glob(os.path.join(run_dir, 'new-translated-files') + '/**/new-translated-files-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9].txt', recursive=True)
-        recent_new_translated_files_files = [new_translated_file for new_translated_file in new_translated_files_files if (now - get_timestamp_from_filename(new_translated_file)).days < 3]
+        recent_new_translated_files_files = [new_translated_file for new_translated_file in new_translated_files_files if (now - get_timestamp_from_filename(new_translated_file)).days < last_days]
         sorted_new_translated_files_files = sorted(recent_new_translated_files_files, key=get_timestamp_from_filename, reverse=True)
 
         for new_translated_files_file in sorted_new_translated_files_files:
