@@ -5,6 +5,7 @@ import json
 import logging
 import logging.config
 import os
+import pathlib
 import queue
 import signal
 import subprocess
@@ -12,6 +13,16 @@ import sys
 import threading
 import time
 import traceback
+
+max_file_count = 8000
+max_file_count_per_country = 1000
+
+def get_timestamp_from_filename(new_translated_file_fn):
+    base_fn = os.path.basename(new_translated_file_fn)
+    timestamp_str = base_fn[29:45]
+    [yyyy, mm, dd, hh, mn] = timestamp_str.split('-')
+    timestamp = datetime.datetime(int(yyyy), int(mm), int(dd), int(hh), int(mn))
+    return timestamp
 
 
 def signal_handler(sig, frame):
@@ -68,35 +79,46 @@ def get_processed_files(new_xml_files_dir):
 
 class Producer(threading.Thread):
 
-    def __init__(self, country):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.name = f"Producer for country {country}"
-        self.country = country
+        self.name = f"Producer"
         self.stopped = False
         self.files_to_process = {}
+        self.file_count = 0
 
-    def run(self):
-        global queue_html_files
-        logger.info(f"Processing files from country: {self.country}...")
-        root_input_dir = f"{self.country}/ja_translated"
-        root_output_dir = f"{self.country}/ja_translated"
+    def process_new_translated_files_file(self, new_translated_files_file):
+        logger.info(f"Processing {new_translated_files_file}...")
 
-        root_abs_input_dir = os.path.join(html_dir, root_input_dir)
-        root_abs_output_dir = os.path.join(xml_dir, root_output_dir)
-        if os.path.exists(root_abs_input_dir):
-            self.files_to_process = []
-            for top, dirs, files in os.walk(root_abs_input_dir):
-                # logger.debug(f"top={top} dirs={dirs} files={files}")
-                for file in files:
+        with open(new_translated_files_file) as f:
+            for line in f:
 
-                    if self.stopped:
-                        logger.info(f"Producer for country {country} has been stopped.")
-                        return
+                if self.stopped:
+                    return
 
-                    if file.endswith('.html'):
-                        www2sf_input_file = os.path.join(top, file)
-                        www2sf_output_file = os.path.join(root_abs_output_dir, top[top.index("ja_translated") + len("ja_translated") + 1:], file[:file.index('.html')] + '.xml')
+                translated_file = line.strip()
+                if translated_file == '':
+                    continue
+
+                # Consider only valid lines.
+                if translated_file.startswith(html_dir) and translated_file.endswith(".html"):
+                    country, _, *url_parts = pathlib.Path(translated_file[len(html_dir) + 1:]).parts
+
+                    print(f"country={country} url_parts={url_parts}")
+
+                    if self.file_count < max_file_count and (country not in self.files_to_process or len(self.files_to_process[country]) < max_file_count_per_country):
+                        url_filename = pathlib.Path(*url_parts)
+
+                        www2sf_input_file = pathlib.Path(html_dir) / country / "ja_translated" / url_filename
+                        www2sf_output_file = pathlib.Path(xml_dir) / country / "ja_translated" / url_filename.with_suffix('.xml')
+                        logger.debug(f"www2sf_input_file={www2sf_input_file}")
+                        logger.debug(f"www2sf_output_file={www2sf_output_file}")
+
                         logger.debug(f"Checking file: {www2sf_input_file}")
+
+                        if not os.path.exists(www2sf_input_file):
+                            logger.debug(f"Skip {www2sf_input_file} because it doesn't exist.")
+                            continue
+
                         if www2sf_input_file in unconvertable_files:
                             logger.debug(f"Skip {www2sf_input_file} because it's flagged as unconvertable.")
                             continue
@@ -105,18 +127,49 @@ class Producer(threading.Thread):
                             logger.debug(f"Skip {www2sf_output_file} because already processed.")
                             continue
 
+                        if os.path.exists(www2sf_output_file):
+                            logger.debug(f"Skip {www2sf_input_file} because {www2sf_output_file} already exists.")
+                            continue
+
                         timestamp = datetime.datetime.fromtimestamp(os.stat(www2sf_input_file).st_mtime).strftime('%Y-%m-%d-%H-%M')
-                        logger.debug(f"Adding {www2sf_input_file} to files to process.")
-                        self.files_to_process.append((www2sf_input_file, www2sf_output_file, timestamp))
+                        item = (www2sf_input_file, www2sf_output_file, timestamp)
+                        if country in self.files_to_process and item in self.files_to_process[country]:
+                            logger.debug(f"Skip {www2sf_input_file} because {www2sf_output_file} already registered.")
+                            continue
 
-            # Process the 200 most recent files first for this country.
-            logger.debug(f"len(files_to_process) for country {self.country}: {len(self.files_to_process)}")
-            self.most_recent_files_first = sorted(self.files_to_process, reverse=True, key=lambda x: x[-1])[:200]
-            for file in self.most_recent_files_first:
-                logger.info(f"Adding {www2sf_input_file} to queue.")
-                queue_html_files.put((file[0], file[1]))
+                        logger.debug("Adding {} to files to process.".format(www2sf_input_file))
+                        if country not in self.files_to_process:
+                            self.files_to_process[country] = []
+                        self.files_to_process[country].append(item)
+                        self.file_count += 1
 
-        logger.info(f"Finished processing files from country: {self.country}...")
+                        if self.file_count >= max_file_count or len(self.files_to_process[country]) >= max_file_count_per_country:
+                            return
+
+
+    def run(self):
+        global queue_html_files
+        logger.info(f"Processing new-translated-files.txt files...")
+
+        new_translated_files_files = glob.glob(os.path.join(run_dir, 'new-translated-files') + '/**/new-twitter-translated-files-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9]-[0-9][0-9].txt', recursive=True)
+        recent_new_translated_files_files = [new_translated_file for new_translated_file in new_translated_files_files if (now - get_timestamp_from_filename(new_translated_file)).days < 3]
+        sorted_new_translated_files_files = sorted(recent_new_translated_files_files, key=get_timestamp_from_filename, reverse=True)
+
+        for new_translated_files_file in sorted_new_translated_files_files:
+
+            self.process_new_translated_files_file(new_translated_files_file)
+            if self.file_count >= max_file_count:
+                break
+
+        logger.info("Finished processing new-translated-files.txt files.")
+
+        for country in self.files_to_process.keys():
+            logger.info(f"country={country} len={len(self.files_to_process[country])}")
+
+        for country in self.files_to_process.keys():
+            for file in self.files_to_process[country]:
+                logger.info(f"Adding {file[0]} to queue.")
+                queue_html_files.put((str(file[0]), str(file[1])))
 
 
 class Converter(threading.Thread):
@@ -237,10 +290,9 @@ if __name__ == '__main__':
         producers = []
         converters = []
 
-        for country in os.listdir(html_dir):
-            producer = Producer(country)
-            producers.append(producer)
-            producer.start()
+        producer = Producer()
+        producers.append(producer)
+        producer.start()
 
         for producer in producers:
             producer.join()
@@ -275,6 +327,9 @@ if __name__ == '__main__':
         logger.info("Iteration over.")
 
         # stopped = True
+
+        # Wait 1 hour before next iteration.
+        time.sleep(60 * 60)
 
     logger.info("Stop running.")
 
