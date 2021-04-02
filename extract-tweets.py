@@ -47,8 +47,6 @@ def extract_date_from(db_filename):
 
 def get_tweet_text(status):
     tweet_text = status.full_text if status.tweet_mode == 'extended' else status.text
-    tweet_text = re.sub("https://t.co/\w+", "", tweet_text) # Remove urls from text.
-    tweet_text = re.sub("#\w+\s*", "", tweet_text) # Remove hashtags from text.
     return tweet_text
 
 
