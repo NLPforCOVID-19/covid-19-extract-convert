@@ -203,8 +203,8 @@
         "bundle.mx": {
             "region": "mx",
             "language": "es",
-            "subdomains": ["coronavirus\\.gob\\.mx"],
-            "sources": ["coronavirus.gob.mx"]
+            "subdomains": ["coronavirus\\.gob\\.mx", "[a-zA-Z.-]+\\.gob.mx/salud"],
+            "sources": ["www.gob.mx"]
         },
 
         "bundle.my": {
