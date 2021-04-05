@@ -200,6 +200,13 @@
             "sources": ["mohw.go.kr"]
         },
 
+        "bundle.mx": {
+            "region": "mx",
+            "language": "es",
+            "subdomains": ["coronavirus\\.gob\\.mx"],
+            "sources": ["coronavirus.gob.mx"]
+        },
+
         "bundle.my": {
             "region": "my",
             "language": "id",
