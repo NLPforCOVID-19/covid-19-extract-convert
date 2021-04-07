@@ -34,6 +34,18 @@ def fix_txt_file(txt_file, links, hashtags):
         f.write(content)
 
 
+def write_hashtags_and_links_file(tweet_id, dest_dir, links, hashtags):
+    metadata_filename = os.path.join(dest_dir, f"{tweet_id}.metadata")
+    with open(metadata_filename, 'r', encoding='utf-8') as metadata_file:
+        metadata = json.load(metadata_file)
+
+    metadata['links'] = links
+    metadata['hashtags'] = hashtags
+
+    with open(metadata_filename, 'w', encoding='utf-8') as data_file:
+        json.dump(metadata, data_file, ensure_ascii=False)
+
+
 def fix_html_file(html_file, links, hashtags):
     soup = bs4.BeautifulSoup(open(html_file), "html.parser")
     # print("HTML BEFORE")
@@ -94,33 +106,34 @@ def overwrite_tweet_html(tweet_id):
         html_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.html")
         if os.path.exists(html_filename):
             # print(f"overwrite_tweet_html tweet_id={tweet_id}")
-            with open(html_filename, 'w', encoding='utf-8') as html_file:
-                html_str = (
-                    "<!DOCTYPE html>\n"
-                    f"<html lang=\"{tweet['status'].lang}\">\n"
-                    "<head><meta charset=\"utf-8\"/></head>\n"
-                    "<body>\n"
-                    f"<p>{tweet_text_for_html}</p>\n"
-                    "</body>\n"
-                    "</html>\n"
-                )
-                html_file.write(html_str)
+            # with open(html_filename, 'w', encoding='utf-8') as html_file:
+            #     html_str = (
+            #         "<!DOCTYPE html>\n"
+            #         f"<html lang=\"{tweet['status'].lang}\">\n"
+            #         "<head><meta charset=\"utf-8\"/></head>\n"
+            #         "<body>\n"
+            #         f"<p>{tweet_text_for_html}</p>\n"
+            #         "</body>\n"
+            #         "</html>\n"
+            #     )
+            #     html_file.write(html_str)
+            write_hashtags_and_links_file(tweet_id, html_orig_tweet_dir, links, hashtags)
 
-            ja_translated_html_filename = os.path.join(html_ja_translated_tweet_dir, f"{tweet_id}.html")
-            if os.path.exists(ja_translated_html_filename):
-                fix_html_file(ja_translated_html_filename, links, hashtags)
+            # ja_translated_html_filename = os.path.join(html_ja_translated_tweet_dir, f"{tweet_id}.html")
+            # if os.path.exists(ja_translated_html_filename):
+            #     fix_html_file(ja_translated_html_filename, links, hashtags)
 
-            ja_translated_txt_filename = os.path.join(html_ja_translated_tweet_dir, f"{tweet_id}.txt")
-            if os.path.exists(ja_translated_txt_filename):
-                fix_txt_file(ja_translated_txt_filename, links, hashtags)
+            # ja_translated_txt_filename = os.path.join(html_ja_translated_tweet_dir, f"{tweet_id}.txt")
+            # if os.path.exists(ja_translated_txt_filename):
+            #     fix_txt_file(ja_translated_txt_filename, links, hashtags)
 
-            en_translated_html_filename = os.path.join(html_en_translated_tweet_dir, f"{tweet_id}.html")
-            if os.path.exists(en_translated_html_filename):
-                fix_html_file(en_translated_html_filename, links, hashtags)
+            # en_translated_html_filename = os.path.join(html_en_translated_tweet_dir, f"{tweet_id}.html")
+            # if os.path.exists(en_translated_html_filename):
+            #     fix_html_file(en_translated_html_filename, links, hashtags)
 
-            en_translated_txt_filename = os.path.join(html_en_translated_tweet_dir, f"{tweet_id}.txt")
-            if os.path.exists(en_translated_txt_filename):
-                fix_txt_file(en_translated_txt_filename, links, hashtags)
+            # en_translated_txt_filename = os.path.join(html_en_translated_tweet_dir, f"{tweet_id}.txt")
+            # if os.path.exists(en_translated_txt_filename):
+            #     fix_txt_file(en_translated_txt_filename, links, hashtags)
 
             if country_code_dir in tweet_count_per_country:
                 tweet_count_per_country[country_code_dir] += 1
@@ -226,7 +239,7 @@ twitter_html_dir = config['twitter']['html_dir']
 
 tweets = {}
 tweet_count_per_country = {}
-for orig_json_tweet_file in glob.glob(f"{twitter_html_dir}/**/orig/**/*.json", recursive=True):
+for orig_json_tweet_file in glob.glob(f"{twitter_html_dir}/**/orig/**/*[0-9].json", recursive=True):
     process_tweet_file(orig_json_tweet_file)
 for country in sorted(tweet_count_per_country.keys()):
     print(f"{country}: {tweet_count_per_country[country]}")

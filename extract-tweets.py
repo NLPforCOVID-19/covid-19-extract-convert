@@ -27,7 +27,7 @@ run_dir = config['run_dir']
 
 rejected_expressions = []
 if "black_list" in config["twitter"]:
-    with open(config['twitter']['black_list'], 'r') as rejected_expressions_file:
+    with open(config['twitter']['black_list'], 'r', encoding='utf-8') as rejected_expressions_file:
         for line in rejected_expressions_file:
             rejected_expressions.append(line.strip())
 
@@ -45,9 +45,13 @@ def extract_date_from(db_filename):
     return bn[bn.index("_") + 1:bn.index(".txt")]
 
 
-def get_tweet_text(status):
-    tweet_text = status.full_text if status.tweet_mode == 'extended' else status.text
-    return tweet_text
+def get_tweet_objects(status):
+    text = status.full_text if status.tweet_mode == 'extended' else status.text
+
+    hashtags = re.findall(r"[#＃][a-z0-9_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0100-\u024f\u0253-\u0254\u0256-\u0257\u0300-\u036f\u1e00-\u1eff\u0400-\u04ff\u0500-\u0527\u2de0-\u2dff\ua640-\ua69f\u0591-\u05bf\u05c1-\u05c2\u05c4-\u05c5\u05d0-\u05ea\u05f0-\u05f4\ufb12-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb40-\ufb41\ufb43-\ufb44\ufb46-\ufb4f\u0610-\u061a\u0620-\u065f\u066e-\u06d3\u06d5-\u06dc\u06de-\u06e8\u06ea-\u06ef\u06fa-\u06fc\u0750-\u077f\u08a2-\u08ac\u08e4-\u08fe\ufb50-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\u200c-\u200c\u0e01-\u0e3a\u0e40-\u0e4e\u1100-\u11ff\u3130-\u3185\ua960-\ua97f\uac00-\ud7af\ud7b0-\ud7ff\uffa1-\uffdc\u30a1-\u30fa\u30fc-\u30fe\uff66-\uff9f\uff10-\uff19\uff21-\uff3a\uff41-\uff5a\u3041-\u3096\u3099-\u309e\u3400-\u4dbf\u4e00-\u9fff\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2f800-\u2fa1f]*[a-z_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0100-\u024f\u0253-\u0254\u0256-\u0257\u0300-\u036f\u1e00-\u1eff\u0400-\u04ff\u0500-\u0527\u2de0-\u2dff\ua640-\ua69f\u0591-\u05bf\u05c1-\u05c2\u05c4-\u05c5\u05d0-\u05ea\u05f0-\u05f4\ufb12-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb40-\ufb41\ufb43-\ufb44\ufb46-\ufb4f\u0610-\u061a\u0620-\u065f\u066e-\u06d3\u06d5-\u06dc\u06de-\u06e8\u06ea-\u06ef\u06fa-\u06fc\u0750-\u077f\u08a2-\u08ac\u08e4-\u08fe\ufb50-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\u200c-\u200c\u0e01-\u0e3a\u0e40-\u0e4e\u1100-\u11ff\u3130-\u3185\ua960-\ua97f\uac00-\ud7af\ud7b0-\ud7ff\uffa1-\uffdc\u30a1-\u30fa\u30fc-\u30fe\uff66-\uff9f\uff10-\uff19\uff21-\uff3a\uff41-\uff5a\u3041-\u3096\u3099-\u309e\u3400-\u4dbf\u4e00-\u9fff\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2f800-\u2fa1f][a-z0-9_\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0100-\u024f\u0253-\u0254\u0256-\u0257\u0300-\u036f\u1e00-\u1eff\u0400-\u04ff\u0500-\u0527\u2de0-\u2dff\ua640-\ua69f\u0591-\u05bf\u05c1-\u05c2\u05c4-\u05c5\u05d0-\u05ea\u05f0-\u05f4\ufb12-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb40-\ufb41\ufb43-\ufb44\ufb46-\ufb4f\u0610-\u061a\u0620-\u065f\u066e-\u06d3\u06d5-\u06dc\u06de-\u06e8\u06ea-\u06ef\u06fa-\u06fc\u0750-\u077f\u08a2-\u08ac\u08e4-\u08fe\ufb50-\ufbb1\ufbd3-\ufd3d\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb\ufe70-\ufe74\ufe76-\ufefc\u200c-\u200c\u0e01-\u0e3a\u0e40-\u0e4e\u1100-\u11ff\u3130-\u3185\ua960-\ua97f\uac00-\ud7af\ud7b0-\ud7ff\uffa1-\uffdc\u30a1-\u30fa\u30fc-\u30fe\uff66-\uff9f\uff10-\uff19\uff21-\uff3a\uff41-\uff5a\u3041-\u3096\u3099-\u309e\u3400-\u4dbf\u4e00-\u9fff\u20000-\u2a6df\u2a700-\u2b73f\u2b740-\u2b81f\u2f800-\u2fa1f]*", text)
+    links = re.findall("https://t.co/\w+", text)
+
+    return text, hashtags, links
 
 
 def search_black_list(tweet_text):
@@ -76,38 +80,41 @@ def write_tweet_data(tweet_id):
 
         # EVen if the json file already exists, it's updated.
         json_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.json")
-        with open(json_filename, 'w') as json_file:
+        with open(json_filename, 'w', encoding='utf-8') as json_file:
             json.dump(tweet['json'], json_file)
+
+        tweet_text, hashtags, links = get_tweet_objects(tweet['status'])
 
         # EVen if the metadata file already exists, it's updated.
         metadata_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.metadata")
-        with open(metadata_filename, 'w') as metadata_file:
+        with open(metadata_filename, 'w', encoding='utf-8') as metadata_file:
             metadata = {
                 "id": tweet_id,
                 "country": tweet["country"],
                 "country_code": tweet["country_code"],
-                "count": tweet["count"]
+                "count": tweet["count"],
+                "hashtags": hashtags,
+                "links": links
             }
-            json.dump(metadata, metadata_file)
+            json.dump(metadata, metadata_file, ensure_ascii=False)
 
         # Write html file only if it doesn't exist yet.
-        tweet_text_for_html = get_tweet_text(tweet['status'])
         html_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.html")
         if not os.path.exists(html_filename):
-            with open(html_filename, 'w') as html_file:
+            with open(html_filename, 'w', encoding='utf-8') as html_file:
                 html_str = (
                     "<!DOCTYPE html>\n"
                     f"<html lang=\"{tweet['status'].lang}\">\n"
                     "<head><meta charset=\"utf-8\"/></head>\n"
                     "<body>\n"
-                    f"<p>{tweet_text_for_html}</p>\n"
+                    f"<p>{tweet_text}</p>\n"
                     "</body>\n"
                     "</html>\n"
                 )
                 html_file.write(html_str)
 
             new_html_filename = os.path.join(run_dir, 'new-html-files', f'new-twitter-html-files-{timestamp}.txt')
-            with open(new_html_filename, 'a') as new_html_file:
+            with open(new_html_filename, 'a', encoding='utf-8') as new_html_file:
                 new_html_file.write(html_filename)
                 new_html_file.write("\n")
 
@@ -125,14 +132,14 @@ def write_tweet_data(tweet_id):
 
 def write_stats_file(filename, tweet_count_per_country):
     if len(tweet_count_per_country) > 0:
-        with open(filename, 'w') as stats_file:
+        with open(filename, 'w', encoding='utf-8') as stats_file:
             json.dump(tweet_count_per_country, stats_file)
 
 
 def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str):
     tweet_json = json.loads(tweet_json_str)
     tweet_status = twitter.models.Status.NewFromJsonDict(tweet_json)
-    tweet_text = get_tweet_text(tweet_status)
+    tweet_text, _, _ = get_tweet_objects(tweet_status)
 
     # Skip tweets that contain rejected words.
     rejected_expr = search_black_list(tweet_text)
@@ -237,7 +244,7 @@ with open(run_filename, 'w') as run_file:
 
 if total_tweets_for_all_db == 0:
     empty_extractions.append(now.strftime('%Y-%m-%d-%H-%M'))
-    with open(empty_extractions_filename, 'w') as empty_extractions_file:
+    with open(empty_extractions_filename, 'w', encoding='utf-8') as empty_extractions_file:
         json.dump(empty_extractions, empty_extractions_file)
     if is_twitter_db_admin_notif_required(empty_extractions, now):
         print("Notification sent.")
