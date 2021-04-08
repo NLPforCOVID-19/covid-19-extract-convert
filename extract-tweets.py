@@ -61,7 +61,7 @@ def search_black_list(tweet_text):
     return None
 
 
-def write_tweet_data(tweet_id):
+def write_tweet_data(tweet_id, tweet_text, hashtags, links):
     print(f"write_tweet_data tweet_id={tweet_id}")
     try:
         tweet = tweets[tweet_id]
@@ -82,8 +82,6 @@ def write_tweet_data(tweet_id):
         json_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.json")
         with open(json_filename, 'w', encoding='utf-8') as json_file:
             json.dump(tweet['json'], json_file)
-
-        tweet_text, hashtags, links = get_tweet_objects(tweet['status'])
 
         # EVen if the metadata file already exists, it's updated.
         metadata_filename = os.path.join(html_orig_tweet_dir, f"{tweet_id}.metadata")
@@ -139,7 +137,7 @@ def write_stats_file(filename, tweet_count_per_country):
 def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_str):
     tweet_json = json.loads(tweet_json_str)
     tweet_status = twitter.models.Status.NewFromJsonDict(tweet_json)
-    tweet_text, _, _ = get_tweet_objects(tweet_status)
+    tweet_text, hashtags, links = get_tweet_objects(tweet_status)
 
     # Skip tweets that contain rejected words.
     rejected_expr = search_black_list(tweet_text)
@@ -164,7 +162,7 @@ def process_tweet(tweet_id, tweet_count, tweet_lang, tweet_country, tweet_json_s
         "status": tweet_status
     }
 
-    write_tweet_data(tweet_id)
+    write_tweet_data(tweet_id, tweet_text, hashtags, links)
 
 
 #
