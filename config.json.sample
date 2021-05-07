@@ -241,6 +241,13 @@
             "sources": ["who.int", "worldometers.info"]
         }
 
+        "bundle.ru": {
+            "region": "ru",
+            "language": "ru",
+            "subdomains": ["zona\\.media", "[a-zA-Z.-]+\\.yandex.ru"],
+            "sources": ["zona.media", "yandex.ru"]
+        },
+
         "bundle.sg": {
             "region": "sg",
             "language": "en",
