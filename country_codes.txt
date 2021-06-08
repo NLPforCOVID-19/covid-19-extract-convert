@@ -58,7 +58,7 @@ Colombia CO
 Comoros KM
 Congo_(The_Democratic_Republic_of_the) CD
 Congo CG
-# Cook_Islands (the) CK
+Cook_Islands CK
 Costa_Rica CR
 Croatia HR
 Cuba CU
@@ -145,13 +145,13 @@ Malaysia MY
 Maldives MV
 Mali ML
 Malta MT
-# Marshall_Islands_(the) MH
+Marshall_Islands MH
 Martinique MQ
 Mauritania MR
 Mauritius MU
 Mayotte YT
 Mexico MX
-# Micronesia_(Federated_States_of) FM
+Micronesia_(Federated_States_of) FM
 Moldova_(Republic_of) MD
 Monaco MC
 Mongolia MN
