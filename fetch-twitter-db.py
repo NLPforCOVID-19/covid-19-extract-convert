@@ -55,11 +55,17 @@ run_dir = config['run_dir']
 
 now = datetime.datetime.now()
 
+retrieved_dbs_count = 0
 processed_dbs = get_processed_databases()
 available_dbs = get_available_databases()
-for index, db in enumerate(available_dbs):
+# Process the latest dbs first.
+for index, db in enumerate(reversed(available_dbs)):
     # Even if the last db has already been processed, it must be
     # processed again because it's been updated with new data.
-    if not db in processed_dbs or index == len(available_dbs) - 1:
+    if not db in processed_dbs or index == 0:
         retrieve_database(db)
-
+        retrieved_dbs_count += 1
+        # Get out after enough dbs have been processed.
+        # This allows to refresh latest data while processing older dbs.
+        if retrieved_dbs_count >= 3:
+            break
