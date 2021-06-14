@@ -188,7 +188,7 @@ if os.path.exists(empty_extractions_filename):
         empty_extractions = json.load(empty_extractions_file)
 
 total_tweets_for_all_db = 0
-for db_filename in sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt')):
+for db_filename in reversed(sorted(glob.glob(f'{twitter_db_dir}/tweets_*.txt'))):
     print(f"Processing {db_filename}")
 
     tweets = {}
