@@ -6,6 +6,8 @@ import re
 import requests
 from requests.auth import HTTPBasicAuth
 
+MAX_DB_COUNT_PER_ITERATION = 6
+
 
 def get_processed_databases():
     dbs = []
@@ -67,5 +69,5 @@ for index, db in enumerate(reversed(available_dbs)):
         retrieved_dbs_count += 1
         # Get out after enough dbs have been processed.
         # This allows to refresh latest data while processing older dbs.
-        if retrieved_dbs_count >= 3:
+        if retrieved_dbs_count >= MAX_DB_COUNT_PER_ITERATION:
             break
