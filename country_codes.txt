@@ -33,7 +33,7 @@ Benin BJ
 Bermuda BM
 Bhutan BT
 Bolivia_(Plurinational_State_of) BO
-# Bonaire, Sint Eustatius and Saba BQ
+Bonaire_(Sint_Eustatius_and_Saba) BQ
 Bosnia_and_Herzegovina BA
 Botswana BW
 Bouvet_Island BV
