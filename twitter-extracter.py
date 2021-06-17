@@ -14,8 +14,7 @@ import traceback
 
 
 # Number of seconds to wait before checking again for new twitter data.
-# INTER_CHECKS_DELAY = 60 * 60 * 2
-INTER_CHECKS_DELAY = 0
+INTER_CHECKS_DELAY = 60 * 60 * 2
 
 exit = Event()
 
