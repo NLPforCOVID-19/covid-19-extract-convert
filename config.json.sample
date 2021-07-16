@@ -13,6 +13,13 @@
     }
     "default_similarity_threshold": 0.8,
     "domains": {
+        "bundle.af": {
+            "region": "af",
+            "language": "en",
+            "subdomains": ["tolonews\\.com", "[a-zA-Z.-]+\\.tolonews\\.com", "data.humdata.org/m/dataset/afghanistan-covid-19-statistics-per-province", "covid19.who.int/region/emro/country/af"],
+            "sources": ["tolonews.com", "data.humdata.org", "who.int"]
+        },
+
         "bundle.au": {
             "region": "au",
             "language": "en",
