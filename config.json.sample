@@ -169,6 +169,31 @@
             "sources": ["who.int"]
         },
 
+        "www.ansa.it": {
+            "region": "it",
+            "language": "it",
+            "subdomains": ["[a-zA-Z.-]+\\.ansa\\.it"],
+            "sources": "ansa.it"
+        },
+        "www.governo.it": {
+            "region": "it",
+            "language": "it",
+            "subdomains": ["[a-zA-Z.-]+\\.governo\\.it"],
+            "sources": ["governo.it"]
+        },
+        "www.repubblica.it": {
+            "region": "it",
+            "language": "it",
+            "subdomains": ["[a-zA-Z.-]+\\.repubblica\\.it"],
+            "sources": ["repubblica.it"]
+        },
+        "www.salute.gov.it": {
+            "region": "it",
+            "language": "it",
+            "subdomains": ["[a-zA-Z.-]+\\.salute\\.gov\\.it"],
+            "sources": ["salute.gov.it"]
+        },
+
         "fij.info": {
             "region": "jp",
             "language": "ja",
@@ -296,22 +321,6 @@
         }
     },
     "domains_ignored": {
-        "www.ansa.it": {
-            "region": "it",
-            "language": "it"
-        },
-        "www.governo.it": {
-            "region": "it",
-            "language": "it"
-        },
-        "www.repubblica.it": {
-            "region": "it",
-            "language": "it"
-        },
-        "www.salute.gov.it": {
-            "region": "it",
-            "language": "it"
-        }
     },
     "domains_disabled": {
         "www.rki.de": {
