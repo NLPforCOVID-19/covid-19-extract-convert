@@ -5,6 +5,7 @@ import glob
 import hashlib
 import json
 import os
+import pathlib
 import re
 import sqlite3
 import sys
@@ -170,20 +171,40 @@ def is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
     return False
 
 
-def is_similar_to_other_urls(url_to_check, urls):
-    for url in urls:
-        # Skip first characters that should be the same.
-        i = 0
-        while i < min(len(url), len(url_to_check)) and url[i] == url_to_check[i]:
-            i += 1
+def is_similar_to_other_urls(url_to_check, urls, real_domain):
+    # Special case for tolonews.com urls from the bundle.af domain.
+    # Many duplicate urls follow this pattern:
+    # https://tolonews.com/index.php/sport-173701
+    # https://tolonews.com/sport-173701
+    if real_domain == 'bundle.af' and 'tolonews.com' in url_to_check:
+        parts = pathlib.Path(url_to_check).parts
+        index_of_domain = parts.index("tolonews.com")
+        end_parts_to_check = parts[index_of_domain + 1:]
+        if end_parts_to_check[0] == "index.php":
+            end_parts_to_check = end_parts_to_check[1:]
+        end_to_check = "/".join(end_parts_to_check)
+        for url in urls:
+            end_parts = pathlib.Path(url).parts[-len(end_parts_to_check):]
+            end = "/".join(end_parts)
+            if (end_to_check == end):
+                print(f"is_similar_to_other_urls urls={url_to_check} vs {url} -> True")
+                return True
+        print(f"is_similar_to_other_urls urls={url_to_check} -> False")
+        return False
+    else:
+        for url in urls:
+            # Skip first characters that should be the same.
+            i = 0
+            while i < min(len(url), len(url_to_check)) and url[i] == url_to_check[i]:
+                i += 1
 
-        seq = SequenceMatcher(a=url_to_check[i:], b=url[i:])
-        ratio = seq.ratio()
-        if ratio > 0.7:
-            print(f"is_similar_to_other_urls urls={url_to_check} vs {url} ratio={ratio}")
-            return True
-    print(f"is_similar_to_other_urls urls={url_to_check} -> False")
-    return False
+            seq = SequenceMatcher(a=url_to_check[i:], b=url[i:])
+            ratio = seq.ratio()
+            if ratio > 0.7:
+                print(f"is_similar_to_other_urls urls={url_to_check} vs {url} ratio={ratio}")
+                return True
+        print(f"is_similar_to_other_urls urls={url_to_check} -> False")
+        return False
 
 
 def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold):
@@ -245,7 +266,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
 
                 # Test if there is already a previous article with the same title and the same root_url.
                 # If so, the current article is considered a doublon and is skipped.
-                if root_url in urls or is_similar_to_other_urls(root_url, urls) or is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
+                if root_url in urls or is_similar_to_other_urls(root_url, urls, real_domain) or is_content_similar_to_other_urls(content, urls_data, similarity_threshold):
                     doublon_urls.add((stripped_title, url))
                     return
 
