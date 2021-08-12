@@ -125,11 +125,18 @@ for domain in config['domains']:
                 retrieve_database(domain, db)
 
 if len(new_empty_databases) > 0:
-    utils.send_mail(config['mail']['from'],
-        None if 'to' not in config['mail'] else config['mail']['to'],
-        None if 'cc' not in config['mail'] else config['mail']['cc'],
-        None if 'bcc' not in config['mail'] else config['mail']['bcc'],
-        "Empty databases were found", str(new_empty_databases))
+    # Filter unwanted domains before sending notifications of empty databases.
+    empty_databases_to_notify = {}
+    for domain in new_empty_databases:
+        if 'notif_empty_db_disabled' not in config['domains'][domain] or not config['domains'][domain]['notif_empty_db_disabled']:
+            empty_databases_to_notify[domain] = new_empty_databases[domain]
+    if (empty_databases_to_notify):
+        utils.send_mail(config['mail']['from'],
+            None if 'to' not in config['mail'] else config['mail']['to'],
+            None if 'cc' not in config['mail'] else config['mail']['cc'],
+            None if 'bcc' not in config['mail'] else config['mail']['bcc'],
+            "Empty databases were found", str(empty_databases_to_notify))
+
     for domain in new_empty_databases:
         for db in new_empty_databases[domain]:
             if domain not in empty_databases:

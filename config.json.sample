@@ -317,7 +317,8 @@
             "region": "za",
             "language": "en",
             "subdomains": ["sacoronavirus\\.co\\.za", "[a-zA-Z.-]+\\.sacoronavirus\\.co\\.za"],
-            "sources": ["sacoronavirus.co.za"]
+            "sources": ["sacoronavirus.co.za"],
+            "notif_empty_db_disabled": true
         }
     },
     "domains_ignored": {
