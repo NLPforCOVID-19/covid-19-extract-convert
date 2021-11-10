@@ -109,6 +109,9 @@ class Producer(threading.Thread):
                     country, _, *url_parts = pathlib.Path(translated_file[len(html_dir) + 1:]).parts
 
                     print(f"country={country} url_parts={url_parts}")
+                    # Skip old files.
+                    if url_parts[0] == "2020":
+                        continue
 
                     if self.file_count < max_file_count and (country not in self.files_to_process or len(self.files_to_process[country]) < max_file_count_per_country):
                         url_filename = pathlib.Path(*url_parts)
@@ -336,7 +339,7 @@ if __name__ == '__main__':
         # stopped = True
 
         # Wait 1 hour before next iteration.
-        time.sleep(60 * 60)
+        # time.sleep(60 * 60)
 
     logger.info("Stop running.")
 
