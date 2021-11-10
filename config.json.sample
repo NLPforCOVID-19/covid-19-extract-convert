@@ -232,13 +232,6 @@
             "sources": ["mohw.go.kr"]
         },
 
-        "bundle.mx": {
-            "region": "mx",
-            "language": "es",
-            "subdomains": ["coronavirus\\.gob\\.mx", "[a-zA-Z.-]+\\.gob.mx/salud"],
-            "sources": ["www.gob.mx"]
-        },
-
         "bundle.my": {
             "region": "my",
             "language": "id",
@@ -336,6 +329,13 @@
             "language": "fr",
             "subdomains": ["[a-zA-Z.-]+\\.fr\\.reuters\\.com"],
             "sources": ["fr.reuters.com"]
+        },
+
+        "bundle.mx": {
+            "region": "mx",
+            "language": "es",
+            "subdomains": ["coronavirus\\.gob\\.mx", "[a-zA-Z.-]+\\.gob.mx/salud"],
+            "sources": ["www.gob.mx"]
         },
 
         "www.covid19india.org": {
