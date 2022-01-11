@@ -66,7 +66,7 @@ def write_tweet_data(tweet_id, tweet_text):
         country_code_dir = utils.get_country_code_dir(tweet['country_code'])
         timestamp_path = tweet_timestamp.strftime('%Y/%m/%d/%H-%M')
         html_orig_tweet_dir = os.path.join(twitter_html_dir, country_code_dir, "orig", timestamp_path)
-        os.makedirs(html_orig_tweet_dir, exist_ok=True)
+        os.makedirs(html_orig_tweet_dir, exist_ok=True, mode=775)
         temp_path = html_orig_tweet_dir
         while temp_path != twitter_html_dir:
             os.chmod(temp_path, 0o775)

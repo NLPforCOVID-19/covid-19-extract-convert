@@ -210,7 +210,7 @@ class Converter(threading.Thread):
                     process = subprocess.run(["tool/html2sf.sh", "-T", f"-D {detectblocks_dir}", "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     logger.info(f"return_code={process.returncode}")
                     if process.returncode == 0:
-                        os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
+                        os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True, mode=775)
                         with open(www2sf_output_file, "wb") as xml_file:
                             xml_file.write(process.stdout)
                         logger.info(f"Output file {www2sf_output_file}: OK")

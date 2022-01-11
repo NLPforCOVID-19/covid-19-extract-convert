@@ -47,7 +47,7 @@ class Extracter(threading.Thread):
 
         if output:
             report_path = f'{self.run_dir}/twitter-extracter'
-            os.makedirs(report_path, exist_ok=True)
+            os.makedirs(report_path, exist_ok=True, mode=775)
             report_filename = f'{report_path}/extracter_{start_timestamp}.txt'
             with open(report_filename, 'wb') as report_file:
                 report_file.write(output)

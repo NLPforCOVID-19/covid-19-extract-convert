@@ -55,7 +55,7 @@ def retrieve_database(domain, database):
     else:
         database_url = os.path.join(config['crawled_data_repository'], domain.replace('.', '_'), database)
     print("db url: {}".format(database_url))
-    os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True)
+    os.makedirs(os.path.join(db_dir, domain_dir), exist_ok=True, mode=775)
     database_filename = os.path.join(db_dir, domain_dir, database)
     
     attempt = 1

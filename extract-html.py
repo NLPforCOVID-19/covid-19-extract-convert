@@ -50,7 +50,7 @@ def write_html_file(path, filename, url, content, source, domain_path):
         timestamp = now.strftime('%Y-%m-%d-%H-%M')
         timestamp_path = now.strftime('%Y/%m/%d-%H-%M')
         path = "{0}/{1}".format(path, timestamp_path).replace("//", "/")
-        os.makedirs(path, exist_ok=True)
+        os.makedirs(path, exist_ok=True, mode=775)
         temp_path = path
         while temp_path != domain_path:
             os.chmod(temp_path, 0o775)

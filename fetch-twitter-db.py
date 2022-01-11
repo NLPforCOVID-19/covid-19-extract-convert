@@ -37,7 +37,7 @@ def retrieve_database(database):
     print(f"Retrieving db: {database}")
     database_url = os.path.join(config['twitter']['crawled_data_repository'], database, 'rtjobs')
     print(f"db url: {database_url}")
-    os.makedirs(os.path.join(db_dir, "twitter"), exist_ok=True)
+    os.makedirs(os.path.join(db_dir, "twitter"), exist_ok=True, mode=775)
     database_filename = os.path.join(db_dir, "twitter", f"tweets_{database}.txt")
 
     with requests.get(database_url, stream=True, auth=HTTPBasicAuth(config['twitter']['user'], config['twitter']['password'])) as req:
