@@ -51,7 +51,7 @@ class Extracter(threading.Thread):
 
         if output:
             report_path = '{0}/extracter/{1}'.format(self.run_dir, self.domain)
-            os.makedirs(report_path, exist_ok=True, mode=775)
+            os.makedirs(report_path, exist_ok=True)
             report_filename = '{0}/extracter_{1}.txt'.format(report_path, start_timestamp)
             with open(report_filename, 'wb') as report_file:
                 report_file.write(output)
