@@ -211,6 +211,10 @@ class Converter(threading.Thread):
                     logger.info(f"return_code={process.returncode}")
                     if process.returncode == 0:
                         os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
+                        temp_path = www2sf_output_file[:www2sf_output_file.rindex('/')]
+                        while temp_path != xml_dir:
+                            os.chmod(temp_path, 0o775)
+                            temp_path = os.path.dirname(temp_path)
                         with open(www2sf_output_file, "wb") as xml_file:
                             xml_file.write(process.stdout)
                         logger.info(f"Output file {www2sf_output_file}: OK")
