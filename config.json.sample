@@ -280,6 +280,12 @@
             "sources": ["gov.sg"]
         },
 
+        "bundle.us": {
+            "region": "us",
+            "language": "en",
+            "subdomains": ["covid\\.cornell\\.edu"],
+            "sources": ["covid.cornell.edu"]
+        },
         "globalbiodefense.com": {
             "region": "us",
             "language": "en",
