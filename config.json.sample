@@ -182,6 +182,20 @@
             "sources": ["www.tuni.fi"]
         },
 
+        "bundle.uk": {
+            "region": "gb",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus"],
+            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk"]
+        },
+
+        "bundle.hk": {
+            "region": "hk",
+            "language": "en",
+            "subdomains": ["[a-zA-Z.-]*covid19\\.hku\\.hk"],
+            "sources": ["hku.hk"]
+        },
+
         "bundle.id": {
             "region": "id",
             "language": "id",
@@ -199,13 +213,6 @@
                 "covid19.go.id",
                 "www.kemkes.go.id"
             ]
-        },
-
-        "bundle.uk": {
-            "region": "gb",
-            "language": "en",
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus"],
-            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk"]
         },
 
         "bundle.ie": {
