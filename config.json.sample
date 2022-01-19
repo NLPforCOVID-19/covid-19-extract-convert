@@ -207,6 +207,12 @@
             "sources": ["salute.gov.it"]
         },
 
+        "bundle.jp": {
+            "region": "jp",
+            "language": "ja",
+            "subdomains": ["www\\.kyushu-u\\.ac\\.jp/ja/crisismanagement/riskmanagement/coronavirus"],
+            "sources": ["www.kyushu-u.ac.jp"]
+        },
         "fij.info": {
             "region": "jp",
             "language": "ja",
