@@ -175,6 +175,13 @@
             "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk"]
         },
 
+        "bundle.ie": {
+            "region": "ie",
+            "language": "en",
+            "subdomains": ["www\\.ucd\\.ie/covid-19"],
+            "sources": ["www.ucd.ie"]
+        },
+
         "www.who.int": {
             "region": "int",
             "language": "en",
