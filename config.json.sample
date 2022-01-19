@@ -41,6 +41,12 @@
             "sources": ["www.fhgr.ch"]
         },
 
+        "bundle.cn": {
+            "region": "cn",
+            "language": "zh",
+            "subdomains": ["news\\.ucas\\.ac\\.cn/index.php/topiccoronavirus"],
+            "sources": ["www.ucas.ac.cn"]
+        },
         "health.ifeng.com": {
             "region": "cn",
             "language": "zh",
