@@ -280,6 +280,13 @@
             "sources": ["gov.sg"]
         },
 
+        "bundle.th": {
+            "region": "th",
+            "language": "th",
+            "subdomains": ["th.kku.ac.th/covid-19new"],
+            "sources": ["th.kku.ac.th"]
+        },
+
         "bundle.tw": {
             "region": "tw",
             "language": "zh",
