@@ -155,6 +155,13 @@
             "similarity_threshold": 0.7
         },
 
+        "bundle.fi": {
+            "region": "fi",
+            "language": "en",
+            "subdomains": ["www\\.tuni\\.fi/en/news/latest-updates-on-the-coronavirus"],
+            "sources": ["www.tuni.fi"]
+        },
+
         "bundle.id": {
             "region": "id",
             "language": "id",
