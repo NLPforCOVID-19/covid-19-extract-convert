@@ -87,6 +87,12 @@
             "sources": ["zusammengegencorona.de"]
         },
 
+        "bundle.es": {
+            "region": "es",
+            "language": "es",
+            "subdomains": ["www.uc3m.es/covid19"],
+            "sources": ["www.uc3m.es"]
+        },
         "covid19.gob.es": {
             "region": "es",
             "language": "es",
@@ -235,8 +241,8 @@
         "bundle.kr": {
             "region": "kr",
             "language": "ko",
-            "subdomains": ["www\\.mohw\\.go\\.kr", "ncov\\.mohw\\.go\\.kr"],
-            "sources": ["mohw.go.kr"]
+            "subdomains": ["www\\.mohw\\.go\\.kr", "ncov\\.mohw\\.go\\.kr", "www\\.snu\\.ac\\.kr/coronavirus"],
+            "sources": ["mohw.go.kr", "snu.ac.kr"]
         },
 
         "bundle.my": {
