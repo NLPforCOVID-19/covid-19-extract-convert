@@ -54,6 +54,12 @@
             "sources": ["gov.cn"]
         },
 
+        "bundle.de": {
+            "region": "de",
+            "language": "de",
+            "subdomains": ["www\\.uni-regensburg\\.de/interne-kommunikation/corona-infos"],
+            "sources": ["www.uni-regensburg.de"]
+        },
         "interaktiv.morgenpost.de": {
             "region": "de",
             "language": "de",
