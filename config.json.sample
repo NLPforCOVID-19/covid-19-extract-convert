@@ -279,6 +279,13 @@
             "sources": ["who.int", "worldometers.info"]
         }
 
+        "bundle.nz": {
+            "region": "nz",
+            "language": "en",
+            "subdomains": ["www\\.wgtn\\.ac\\.nz/covid-19"],
+            "sources": ["www.wgtn.ac.nz"]
+        },
+
         "bundle.pt": {
             "region": "pt",
             "language": "pt",
