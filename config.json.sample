@@ -158,8 +158,8 @@
         "bundle.uk": {
             "region": "gb",
             "language": "en",
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk"],
-            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk"]
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus"],
+            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk"]
         },
 
         "www.who.int": {
@@ -284,7 +284,7 @@
             "region": "us",
             "language": "en",
             "subdomains": ["covid\\.cornell\\.edu"],
-            "sources": ["covid.cornell.edu"]
+            "sources": ["www.cornell.edu"]
         },
         "globalbiodefense.com": {
             "region": "us",
