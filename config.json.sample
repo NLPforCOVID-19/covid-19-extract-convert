@@ -279,6 +279,13 @@
             "sources": ["who.int", "worldometers.info"]
         }
 
+        "bundle.pt": {
+            "region": "pt",
+            "language": "pt",
+            "subdomains": ["covid360\\.unl\\.pt"],
+            "sources": ["www.unl.pt"]
+        },
+
         "bundle.ru": {
             "region": "ru",
             "language": "ru",
