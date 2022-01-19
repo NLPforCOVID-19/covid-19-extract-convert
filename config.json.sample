@@ -272,6 +272,13 @@
             "sources": ["worldometers.info"]
         },
 
+        "bundle.nl": {
+            "region": "nl",
+            "language": "nl",
+            "subdomains": ["www\\.uva\\.nl/actueel/coronavirus"],
+            "sources": ["www.uva.nl"]
+        },
+
         "bundle.np": {
             "region": "np",
             "language": "en",
