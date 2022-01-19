@@ -280,6 +280,13 @@
             "sources": ["gov.sg"]
         },
 
+        "bundle.tw": {
+            "region": "tw",
+            "language": "zh",
+            "subdomains": ["covid19.ntnu.edu.tw"],
+            "sources": ["www.ntnu.edu.tw"]
+        },
+
         "bundle.us": {
             "region": "us",
             "language": "en",
