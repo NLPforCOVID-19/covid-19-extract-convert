@@ -93,6 +93,13 @@
             "sources": ["zusammengegencorona.de"]
         },
 
+        "bundle.dk": {
+            "region": "dk",
+            "language": "en",
+            "subdomains": ["www\\.aau\\.dk/coronavirus"],
+            "sources": ["www.aau.dk"]
+        },
+
         "bundle.es": {
             "region": "es",
             "language": "es",
