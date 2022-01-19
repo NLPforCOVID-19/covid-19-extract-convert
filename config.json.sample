@@ -34,6 +34,13 @@
             "sources": ["globo.com", "gov.br"]
         },
 
+        "bundle.ch": {
+            "region": "ch",
+            "language": "en",
+            "subdomains": ["www.fhgr.ch/en/coronavirus"],
+            "sources": ["www.fhgr.ch"]
+        },
+
         "health.ifeng.com": {
             "region": "cn",
             "language": "zh",
