@@ -54,6 +54,13 @@
             "sources": ["gov.cn"]
         },
 
+        "bundle.cz": {
+            "region": "cz",
+            "language": "en",
+            "subdomains": ["cuni\\.cz/UKEN-379.html"],
+            "sources": ["cuni.cz"]
+        },
+
         "bundle.de": {
             "region": "de",
             "language": "de",
