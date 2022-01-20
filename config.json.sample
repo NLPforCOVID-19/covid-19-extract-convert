@@ -34,6 +34,13 @@
             "sources": ["globo.com", "gov.br"]
         },
 
+        "bundle.ca": {
+            "region": "ca",
+            "language": "en",
+            "subdomains": ["covid19\\.ubc\\.ca"],
+            "sources": ["www.ubc.ca"]
+        },
+
         "bundle.ch": {
             "region": "ch",
             "language": "en",
