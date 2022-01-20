@@ -23,8 +23,8 @@
         "bundle.au": {
             "region": "au",
             "language": "en",
-            "subdomains": ["www\\.health\\.gov\\.au"],
-            "sources": ["www.health.gov.au"]
+            "subdomains": ["www\\.health\\.gov\\.au", "www\\.curtin\\.edu.au/novel-coronavirus"],
+            "sources": ["www.health.gov.au", "www.curtin.edu.au"]
         },
 
         "bundle.br": {
