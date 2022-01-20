@@ -360,6 +360,13 @@
             "sources": ["zona.media", "yandex.ru"]
         },
 
+        "bundle.se": {
+            "region": "se",
+            "language": "en",
+            "subdomains": ["www\\.hb\\.se/en/about-ub/current/coronavirus"],
+            "sources": ["www.hb.se"]
+        },
+
         "bundle.sg": {
             "region": "sg",
             "language": "en",
