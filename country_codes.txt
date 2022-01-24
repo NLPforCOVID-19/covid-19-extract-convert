@@ -52,7 +52,7 @@ Central_African_Republic CF
 Chad TD
 Chile CL
 China CN
-Christmas Island CX
+Christmas_Island CX
 # Cocos (Keeling) Islands (the) CC
 Colombia CO
 Comoros KM
