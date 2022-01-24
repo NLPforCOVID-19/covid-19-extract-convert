@@ -30,8 +30,8 @@
         "bundle.br": {
             "region": "br",
             "language": "pt",
-            "subdomains": ["g1\\.globo\\.com", "coronavirus\\.saude\\.gov\\.br"],
-            "sources": ["globo.com", "gov.br"]
+            "subdomains": ["g1\\.globo\\.com", "coronavirus\\.saude\\.gov\\.br", "jornal\\.usp\\.br/coronavirus"],
+            "sources": ["globo.com", "gov.br", "www5.usp.br"]
         },
 
         "bundle.ca": {
