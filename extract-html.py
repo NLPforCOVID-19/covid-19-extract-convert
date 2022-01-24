@@ -44,8 +44,8 @@ def is_blacklisted(url):
     return False
 
 
-def write_html_file(path, filename, url, content, source, domain_path):
-    print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4}".format(path, filename, url, source, domain_path))
+def write_html_file(path, filename, url, content, source, domain_path, guessed_language, languages):
+    print("write_html_file path={0} filename={1} url={2} source={3} domain_path={4} guessed_language={5} languages={6}".format(path, filename, url, source, domain_path, guessed_language, languages))
     try:
         timestamp = now.strftime('%Y-%m-%d-%H-%M')
         timestamp_path = now.strftime('%Y/%m/%d-%H-%M')
@@ -64,6 +64,10 @@ def write_html_file(path, filename, url, content, source, domain_path):
         filename_source = filename[:-5] + '.src'
         with open(filename_source, 'w') as source_file:
             source_file.write(source)
+        if guessed_language != '' and guessed_language != languages[0]:
+            filename_lang = filename[:-5] + '.lang'
+            with open(filename_lang, 'w') as lang_file:
+                lang_file.write(guessed_language)
         new_html_filename = os.path.join(run_dir, 'new-html-files', 'new-html-files-{}.txt'.format(timestamp))
         with open(new_html_filename, 'a') as new_html_file:
             new_html_file.write(filename)
@@ -207,7 +211,7 @@ def is_similar_to_other_urls(url_to_check, urls, real_domain):
         return False
 
 
-def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold):
+def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold, guessed_language, languages):
     print("process_file parent_dir={0} file_dir_prefix={1}".format(parent_dir, file_dir_prefix))
     all_versions = sorted(get_all_versions(parent_dir, file_dir_prefix))
     # print("all_versions={0}".format(all_versions))
@@ -275,7 +279,7 @@ def process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, d
                 urls_data.add((root_url, filename, parent_dir, file_dir_prefix, full_path))
 
     source = same_as or db_file_basename
-    write_html_file(full_path, filename, url, content, source, domain_path)
+    write_html_file(full_path, filename, url, content, source, domain_path, guessed_language, languages)
 
 
 def perform_fact_checking(db_file, real_domain, region, db_file_basename, urls_with_title):
@@ -315,13 +319,13 @@ def perform_fact_checking(db_file, real_domain, region, db_file_basename, urls_w
                     "where content_type like '%text/html%' and url in ({0})"
                 ).format(','.join(["'{}'".format(href) for href in external_hrefs]))
                 for row in cursor.execute(sql):
-                    process_row(row, real_domain, region, db_file_basename, urls_with_title, test_domain_and_subdomain=False)
+                    process_row(row, real_domain, region,languages, db_file_basename, urls_with_title, test_domain_and_subdomain=False)
             except sqlite3.DatabaseError as db_err:
                 print("An error has occurred: {0}".format(db_err))
             finally:
                 conn.close()
 
-def process_row(row, real_domain, region, db_file_basename, urls_with_title, test_domain_and_subdomain=True, test_similarity=True, limit_in_days=7):
+def process_row(row, real_domain, region, languages, db_file_basename, urls_with_title, test_domain_and_subdomain=True, test_similarity=True, limit_in_days=7):
     url = row[0]
     same_as = row[1]
     content = row[2]
@@ -329,6 +333,7 @@ def process_row(row, real_domain, region, db_file_basename, urls_with_title, tes
     similarity = row[4]
     main_text_similarity = row[5]
     compared_against = row[6]
+    guessed_lang = row[7]
 
     print("url: {0}".format(url))
 
@@ -340,6 +345,11 @@ def process_row(row, real_domain, region, db_file_basename, urls_with_title, tes
     # Skip blacklisted urls.
     if is_blacklisted(url):
         print("url blacklisted detected!!!: {}".format(url))
+        return
+
+    # Skip pages that are in an unsupported languages.
+    if guessed_lang != '' and guessed_lang not in languages:
+        print("url in an unlisted language for this domain: {}".format(guessed_lang))
         return
 
     # Consider only urls that match the domain_part or declared subdomains.
@@ -405,7 +415,7 @@ def process_row(row, real_domain, region, db_file_basename, urls_with_title, tes
             print("url too similar to previous version sim: {0} main_text_sim={1} sim_treshold={2}".format(similarity, main_text_similarity, similarity_threshold))
             return
 
-    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold)
+    process_file(filename, parent_dir, file_dir_prefix, same_as, url, content, db_file_basename, urls_with_title, full_path, domain_path, similarity_threshold, guessed_lang, languages)
 
 
 for domain in os.listdir(db_dir):
@@ -432,8 +442,8 @@ for domain in os.listdir(db_dir):
     urls_with_title = {}
     doublon_urls = set()
 
-    lang = config['domains'][real_domain]['language']
     region = config['domains'][real_domain]['region']
+    languages = config['domains'][real_domain]['languages']
     for db_file in sorted(glob.glob('{0}/*.db'.format(domain_dir))):
         db_file_basename = os.path.basename(db_file)
         if real_domain in processed_db_per_domain and db_file_basename in processed_db_per_domain[real_domain]:
@@ -444,11 +454,11 @@ for domain in os.listdir(db_dir):
         try:
             cursor = conn.cursor()
             sql = (
-                "select url, same_as, content, headers, similarity, maintext_similarity, compared_against from page "
+                "select url, same_as, content, headers, similarity, maintext_similarity, compared_against, guessed_language from page "
                 "where content_type like '%text/html%'"
             )
             for row in cursor.execute(sql):
-                process_row(row, real_domain, region, db_file_basename, urls_with_title)
+                process_row(row, real_domain, region, languages, db_file_basename, urls_with_title)
         except sqlite3.DatabaseError as db_err:
             print("An error has occurred: {0}".format(db_err))
         finally:
