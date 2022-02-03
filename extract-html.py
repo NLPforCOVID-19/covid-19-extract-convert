@@ -85,6 +85,9 @@ def write_stats_file(filename):
 
 
 def is_too_old(headers, limit_in_days=7):
+    if headers is None or headers == '':
+        return False
+
     json_data = json.loads(headers)
     for key in json_data:
         if key == 'last-modified' or key == 'Last-Modified' or key == 'Last-modified':
@@ -348,9 +351,15 @@ def process_row(row, real_domain, region, languages, db_file_basename, urls_with
         return
 
     # Skip pages that are in an unsupported languages.
-    if guessed_lang != '' and guessed_lang not in languages:
-        print("url in an unlisted language for this domain: {}".format(guessed_lang))
-        return
+    if guessed_lang is not None and guessed_lang != '':
+        lang_found = False
+        for lang in languages:
+            if guessed_lang.startswith(lang):
+                lang_found = True
+                break
+        if not lang_found:
+            print("url in an unlisted language for this domain: {}".format(guessed_lang))
+            return
 
     # Consider only urls that match the domain_part or declared subdomains.
     # print("url={0} same_as={1} isNone={2} isEmpty={3}".format(url, same_as, (same_as is None), same_as == ''))
