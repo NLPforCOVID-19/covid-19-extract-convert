@@ -41,8 +41,8 @@
             "region": "ca",
             "language": "en",
             "languages": ["en", "fr"],
-            "subdomains": ["covid19\\.ubc\\.ca"],
-            "sources": ["www.ubc.ca"]
+            "subdomains": ["covid19\\.ubc\\.ca", "www\\.mcgill\\.ca/coronavirus"],
+            "sources": ["www.ubc.ca", "www.mcgill.ca"]
         },
 
         "bundle.ch": {
