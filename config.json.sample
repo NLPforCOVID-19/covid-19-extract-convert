@@ -25,8 +25,8 @@
             "region": "au",
             "language": "en",
             "languages": ["en"],
-            "subdomains": ["www\\.health\\.gov\\.au", "www\\.curtin\\.edu.au/novel-coronavirus"],
-            "sources": ["www.health.gov.au", "www.curtin.edu.au"]
+            "subdomains": ["www\\.health\\.gov\\.au", "www\\.curtin\\.edu.au/novel-coronavirus", "[a-zA-Z.-]+\\.unimelb\\.edu\\.au/coronavirus"],
+            "sources": ["www.health.gov.au", "www.curtin.edu.au", "www.unimelb.edu.au"]
         },
 
         "bundle.br": {
