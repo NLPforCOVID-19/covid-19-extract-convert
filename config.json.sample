@@ -219,8 +219,8 @@
             "region": "gb",
             "language": "en",
             "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus"],
-            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk"]
+            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus", "www\\.shu\\.ac\\.uk/covid-19-student-guidance"],
+            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk", "www.shu.ac.uk"]
         },
 
         "bundle.hk": {
