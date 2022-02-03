@@ -461,8 +461,9 @@
         "bundle.us": {
             "region": "us",
             "language": "en",
-            "subdomains": ["covid\\.cornell\\.edu"],
-            "sources": ["www.cornell.edu"]
+            "languages": ["en"],
+            "subdomains": ["covid\\.cornell\\.edu", "coronavirus\\.berkeley\\.edu"],
+            "sources": ["www.cornell.edu", "www.berkeley.edu"]
         },
         "globalbiodefense.com": {
             "region": "us",
