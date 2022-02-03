@@ -300,8 +300,8 @@
             "region": "jp",
             "language": "ja",
             "languages": ["ja"],
-            "subdomains": ["www\\.kyushu-u\\.ac\\.jp/ja/crisismanagement/riskmanagement/coronavirus"],
-            "sources": ["www.kyushu-u.ac.jp"]
+            "subdomains": ["www\\.kyushu-u\\.ac\\.jp/ja/crisismanagement/riskmanagement/coronavirus", "www\\.tsukuba\\.ac\\.jp/about/antidisaster-crisismanagement/covid-19"],
+            "sources": ["www.kyushu-u.ac.jp", "www.tsukuba.ac.jp"]
         },
         "fij.info": {
             "region": "jp",
