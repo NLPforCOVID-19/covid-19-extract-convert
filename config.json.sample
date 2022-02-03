@@ -442,6 +442,14 @@
             "sources": ["th.kku.ac.th"]
         },
 
+        "bundle.tr": {
+            "region": "tr",
+            "language": "tr",
+            "languages": ["tr", "en"],
+            "subdomains": ["corona\\.hacettepe\\.edu\\.tr"],
+            "sources": ["hacettepe.edu.tr"]
+        },
+
         "bundle.tw": {
             "region": "tw",
             "language": "zh",
