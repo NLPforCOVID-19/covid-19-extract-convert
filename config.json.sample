@@ -86,9 +86,9 @@
         "bundle.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["www\\.uni-regensburg\\.de/interne-kommunikation/corona-infos"],
-            "sources": ["www.uni-regensburg.de"]
+            "languages": ["de", "en"],
+            "subdomains": ["www\\.uni-regensburg\\.de/interne-kommunikation/corona-infos", "www\\.hu-berlin\\.de/en/press-portal/current-information-regarding-coronavirus"],
+            "sources": ["www.uni-regensburg.de", "www.hu-berlin.de"]
         },
         "interaktiv.morgenpost.de": {
             "region": "de",
