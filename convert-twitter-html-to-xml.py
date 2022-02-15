@@ -213,7 +213,12 @@ class Converter(threading.Thread):
                         os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
                         temp_path = www2sf_output_file[:www2sf_output_file.rindex('/')]
                         while temp_path != xml_dir:
-                            os.chmod(temp_path, 0o775)
+                            # An error might happen when the folder owner is different from the user running the script.
+                            # The permissions of such folders should already be ok so it's not needed to update them.
+                            try:
+                                os.chmod(temp_path, 0o775)
+                            except OSError as e:
+                                break
                             temp_path = os.path.dirname(temp_path)
                         with open(www2sf_output_file, "wb") as xml_file:
                             xml_file.write(process.stdout)
@@ -251,8 +256,8 @@ class Converter(threading.Thread):
 
             except:
                 e = sys.exc_info()[0]
-                logger.info("An error has occurred: %s" % e)
-                # logger.info("An error has occurred: %s" % traceback.format_exc())
+                # logger.info("An error has occurred: %s" % e)
+                logger.info("An error has occurred: %s" % traceback.format_exc())
 
 
 if __name__ == '__main__':
