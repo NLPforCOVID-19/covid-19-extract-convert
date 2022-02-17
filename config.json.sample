@@ -2,239 +2,442 @@
     "crawled_data_repository": "http://setagaya.tkl.iis.u-tokyo.ac.jp:8901/~suzuki/covid19",
     "twitter": {
         "crawled_data_repository": "http://tokyo.tkl.iis.u-tokyo.ac.jp:7089/~toyoda/Twitter/covid19world/",
-        "user": "???",
-        "password": "???",
+        "user": "******",
+        "password": "******",
         "html_dir": "/mnt/hinoki/share/covid19/twitter/html",
         "xml_dir": "/mnt/hinoki/share/covid19/twitter/xml",
         "stats": {
-            "countries_of_interest": ["_", "jp", "us", "gb", "fr", "de", "au", "cn", "kr"]
+            "countries_of_interest": [
+                "_",
+                "jp",
+                "us",
+                "gb",
+                "fr",
+                "de",
+                "au",
+                "cn",
+                "kr"
+            ]
         },
         "black_list": "/mnt/hinoki/share/covid19/twitter_black_list.txt"
-    }
+    },
     "default_similarity_threshold": 0.8,
     "domains": {
         "bundle.af": {
             "region": "af",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["tolonews\\.com", "[a-zA-Z.-]+\\.tolonews\\.com", "data.humdata.org/m/dataset/afghanistan-covid-19-statistics-per-province", "covid19.who.int/region/emro/country/af"],
-            "sources": ["tolonews.com", "data.humdata.org", "who.int"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "tolonews\\.com",
+                "[a-zA-Z.-]+\\.tolonews\\.com",
+                "data.humdata.org/m/dataset/afghanistan-covid-19-statistics-per-province",
+                "covid19.who.int/region/emro/country/af"
+            ],
+            "sources": [
+                "tolonews.com",
+                "data.humdata.org",
+                "who.int"
+            ]
         },
-
         "bundle.au": {
             "region": "au",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.health\\.gov\\.au", "www\\.curtin\\.edu.au/novel-coronavirus", "[a-zA-Z.-]+\\.unimelb\\.edu\\.au/coronavirus"],
-            "sources": ["www.health.gov.au", "www.curtin.edu.au", "www.unimelb.edu.au"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.health\\.gov\\.au",
+                "www\\.curtin\\.edu.au/novel-coronavirus",
+                "[a-zA-Z.-]+\\.unimelb\\.edu\\.au/coronavirus",
+                "www\\.monash\\.edu/news/coronavirus-updates"
+            ],
+            "sources": [
+                "www.health.gov.au",
+                "www.curtin.edu.au",
+                "www.unimelb.edu.au",
+                "www.monash.edu"
+            ]
         },
-
         "bundle.br": {
             "region": "br",
             "language": "pt",
-            "languages": ["pt"],
-            "subdomains": ["g1\\.globo\\.com", "coronavirus\\.saude\\.gov\\.br", "jornal\\.usp\\.br/coronavirus"],
-            "sources": ["globo.com", "gov.br", "www5.usp.br"]
+            "languages": [
+                "pt"
+            ],
+            "subdomains": [
+                "g1\\.globo\\.com",
+                "coronavirus\\.saude\\.gov\\.br",
+                "jornal\\.usp\\.br/coronavirus"
+            ],
+            "sources": [
+                "globo.com",
+                "gov.br",
+                "www5.usp.br"
+            ]
         },
-
         "bundle.ca": {
             "region": "ca",
             "language": "en",
-            "languages": ["en", "fr"],
-            "subdomains": ["covid19\\.ubc\\.ca", "www\\.mcgill\\.ca/coronavirus"],
-            "sources": ["www.ubc.ca", "www.mcgill.ca"]
+            "languages": [
+                "en",
+                "fr"
+            ],
+            "subdomains": [
+                "covid19\\.ubc\\.ca",
+                "www\\.mcgill\\.ca/coronavirus",
+                "www\\.utoronto\\.ca/news/tags/coronavirus"
+            ],
+            "sources": [
+                "www.ubc.ca",
+                "www.mcgill.ca",
+                "www.utoronto.ca"
+            ]
         },
-
         "bundle.ch": {
             "region": "ch",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www.fhgr.ch/en/coronavirus"],
-            "sources": ["www.fhgr.ch"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www.fhgr.ch/en/coronavirus"
+            ],
+            "sources": [
+                "www.fhgr.ch"
+            ]
         },
-
         "bundle.cn": {
             "region": "cn",
             "language": "zh",
-            "languages": ["zh"],
-            "subdomains": ["news\\.ucas\\.ac\\.cn/index.php/topiccoronavirus"],
-            "sources": ["www.ucas.ac.cn"]
+            "languages": [
+                "zh"
+            ],
+            "subdomains": [
+                "news\\.ucas\\.ac\\.cn/index.php/topiccoronavirus",
+                "news\\.pku\\.edu\\.cn/ztrd/zzcckjyq/index.htm"
+            ],
+            "sources": [
+                "www.ucas.ac.cn",
+                "www.im.pku.edu.cn"
+            ]
         },
         "health.ifeng.com": {
             "region": "cn",
             "language": "zh",
-            "languages": ["zh"],
-            "subdomains": ["[a-zA-Z.-]+\\.ifeng\\.com"],
-            "sources": ["ifeng.com"]
+            "languages": [
+                "zh"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.ifeng\\.com"
+            ],
+            "sources": [
+                "ifeng.com"
+            ]
         },
         "www.gov.cn": {
             "region": "cn",
             "language": "zh",
-            "languages": ["zh"],
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.cn"],
-            "sources": ["gov.cn"]
+            "languages": [
+                "zh"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.gov\\.cn"
+            ],
+            "sources": [
+                "gov.cn"
+            ]
         },
-
         "bundle.cz": {
             "region": "cz",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["cuni\\.cz/UKEN-379.html"],
-            "sources": ["cuni.cz"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "cuni\\.cz/UKEN-379.html"
+            ],
+            "sources": [
+                "cuni.cz"
+            ]
         },
-
         "bundle.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de", "en"],
-            "subdomains": ["www\\.uni-regensburg\\.de/interne-kommunikation/corona-infos", "www\\.hu-berlin\\.de/en/press-portal/current-information-regarding-coronavirus"],
-            "sources": ["www.uni-regensburg.de", "www.hu-berlin.de"]
+            "languages": [
+                "de",
+                "en"
+            ],
+            "subdomains": [
+                "www\\.uni-regensburg\\.de/interne-kommunikation/corona-infos",
+                "www\\.hu-berlin\\.de/en/press-portal/current-information-regarding-coronavirus"
+            ],
+            "sources": [
+                "www.uni-regensburg.de",
+                "www.hu-berlin.de"
+            ]
         },
         "interaktiv.morgenpost.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["[a-zA-Z.-]+\\.morgenpost\\.de"],
-            "sources": ["morgenpost.de"]
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.morgenpost\\.de"
+            ],
+            "sources": [
+                "morgenpost.de"
+            ]
         },
         "www.bundesgesundheitsministerium.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["[a-zA-Z.-]+\\.bundesgesundheitsministerium\\.de"],
-            "sources": ["bundesgesundheitsministerium.de"]
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.bundesgesundheitsministerium\\.de"
+            ],
+            "sources": [
+                "bundesgesundheitsministerium.de"
+            ]
         },
         "www.bundesregierung.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["[a-zA-Z.-]+\\.bundesregierung\\.de"],
-            "sources": ["bundesregierung.de"],
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.bundesregierung\\.de"
+            ],
+            "sources": [
+                "bundesregierung.de"
+            ],
             "similarity_threshold": 0.7
         },
         "www.spiegel.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["[a-zA-Z.-]+\\.spiegel\\.de"],
-            "sources": ["spiegel.de"],
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.spiegel\\.de"
+            ],
+            "sources": [
+                "spiegel.de"
+            ],
             "similarity_threshold": 0.7
         },
         "www.zusammengegencorona.de": {
             "region": "de",
             "language": "de",
-            "languages": ["de"],
-            "subdomains": ["[a-zA-Z.-]+\\.zusammengegencorona\\.de"],
-            "sources": ["zusammengegencorona.de"]
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.zusammengegencorona\\.de"
+            ],
+            "sources": [
+                "zusammengegencorona.de"
+            ]
         },
-
         "bundle.dk": {
             "region": "dk",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.aau\\.dk/coronavirus"],
-            "sources": ["www.aau.dk"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.aau\\.dk/coronavirus"
+            ],
+            "sources": [
+                "www.aau.dk"
+            ]
         },
-
         "bundle.es": {
             "region": "es",
             "language": "es",
-            "languages": ["es"],
-            "subdomains": ["www.uc3m.es/covid19"],
-            "sources": ["www.uc3m.es"]
+            "languages": [
+                "es"
+            ],
+            "subdomains": [
+                "www.uc3m.es/covid19"
+            ],
+            "sources": [
+                "www.uc3m.es"
+            ]
         },
         "covid19.gob.es": {
             "region": "es",
             "language": "es",
-            "languages": ["es"],
-            "subdomains": ["[a-zA-Z.-]+\\.covid19\\.gob\\.es"],
-            "sources": ["covid19.gob.es"]
+            "languages": [
+                "es"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.covid19\\.gob\\.es"
+            ],
+            "sources": [
+                "covid19.gob.es"
+            ]
         },
         "www.mscbs.gob.es": {
             "region": "es",
             "language": "es",
-            "languages": ["es"],
-            "subdomains": ["[a-zA-Z.-]+\\.mscbs\\.gob\\.es"],
-            "sources": ["mscbs.gob.es"]
+            "languages": [
+                "es"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.mscbs\\.gob\\.es"
+            ],
+            "sources": [
+                "mscbs.gob.es"
+            ]
         },
-
         "www.ecdc.europa.eu": {
             "region": "eu",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.ecdc\\.europa\\.eu"],
-            "sources": ["ecdc.europa.eu"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.ecdc\\.europa\\.eu"
+            ],
+            "sources": [
+                "ecdc.europa.eu"
+            ]
         },
-
         "www.france24.com": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr", "en", "es"],
-            "subdomains": ["[a-zA-Z.-]+\\.france24\\.com"],
-            "sources": ["france24.com"],
+            "languages": [
+                "fr",
+                "en",
+                "es"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.france24\\.com"
+            ],
+            "sources": [
+                "france24.com"
+            ],
             "similarity_threshold": 0.7
         },
         "www.francetvinfo.fr": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr"],
-            "subdomains": ["[a-zA-Z.-]+\\.francetvinfo\\.fr"],
-            "sources": ["francetvinfo.fr"],
+            "languages": [
+                "fr"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.francetvinfo\\.fr"
+            ],
+            "sources": [
+                "francetvinfo.fr"
+            ],
             "similarity_threshold": 0.7,
             "dom_element_to_compare": "article"
         },
         "www.gouvernement.fr": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr"],
-            "subdomains": ["[a-zA-Z.-]+\\.gouvernement\\.fr"],
-            "sources": ["gouvernement.fr"]
+            "languages": [
+                "fr"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.gouvernement\\.fr"
+            ],
+            "sources": [
+                "gouvernement.fr"
+            ]
         },
         "www.lci.fr": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr"],
-            "subdomains": ["[a-zA-Z.-]+\\.lci\\.fr"],
-            "sources": ["lci.fr"],
+            "languages": [
+                "fr"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.lci\\.fr"
+            ],
+            "sources": [
+                "lci.fr"
+            ],
             "similarity_threshold": 0.7
         },
         "www.lemonde.fr": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr"],
-            "subdomains": ["[a-zA-Z.-]+\\.lemonde\\.fr"],
-            "sources": ["lemonde.fr"],
+            "languages": [
+                "fr"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.lemonde\\.fr"
+            ],
+            "sources": [
+                "lemonde.fr"
+            ],
             "similarity_threshold": 0.7
         },
-
         "bundle.fi": {
             "region": "fi",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.tuni\\.fi/en/news/latest-updates-on-the-coronavirus"],
-            "sources": ["www.tuni.fi"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.tuni\\.fi/en/news/latest-updates-on-the-coronavirus"
+            ],
+            "sources": [
+                "www.tuni.fi"
+            ]
         },
-
         "bundle.uk": {
             "region": "gb",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.scot", "[a-zA-Z.-]+\\.nhs\\.uk", "[a-zA-Z.-]+\\.gov\\.uk", "www.ox.ac.uk/coronavirus", "www\\.shu\\.ac\\.uk/covid-19-student-guidance"],
-            "sources": ["www.gov.scot", "www.nhs.uk", "www.gov.uk", "www.ox.ac.uk", "www.shu.ac.uk"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.gov\\.scot",
+                "[a-zA-Z.-]+\\.nhs\\.uk",
+                "[a-zA-Z.-]+\\.gov\\.uk",
+                "www.ox.ac.uk/coronavirus",
+                "www\\.shu\\.ac\\.uk/covid-19-student-guidance",
+                "www.gla.ac.uk/myglasgow/coronavirus"
+            ],
+            "sources": [
+                "www.gov.scot",
+                "www.nhs.uk",
+                "www.gov.uk",
+                "www.ox.ac.uk",
+                "www.shu.ac.uk",
+                "www.gla.ac.uk",
+                "www.gla.ac.uk/myglasgow/coronavirus"
+            ]
         },
-
         "bundle.hk": {
             "region": "hk",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]*covid19\\.hku\\.hk"],
-            "sources": ["hku.hk"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]*covid19\\.hku\\.hk"
+            ],
+            "sources": [
+                "hku.hk"
+            ]
         },
-
         "bundle.id": {
             "region": "id",
             "language": "id",
-            "languages": ["id"],
+            "languages": [
+                "id"
+            ],
             "subdomains": [
                 "[a-zA-Z.-]+\\.indonesia\\.go\\.id",
                 "[a-zA-Z.-]+\\.detik\\.com",
@@ -250,309 +453,571 @@
                 "www.kemkes.go.id"
             ]
         },
-
         "bundle.ie": {
             "region": "ie",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.ucd\\.ie/covid-19"],
-            "sources": ["www.ucd.ie"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.ucd\\.ie/covid-19"
+            ],
+            "sources": [
+                "www.ucd.ie"
+            ]
         },
-
         "www.who.int": {
             "region": "int",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.who\\.int"],
-            "sources": ["who.int"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.who\\.int"
+            ],
+            "sources": [
+                "who.int"
+            ]
         },
-
         "www.ansa.it": {
             "region": "it",
             "language": "it",
-            "languages": ["it"],
-            "subdomains": ["[a-zA-Z.-]+\\.ansa\\.it"],
+            "languages": [
+                "it"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.ansa\\.it"
+            ],
             "sources": "ansa.it"
         },
         "www.governo.it": {
             "region": "it",
             "language": "it",
-            "languages": ["it"],
-            "subdomains": ["[a-zA-Z.-]+\\.governo\\.it"],
-            "sources": ["governo.it"]
+            "languages": [
+                "it"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.governo\\.it"
+            ],
+            "sources": [
+                "governo.it"
+            ]
         },
         "www.repubblica.it": {
             "region": "it",
             "language": "it",
-            "languages": ["it"],
-            "subdomains": ["[a-zA-Z.-]+\\.repubblica\\.it"],
-            "sources": ["repubblica.it"]
+            "languages": [
+                "it"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.repubblica\\.it"
+            ],
+            "sources": [
+                "repubblica.it"
+            ]
         },
         "www.salute.gov.it": {
             "region": "it",
             "language": "it",
-            "languages": ["it"],
-            "subdomains": ["[a-zA-Z.-]+\\.salute\\.gov\\.it"],
-            "sources": ["salute.gov.it"]
+            "languages": [
+                "it"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.salute\\.gov\\.it"
+            ],
+            "sources": [
+                "salute.gov.it"
+            ]
         },
-
         "bundle.jp": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["www\\.kyushu-u\\.ac\\.jp/ja/crisismanagement/riskmanagement/coronavirus", "www\\.tsukuba\\.ac\\.jp/about/antidisaster-crisismanagement/covid-19"],
-            "sources": ["www.kyushu-u.ac.jp", "www.tsukuba.ac.jp"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "www\\.kyushu-u\\.ac\\.jp/ja/crisismanagement/riskmanagement/coronavirus",
+                "www\\.tsukuba\\.ac\\.jp/about/antidisaster-crisismanagement/covid-19"
+            ],
+            "sources": [
+                "www.kyushu-u.ac.jp",
+                "www.tsukuba.ac.jp"
+            ]
         },
         "fij.info": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["[a-zA-Z.-]+\\.fij\\.info"],
-            "sources": ["fij.info"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.fij\\.info"
+            ],
+            "sources": [
+                "fij.info"
+            ]
         },
         "hazard.yahoo.co.jp": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["[a-zA-Z.-]+\\.yahoo\\.co\\.jp"],
-            "sources": ["yahoo.co.jp"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.yahoo\\.co\\.jp"
+            ],
+            "sources": [
+                "yahoo.co.jp"
+            ]
         },
         "www.kantei.go.jp": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["[a-zA-Z.-]+\\.kantei\\.go\\.jp"],
-            "sources": ["kantei.co.jp"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.kantei\\.go\\.jp"
+            ],
+            "sources": [
+                "kantei.co.jp"
+            ]
         },
         "www.mhlw.go.jp": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["[a-zA-Z.-]+\\.mhlw\\.go\\.jp"],
-            "sources": ["mhlw.go.cp"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.mhlw\\.go\\.jp"
+            ],
+            "sources": [
+                "mhlw.go.cp"
+            ]
         },
         "www.niid.go.jp": {
             "region": "jp",
             "language": "ja",
-            "languages": ["ja"],
-            "subdomains": ["[a-zA-Z.-]+\\.niid.go\\.jp"],
-            "sources": ["niid.go.jp"]
+            "languages": [
+                "ja"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.niid.go\\.jp"
+            ],
+            "sources": [
+                "niid.go.jp"
+            ]
         },
-
         "bundle.kr": {
             "region": "kr",
             "language": "ko",
-            "languages": ["ko"],
-            "subdomains": ["www\\.mohw\\.go\\.kr", "ncov\\.mohw\\.go\\.kr", "www\\.snu\\.ac\\.kr/coronavirus"],
-            "sources": ["mohw.go.kr", "snu.ac.kr"]
+            "languages": [
+                "ko",
+                "en"
+            ],
+            "subdomains": [
+                "www\\.mohw\\.go\\.kr",
+                "ncov\\.mohw\\.go\\.kr",
+                "www\\.snu\\.ac\\.kr/coronavirus",
+                "en.knu.ac.kr/board/covid.htm",
+                "www.cau.ac.kr/cms/FR_CON/index.do\\?MENU_ID=2450\\#page1"
+            ],
+            "sources": [
+                "mohw.go.kr",
+                "snu.ac.kr",
+                "en.knu.ac.kr/main/main.htm",
+                "neweng.cau.ac.kr"
+            ]
         },
-
         "bundle.my": {
             "region": "my",
             "language": "id",
-            "languages": ["id"],
-            "subdomains": ["covid-19\\.moh\\.gov\\.my/"],
-            "sources": ["covid-19.moh.gov.my"]
+            "languages": [
+                "id",
+                "en"
+            ],
+            "subdomains": [
+                "covid-19\\.moh\\.gov\\.my/",
+                "www.uitm.edu.my/index.php/en/covid-19"
+            ],
+            "sources": [
+                "covid-19.moh.gov.my",
+                "www.uitm.edu.my/index.php/en/"
+            ]
         },
-
         "www.mohfw.gov.in": {
             "region": "in",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.mohfw\\.gov\\.in"],
-            "sources": ["mohfw.gov.in"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.mohfw\\.gov\\.in"
+            ],
+            "sources": [
+                "mohfw.gov.in"
+            ]
         },
         "www.mygov.in": {
             "region": "in",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.mygov\\.in"],
-            "sources": ["mygov.in"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.mygov\\.in"
+            ],
+            "sources": [
+                "mygov.in"
+            ]
         },
-
         "www.worldometers.info": {
             "region": "int",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.worldometers\\.info"],
-            "sources": ["worldometers.info"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.worldometers\\.info"
+            ],
+            "sources": [
+                "worldometers.info"
+            ]
         },
-
         "bundle.nl": {
             "region": "nl",
             "language": "nl",
-            "languages": ["nl"],
-            "subdomains": ["www\\.uva\\.nl/actueel/coronavirus"],
-            "sources": ["www.uva.nl"]
+            "languages": [
+                "nl"
+            ],
+            "subdomains": [
+                "www\\.uva\\.nl/actueel/coronavirus"
+            ],
+            "sources": [
+                "www.uva.nl"
+            ]
         },
-
         "bundle.np": {
             "region": "np",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.who\\.int/countries/npl", "[a-zA-Z.-]+\\.worldometers.info/coronavirus/country/nepal"],
-            "sources": ["who.int", "worldometers.info"]
-        }
-
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.who\\.int/countries/npl",
+                "[a-zA-Z.-]+\\.worldometers.info/coronavirus/country/nepal"
+            ],
+            "sources": [
+                "who.int",
+                "worldometers.info"
+            ]
+        },
         "bundle.nz": {
             "region": "nz",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.wgtn\\.ac\\.nz/covid-19"],
-            "sources": ["www.wgtn.ac.nz"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.wgtn\\.ac\\.nz/covid-19",
+                "www.waikato.ac.nz/covid-19"
+            ],
+            "sources": [
+                "www.wgtn.ac.nz",
+                "www.waikato.ac.nz"
+            ]
         },
-
         "bundle.pt": {
             "region": "pt",
             "language": "pt",
-            "languages": ["pt"],
-            "subdomains": ["covid360\\.unl\\.pt"],
-            "sources": ["www.unl.pt"]
+            "languages": [
+                "pt",
+                "en"
+            ],
+            "subdomains": [
+                "covid360\\.unl\\.pt",
+                "www.up.pt/covid-19"
+            ],
+            "sources": [
+                "www.unl.pt",
+                "sigarra.up.pt/up/en/web_base.gera_pagina?p_pagina=home"
+            ]
         },
-
         "bundle.ru": {
             "region": "ru",
             "language": "ru",
-            "languages": ["ru"],
-            "subdomains": ["zona\\.media", "[a-zA-Z.-]+\\.yandex.ru", "t\\.me"],
-            "sources": ["zona.media", "yandex.ru"]
+            "languages": [
+                "ru"
+            ],
+            "subdomains": [
+                "zona\\.media",
+                "[a-zA-Z.-]+\\.yandex.ru",
+                "t\\.me"
+            ],
+            "sources": [
+                "zona.media",
+                "yandex.ru"
+            ]
         },
-
         "bundle.se": {
             "region": "se",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["www\\.hb\\.se/en/about-ub/current/coronavirus"],
-            "sources": ["www.hb.se"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www\\.hb\\.se/en/about-ub/current/coronavirus"
+            ],
+            "sources": [
+                "www.hb.se"
+            ]
         },
-
         "bundle.sg": {
             "region": "sg",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.gov\\.sg"],
-            "sources": ["gov.sg"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.gov\\.sg"
+            ],
+            "sources": [
+                "gov.sg"
+            ]
         },
-
         "bundle.th": {
             "region": "th",
             "language": "th",
-            "languages": ["th"],
-            "subdomains": ["th.kku.ac.th/covid-19new"],
-            "sources": ["th.kku.ac.th"]
+            "languages": [
+                "th"
+            ],
+            "subdomains": [
+                "th.kku.ac.th/covid-19new"
+            ],
+            "sources": [
+                "th.kku.ac.th"
+            ]
         },
-
         "bundle.tr": {
             "region": "tr",
             "language": "tr",
-            "languages": ["tr", "en"],
-            "subdomains": ["corona\\.hacettepe\\.edu\\.tr"],
-            "sources": ["hacettepe.edu.tr"]
+            "languages": [
+                "tr",
+                "en"
+            ],
+            "subdomains": [
+                "corona\\.hacettepe\\.edu\\.tr"
+            ],
+            "sources": [
+                "hacettepe.edu.tr"
+            ]
         },
-
         "bundle.tw": {
             "region": "tw",
             "language": "zh",
-            "languages": ["zh"],
-            "subdomains": ["covid19.ntnu.edu.tw"],
-            "sources": ["www.ntnu.edu.tw"]
+            "languages": [
+                "zh"
+            ],
+            "subdomains": [
+                "covid19.ntnu.edu.tw"
+            ],
+            "sources": [
+                "www.ntnu.edu.tw"
+            ]
         },
-
         "bundle.us": {
             "region": "us",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["covid\\.cornell\\.edu", "coronavirus\\.berkeley\\.edu"],
-            "sources": ["www.cornell.edu", "www.berkeley.edu"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "covid\\.cornell\\.edu",
+                "coronavirus\\.berkeley\\.edu",
+                "covid19.arizona.edu"
+            ],
+            "sources": [
+                "www.cornell.edu",
+                "www.berkeley.edu",
+                "www.arizona.edu"
+            ]
         },
         "globalbiodefense.com": {
             "region": "us",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.globalbiodefense\\.com"],
-            "sources": ["globalbiodefense.com"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.globalbiodefense\\.com"
+            ],
+            "sources": [
+                "globalbiodefense.com"
+            ]
         },
         "www.cdc.gov": {
             "region": "us",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov"],
-            "sources": ["cdc.gov"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.cdc\\.gov"
+            ],
+            "sources": [
+                "cdc.gov"
+            ]
         },
         "www.nytimes.com": {
             "region": "us",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.nytimes\\.com"],
-            "sources": ["nytimes.com"],
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.nytimes\\.com"
+            ],
+            "sources": [
+                "nytimes.com"
+            ],
             "similarity_threshold": 0.6
         },
         "www.usa.gov": {
             "region": "us",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.usa\\.gov"],
-            "sources": ["usa.gov"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.usa\\.gov"
+            ],
+            "sources": [
+                "usa.gov"
+            ]
         },
-
         "bundle.za": {
             "region": "za",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["sacoronavirus\\.co\\.za", "[a-zA-Z.-]+\\.sacoronavirus\\.co\\.za"],
-            "sources": ["sacoronavirus.co.za"],
-            "notif_empty_db_disabled": true
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "sacoronavirus\\.co\\.za",
+                "[a-zA-Z.-]+\\.sacoronavirus\\.co\\.za"
+            ],
+            "sources": [
+                "sacoronavirus.co.za"
+            ]
+        },
+        "bundle.no": {
+            "region": "no",
+            "language": "en",
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "www.oslomet.no/en/about/news/covid-situation-oslomet"
+            ],
+            "sources": [
+                "www.oslomet.no/en"
+            ]
+        },
+        "bundle.ph": {
+            "region": "ph",
+            "language": "en",
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "up.edu.ph/covid-19-updates"
+            ],
+            "sources": [
+                "up.edu.ph"
+            ]
         }
     },
-    "domains_ignored": {
-    },
+    "domains_ignored": {},
     "domains_disabled": {
         "www.rki.de": {
             "region": "de",
-            "languages": ["de"],
             "language": "de",
-            "subdomains": ["[a-zA-Z.-]+\\.rki\\.de"],
-            "sources": ["rki.de"]
+            "languages": [
+                "de"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.rki\\.de"
+            ],
+            "sources": [
+                "rki.de"
+            ]
         },
-
         "fr.reuters.com": {
             "region": "fr",
             "language": "fr",
-            "languages": ["fr"],
-            "subdomains": ["[a-zA-Z.-]+\\.fr\\.reuters\\.com"],
-            "sources": ["fr.reuters.com"]
+            "languages": [
+                "fr"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.fr\\.reuters\\.com"
+            ],
+            "sources": [
+                "fr.reuters.com"
+            ]
         },
-
         "bundle.mx": {
             "region": "mx",
             "language": "es",
-            "languages": ["es"],
-            "subdomains": ["coronavirus\\.gob\\.mx", "[a-zA-Z.-]+\\.gob.mx/salud"],
-            "sources": ["www.gob.mx"]
+            "languages": [
+                "es"
+            ],
+            "subdomains": [
+                "coronavirus\\.gob\\.mx",
+                "[a-zA-Z.-]+\\.gob.mx/salud"
+            ],
+            "sources": [
+                "www.gob.mx"
+            ]
         },
-
         "www.covid19india.org": {
             "region": "in",
             "language": "en",
-            "languages": ["en"],
-            "subdomains": ["[a-zA-Z.-]+\\.covid19india\\.org"],
-            "sources": ["covid19india.org"]
+            "languages": [
+                "en"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.covid19india\\.org"
+            ],
+            "sources": [
+                "covid19india.org"
+            ]
         },
-
         "www.cdc.gov.kr": {
             "region": "kr",
             "language": "ko",
-            "languages": ["ko"],
+            "languages": [
+                "ko"
+            ],
             "prefix": "www.cdc.go.kr",
-            "subdomains": ["[a-zA-Z.-]+\\.cdc\\.gov\\.kr"],
-            "sources": ["cdc.gov.kr"]
+            "subdomains": [
+                "[a-zA-Z.-]+\\.cdc\\.gov\\.kr"
+            ],
+            "sources": [
+                "cdc.gov.kr"
+            ]
         },
         "www.kdca.go.kr": {
             "region": "kr",
             "language": "ko",
-            "languages": ["ko"],
-            "subdomains": ["[a-zA-Z.-]+\\.kdca\\.go\\.kr"],
-            "sources": ["kdca.go.kr"]
+            "languages": [
+                "ko"
+            ],
+            "subdomains": [
+                "[a-zA-Z.-]+\\.kdca\\.go\\.kr"
+            ],
+            "sources": [
+                "kdca.go.kr"
+            ]
         }
     },
     "url_black_list": "/mnt/hinoki/share/covid19/url_black_list.txt",
@@ -561,20 +1026,19 @@
     "xml_dir": "/mnt/hinoki/share/covid19/xml",
     "metadata_dir": "/mnt/hinoki/murawaki/covid19",
     "run_dir": "/mnt/hinoki/share/covid19/run",
-    "WWW2sf_dir": "/home/frederic/WWW2sf",
-    "detectblocks_dir": "/home/frederic/detectblocks",
+    "WWW2sf_dir": "/home/song/git/WWW2sf",
+    "detectblocks_dir": "/home/song/git/detectblocks",
     "grace_period_before_pruning": 14,
+    "grace_period_before_pruning_off": 5,
     "mail": {
         "from": "noreply.covid19.dbchecker@gmail.com",
-        "to": "someone@example.com",
-        "cc": "someone.else@example.com",
-        "bcc": "someone.else.again@example.com"
+        "to": "******",
+        "cc": "******"
     },
     "elastic_search": {
-        "host": "localhost",
+        "host": "******",
         "port": 9200,
         "index_basename": "covid19-pages",
         "twitter_index_basename": "covid19-tweets"
     }
 }
-
