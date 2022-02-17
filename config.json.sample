@@ -116,7 +116,7 @@
             ],
             "subdomains": [
                 "news\\.ucas\\.ac\\.cn/index.php/topiccoronavirus",
-                "news\\.pku\\.edu\\.cn/ztrd/zzcckjyq/index.htm"
+                "news\\.pku\\.edu\\.cn"
             ],
             "sources": [
                 "www.ucas.ac.cn",
@@ -415,8 +415,7 @@
                 "www.gov.uk",
                 "www.ox.ac.uk",
                 "www.shu.ac.uk",
-                "www.gla.ac.uk",
-                "www.gla.ac.uk/myglasgow/coronavirus"
+                "www.gla.ac.uk"
             ]
         },
         "bundle.hk": {
@@ -621,12 +620,12 @@
                 "ncov\\.mohw\\.go\\.kr",
                 "www\\.snu\\.ac\\.kr/coronavirus",
                 "en.knu.ac.kr/board/covid.htm",
-                "www.cau.ac.kr/cms/FR_CON/index.do\\?MENU_ID=2450\\#page1"
+                "www.cau.ac.kr/cms/FR_CON/index.do\\?MENU_ID=2450"
             ],
             "sources": [
                 "mohw.go.kr",
                 "snu.ac.kr",
-                "en.knu.ac.kr/main/main.htm",
+                "knu.ac.kr",
                 "neweng.cau.ac.kr"
             ]
         },
@@ -643,7 +642,7 @@
             ],
             "sources": [
                 "covid-19.moh.gov.my",
-                "www.uitm.edu.my/index.php/en/"
+                "www.uitm.edu.my"
             ]
         },
         "www.mohfw.gov.in": {
@@ -741,7 +740,7 @@
             ],
             "sources": [
                 "www.unl.pt",
-                "sigarra.up.pt/up/en/web_base.gera_pagina?p_pagina=home"
+                "www.up.pt"
             ]
         },
         "bundle.ru": {
@@ -920,7 +919,7 @@
                 "www.oslomet.no/en/about/news/covid-situation-oslomet"
             ],
             "sources": [
-                "www.oslomet.no/en"
+                "www.oslomet.no"
             ]
         },
         "bundle.ph": {
