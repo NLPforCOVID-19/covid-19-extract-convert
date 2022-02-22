@@ -53,7 +53,12 @@ def write_html_file(path, filename, url, content, source, domain_path, guessed_l
         os.makedirs(path, exist_ok=True)
         temp_path = path
         while temp_path != domain_path:
-            os.chmod(temp_path, 0o775)
+            # An error might happen when the folder owner is different from the user running the script.
+            # The permissions of such folders should already be ok so it's not needed to update them.
+            try:
+                os.chmod(temp_path, 0o775)
+            except OSError as e:
+                break
             temp_path = os.path.dirname(temp_path)
         filename = os.path.join(path, filename)
         with open(filename, 'wb') as html_file:
@@ -74,8 +79,10 @@ def write_html_file(path, filename, url, content, source, domain_path, guessed_l
             new_html_file.write("\n")
         global nb_html_files
         nb_html_files += 1
-    except OSError as os_err:
-        print("An error has occurred in write_html(path={0} filename={1} url={2}): {3}".format(path, filename, url, os_err))
+    except:
+        e = sys.exc_info()[0]
+        # logger.info("An error has occurred: %s" % e)
+        print(f"An error has occurred in write_html(path={path} filename={filename} url={url}): {traceback.format_exc()}")
 
 
 def write_stats_file(filename):
