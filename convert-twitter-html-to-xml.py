@@ -255,7 +255,7 @@ class Converter(threading.Thread):
                                 f.write(f"{www2sf_output_file}\n")
 
             except:
-                e = sys.exc_info()[0]
+                # e = sys.exc_info()[0]
                 # logger.info("An error has occurred: %s" % e)
                 logger.info("An error has occurred: %s" % traceback.format_exc())
 

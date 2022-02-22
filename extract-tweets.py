@@ -4,6 +4,7 @@ import json
 from json import JSONDecodeError
 import os
 import re
+import traceback
 import twitter
 import utils
 
@@ -69,7 +70,12 @@ def write_tweet_data(tweet_id, tweet_text):
         os.makedirs(html_orig_tweet_dir, exist_ok=True)
         temp_path = html_orig_tweet_dir
         while temp_path != twitter_html_dir:
-            os.chmod(temp_path, 0o775)
+            # An error might happen when the folder owner is different from the user running the script.
+            # The permissions of such folders should already be ok so it's not needed to update them.
+            try:
+                os.chmod(temp_path, 0o775)
+            except OSError as e:
+                break
             temp_path = os.path.dirname(temp_path)
 
         print(f"tweet_path={html_orig_tweet_dir}")
@@ -118,8 +124,8 @@ def write_tweet_data(tweet_id, tweet_text):
                 tweet_count_per_country[country_code_dir] += 1
             else:
                 tweet_count_per_country[country_code_dir] = 1
-    except OSError as os_err:
-        print(f"An error has occurred in write_tweet_data(tweet_id={tweet_id}) os_err={os_err}")
+    except:
+        print(f"An error has occurred in write_tweet_data(tweet_id={tweet_id}): {traceback.format_exc()}")
 
 
 def write_stats_file(filename, tweet_count_per_country):

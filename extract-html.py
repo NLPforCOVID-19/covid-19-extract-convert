@@ -9,6 +9,7 @@ import pathlib
 import re
 import sqlite3
 import sys
+import traceback
 
 input_domain = sys.argv[1]
 
@@ -80,7 +81,7 @@ def write_html_file(path, filename, url, content, source, domain_path, guessed_l
         global nb_html_files
         nb_html_files += 1
     except:
-        e = sys.exc_info()[0]
+        # e = sys.exc_info()[0]
         # logger.info("An error has occurred: %s" % e)
         print(f"An error has occurred in write_html(path={path} filename={filename} url={url}): {traceback.format_exc()}")
 
