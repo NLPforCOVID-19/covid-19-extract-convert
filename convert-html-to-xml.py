@@ -203,7 +203,7 @@ class Converter(threading.Thread):
                     logger.info("Convert input={} output={}".format(www2sf_input_file, www2sf_output_file))
                     logger.info("cd {0} && tool/html2sf.sh -T -D {1} -J {2}".format(www2sf_dir, detectblocks_dir, www2sf_input_file))
                     process = subprocess.run(["tool/html2sf.sh", "-T", "-D {}".format(detectblocks_dir), "-J", www2sf_input_file], cwd=www2sf_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    logger.info("return_code={0}".format(process.returncode))
+                    logger.info(f"return_code={process.returncode} for {www2sf_input_file}")
                     if process.returncode == 0:
                         os.makedirs(www2sf_output_file[:www2sf_output_file.rindex('/')], exist_ok=True)
                         temp_path = www2sf_output_file[:www2sf_output_file.rindex('/')]
